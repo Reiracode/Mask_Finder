@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-<title>MaskFinder</title>
+<title>Mask Finder</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"></link> 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css"></link>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"></link>
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.0/css/all.min.css"></link> -->
+<!-- <link rel="stylesheet" href="https://static.fontawesome.com/css/fontawesome-app.css"></link> -->
 <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> -->
 <style>
-    /* https://developer.mozilla.org/zh-TW/docs/Web/API/Fetch_API/Using_Fetch */
     *{
         padding:0;
         margin:0;
@@ -81,7 +80,7 @@
     }
 
     #list{
-        padding: 10px 15px;
+        /* padding: 10px 15px; */
         flex:1;
         background-color:rgba(255, 255, 255, 0.6);
         overflow-y: auto;
@@ -150,7 +149,7 @@
         font-size: 20px;
         letter-spacing: 0.5px;
         width: 100%;
-        margin-bottom:5px;
+        margin-bottom:10px;
 
     }
 
@@ -170,16 +169,53 @@
         display: none;
     }
 
+    .list_selector{
+        padding: 10px;
+    }
     .store_detail{
-        padding:10px;
-        margin:10px 0;
+        padding:20px 10px;
         background-color: #90b1ec;
         color:white;
+        margin-bottom: 10px;
+    }
+
+    .store_detail:last-child{
+        margin-bottom: 0;
+    }
+
+    .store_detail>p{
+        line-height: 2rem;
+    }
+
+    .store_detail>h2{
+        line-height: 20px;
+    }
+
+    .store_detail>span{
+        text-align: right;
+        font-size: 0.8rem;
+        display: block;
+    }
+    
+
+    #mask_sel{
+        display: flex;
+        justify-content: space-around;
+    }
+    #mask_sel>button{
+        padding: 0.3rem;
+        /* border:1px solid grey; */
+        border-radius: 4px;
+        font-size: 16px;
+        width: 30%;
+        background-color: #c8d8dd;
+        color:#fff;
     }
 
     .mask_size{
         display: flex;
         justify-content:space-around;
+        margin:10px 0;
     }
 
     .mask_size span{
@@ -199,6 +235,12 @@
 
     .mask_size [data-size="child"]{
         background-color: #afdae6;
+    }
+
+
+    a[href^="tel:"] {
+    color: #fff;
+    text-decoration: none;
     }
 
 
@@ -248,29 +290,28 @@
         <div id="map">
             <button id="open_arrow">
                 <i class="fas fa-angle-up"></i>
+                <!-- <i class="fas fa-clinic-medical"></i> -->
             </button>
         </div>
 
 
         <div id="list"   class="my-selector-c">
-            <div>
-                <!-- <select class="county  custom-select"></select> -->
-                <select class="county select-selected"></select>
-            </div>
-            <div>
-                <select class="district select-selected"></select>
-            </div>
+            <div class="list_selector">
+                    <!-- <select class="county  custom-select"></select>
+                    <select class="district custom-select"></select> -->
+                    <select class="county select-selected"></select>  
+                    <select class="district select-selected"></select>
 
-            <div id="mask_sel">
-                <button class="mask_all" data-item="all">ALL</button>
-                <button class="mask_all" data-item="adult">Adult</button>
-                <button class="mask_all" data-item="child">Child</button>  
+                <div id="mask_sel">
+                    <button class="mask_all" data-item="all">ALL</button>
+                    <button class="mask_all" data-item="adult">Adult</button>
+                    <button class="mask_all" data-item="child">Child</button>  
+                </div>
+
+                <div id="day"></div>
             </div>
-            <div id="day"></div>
 
             <div id="storelist"></div>
-
-             
         </div>
     </div>
 
@@ -280,19 +321,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tw-city-selector@2.1.0/dist/tw-city-selector.min.js"></script>
 <!-- <script src="http://maximeh.github.io/leaflet.bouncemarker/bouncemarker.js"></script> -->
-<script src="https://use.fontawesome.com/releases/v5.0.0/js/solid.js"></script>
-<script src="https://use.fontawesome.com/releases/v5.0.0/js/fontawesome.js"></script>
+<!-- <script src="https://use.fontawesome.com/releases/v5.0.0/js/fontawesome.js"></script> -->
+<!-- <script src="https://use.fontawesome.com/releases/v5.0.0/js/solid.js"></script> -->
+<script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
+<!-- <script src="https://use.fontawesome.com/releases/v5.0.0/js/solid.js"></script> -->
+<!-- <script src="https://use.fontawesome.com/releases/v5.0.0/js/regular.js"></script> -->
+<!-- <script src="https://use.fontawesome.com/releases/v5.0.0/js/fontawesome.js"></script> -->
+
+
 <script>
-//  window.addEventListener("load", function(event) {
-//   // All resources finished loading!
-//     console.log("loading")
-// });
 let vh = window.innerHeight * 0.01;
-console.log(vh)
 document.documentElement.style.setProperty('--vh', `${vh}px`); 
-// We listen to the resize event
 window.addEventListener('resize', () => {
-    // We execute the same script as before
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
 });
@@ -308,29 +348,18 @@ window.addEventListener('resize', () => {
     const selectDist= document.querySelector('.district');
     const mask_sel_btn= document.querySelector('#mask_sel');
     const maskBtn= document.querySelector('.mask_all');
-
     const open_arrow = document.getElementById("open_arrow");
-    // const open_arrow2 = document.getElementById("open_arrow2");
-    const auto_menu = document.getElementById("list");
+    const open_menu = document.getElementById("list");
 
-
-    // const sideInfo= document.querySelectorAll('.store_detail')
     var setloading = false;
-    var selCity;
-    var selZone;
-    // var markers = [],
+    var selCity,selZone;
     var markers = new L.markerClusterGroup();
-    // var markers =L.markerClusterGroup();
     var markersRef = {};
 
-//192.168.104
     let [latitude, longitude] = await getPosition();
-    console.log(latitude,longitude)
     let geoInfo = await getGeoInfo();
     let userPosition = await getUserPosition();
-
     let infoData = await getMaskInfo();
-
     let infoDay = await getDatInfo();
 
     var greenIcon = new L.Icon({
@@ -354,7 +383,7 @@ window.addEventListener('resize', () => {
     // const map = L.map('map').setView([latitude, longitude], 16).on('dragend', getAroundStore).on('zoomend', getAroundStore);
     const map = L.map('map', {
         //192.168.104
-        center: [latitude,longitude],
+        center: ss = ![latitude,longitude]? [latitude,longitude] :[25.040065, 121.523235],
         // center: [25.040065, 121.523235],
         zoom: 16
     });  
@@ -389,19 +418,6 @@ window.addEventListener('resize', () => {
     map.on('locationerror', onLocationError);
     map.locate({setView: true, maxZoom: 16});
 
-    // var getPosition = function (options) {
-    // return new Promise(function (resolve, reject) {
-    //     navigator.geolocation.getCurrentPosition(resolve, reject, options);
-    // });
-    // }
-
-    // getPosition()
-    // .then((position) => {
-    //     console.log(position);
-    // })
-    // .catch((err) => {
-    //     console.error(err.message);
-    // });
      // 取得使用者的地理位置。
     function getUserPosition() {
         if (navigator.geolocation) {
@@ -421,21 +437,6 @@ window.addEventListener('resize', () => {
         }
     }
 
-    // var getPosition = function (options) {
-    // return new Promise(function (resolve, reject) {
-    //     navigator.geolocation.getCurrentPosition(resolve, reject, options);
-    // });
-    // }
-
-    // getPosition()
-    // .then((position) => {
-    //     console.log(position);
-    // })
-    // .catch((err) => {
-    //     console.error(err.message);
-    // });
-
-
     function getGeoInfo(){
         return new Promise((resolve, reject) => {
             navigator.geolocation.getCurrentPosition(
@@ -450,86 +451,50 @@ window.addEventListener('resize', () => {
             )
         })
     }
-    // captureImage = async () => {
-//     if (this.camera) {
-//     }
-//     this.sendImageData(data); // data is what you got from camera.
-// }
-
-
-    // sendImageData = (cameraData) => {
-    //     let coordinates = '';
-    //     getGeoInfo.then(crdnts => coordinates = crdnts );
-    //    // now coordinates have all relevant data you wished.
-    
-    //    //... make the object as you want 
-    //     const data = { }
-    //     // do the API call using axios as you've already done.
-    // }
+ 
 
     function getPosition(){
         return new Promise(resolve=>{
-        //     // navigator.geolocation.getCurrentPosition(position => {
-        //     //     resolve([position.coords.latitude, position.coords.longitude])
-        //     // });
-
             !!(navigator.geolocation)
                 ? navigator.geolocation.getCurrentPosition(position => {     
                     resolve([position.coords.latitude, position.coords.longitude])
                     })
                 : alert("Geolocation is not supported by your browser")
         })
-            // return new Promise((resolve, reject) => {
-            // navigator.geolocation.getCurrentPosition(
-            //     position => { resolve([position.coords.latitude, position.coords.longitude]) },
-            //     error => { reject(error) }
-            // )
-            // }).catch(error => error)
     }
 
 
     function getMaskInfo(){
         // main.innerHTML = "<p>Loading...";
         // setloading = true;
-        // main.style.display = "block";
         return new Promise(resolve=>{
-            // fetch('http://localhost:8080/dashboard/F2E_project/Maskfinder/points.json?fbclid=IwAR2faivZHghmapjOcGiuSocqD09wboudZpWjQIfxwG9xCutufqr7Bw06yVk')
-            fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json?fbclid=IwAR2faivZHghmapjOcGiuSocqD09wboudZpWjQIfxwG9xCutufqr7Bw06yVk')
-            .then(res=>res.json())
-            .then(json=>resolve(json.features))
-            .catch(err=>console.log(err))
-            .then(response => 
-            // console.log('Success:', response)
-            // main.innerHTML ="success"
-            loading.style.display = "none"
-            
-            );
+            fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
+                .then(res=>res.json())
+                .then(json=>resolve(json.features))
+                .catch(err=>console.log(err))
+                .then(response => 
+                // console.log('Success:', response)
+                // main.innerHTML ="success"
+                loading.style.display = "none"
+                
+                );
         })
     }
 
     function getStore(){ 
-        // map.setView([this.dataset['lat'],this.dataset['lng']],18)
-        // markersRef[sideInfo.indexOf(this)].fire('click');
+
         console.log(this)
         console.log(markersRef)
         console.log([sideInfo.indexOf(this)])
-        // map.setView([this.dataset['lat'],this.dataset['lng']],18)
-        // this.fire('click');
     
         if(!markersRef[sideInfo.indexOf(this)].isPopupOpen()){
             let marker = markersRef[sideInfo.indexOf(this)]
             console.log(marker)
-            // map.panTo([marker._latlng.lat, marker._latlng.lng], 18)
             map.setView([marker._latlng.lat, marker._latlng.lng], 18)
-            /*問題panto 士林華榮街:博惠  閃退  萬華:正盛
-            setView vs panTo不同
-            */
             markers.zoomToShowLayer(marker, function() {
                 marker.openPopup();
             });
         }
-        console.log(this.children)
-        console.log(this.childNodes)
     }
 
     function getDatInfo() {
@@ -538,18 +503,11 @@ window.addEventListener('resize', () => {
         document.getElementById('day').innerText = "今天星期"+ dayInfo[day]      
     }
 
-    // open_arrow2.addEventListener("click", function() {
-    //     var element = document.getElementById("list");
-    //             element.classList.toggle("active");
-    //             this.classList.toggle('active')
-    // })
 
 
-    var element = document.getElementById("list");
     open_arrow.addEventListener("click", function() {
-            element.classList.toggle("active");
+            open_menu.classList.toggle("active");
             this.classList.toggle('active')
-
     })
 
     selectDist.addEventListener('change', (event) => {
@@ -589,26 +547,13 @@ window.addEventListener('resize', () => {
   // var markers = new L.MarkerClusterGroup().addTo(map);
 function getDistance(origin, destination) {
     console.log(origin,destination)
-
     lat1 = origin[0]
     lng1 = origin[1] 
     lat2 = destination[0]
     lng2 = destination[1]
 
-return 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1-lat2)/360), 2)+Math.cos(Math.PI * lat1/180) * Math.cos(Math.PI * lat2/180)*Math.pow(Math.sin(Math.PI*(lng1-lng2)/360), 2)))
+    return 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1-lat2)/360), 2)+Math.cos(Math.PI * lat1/180) * Math.cos(Math.PI * lat2/180)*Math.pow(Math.sin(Math.PI*(lng1-lng2)/360), 2)))
 
-    // return distance in meters
-    // var lon1 = toRadian(origin[1]),
-    //     lat1 = toRadian(origin[0]),
-    //     lon2 = toRadian(destination[1]),
-    //     lat2 = toRadian(destination[0]);
-    // var deltaLat = lat2 - lat1;
-    // var deltaLon = lon2 - lon1;
-    // var a = Math.pow(Math.sin(deltaLat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon/2), 2);
-    // var c = 2 * Math.asin(Math.sqrt(a));
-    // var EARTH_RADIUS = 6371;
-    // return c * EARTH_RADIUS /1000;
-    // return c;
 }
 
 function toRadian(degree) {
@@ -632,21 +577,9 @@ function toRadian(degree) {
 
 //************************************************
 function filterPharmacy () {
-    // 原本寫這個  
-    // map.removeLayer(markers);
+ 
     let res = [];
-    // let city = this.city
-    // let area = this.area
-    // let tw = /(台|臺)../
-    // if (!!city && !!area) {
-    //   if (city !== null && city.match(tw)) {
-    //     city = city.split('台').join('')
-    //   }
-    //   let regExp = new RegExp(city + area, 'g')
-    //   res = this.Tw_Stores.filter((features) => {
-    //     return features.properties.address.match(regExp)
-    //   })
-    // };
+
     let filterStore = infoData;
     // let filterStore= JSON.parse(localStorage.getItem("allMask"));
     // let filterStore= JSON.parse(sessionStorage.getItem("msg1"));
@@ -683,35 +616,15 @@ function findMask() {
         
         // markersRef.push(L.marker(new L.LatLng(coordinates[1],coordinates[0])));
         marker.bindPopup(
-        `<h2>${properties.name} </h2>
-                            <a href="tel:${properties.phone}">${properties.phone}</a>
-                            <p>成人口罩數量${properties.mask_adult}</p>
-                            <p>小孩口罩數量${properties.mask_child}</p>
-                        `
-        )
-        // markersRef.push(L.marker([coordinates[1], coordinates[0]],{icon: mask})
-        //         .bindPopup(
-        //         `<h2>${properties.name} </h2>
-        //             <a href="tel:'${properties.phone}">${properties.phone}</a>
-        //             <p>成人口罩數量${properties.mask_adult}</p>
-        //             <p>小孩口罩數量${properties.mask_child}</p>
-        //         `
-        // ));
-                
+        `<h2>${properties.name}</h2>
+        <a href="tel:${properties.phone}"><span class="fas fa-phone fa-flip-horizontal"></span>${properties.phone}</a>
+        <p>成人口罩數量${properties.mask_adult}</i></p>
+        <p>小孩口罩數量${properties.mask_child}</p>
+        `
+        )              
         markersRef.push(marker);
         markers.addLayer(marker);
-                
-
-        // markers.addLayer(
-        //         L.marker([coordinates[1], coordinates[0]],{icon: mask})
-        //         .bindPopup(
-        //         `<h2>${properties.name} </h2>
-        //             <a href="tel:'${properties.phone}">${properties.phone}</a>
-        //             <p>成人口罩數量${properties.mask_adult}</p>
-        //             <p>小孩口罩數量${properties.mask_child}</p>
-        //         `
-        //         )
-        // )
+            
     })  
 
     map.addLayer(markers);
@@ -722,42 +635,27 @@ function findMask() {
     const s_list = document.getElementById('storelist');
     s_list.innerHTML = '';
     for (let i=0; dataAll.length>i; i++){
-        // if (dataAll[i].properties.mask_adult == 0){
-        //     mask = redIcon;
-        // }else{
-        //     mask = greenIcon;
-        // } 
-        // markers.addLayer(
-        //     L.marker([dataAll[i].geometry.coordinates[1],
-        //             dataAll[i].geometry.coordinates[0]], 
-        //             {icon: mask})
-        //     .bindPopup('<h2>'+dataAll[i].properties.name+'</h2>'+
-        //         '<a href="tel:'+dataAll[i].properties.phone+'">' +
-        //                         dataAll[i].properties.phone +'</a>'+
-        //         '<p>成人口罩數量'+dataAll[i].properties.mask_adult+'</p>'+
-        //         '<p>小孩口罩數量'+dataAll[i].properties.mask_child+'</p>'
-        //     )); 
-
         var el = document.createElement('div');
         el.setAttribute('class','store_detail');
         el.innerHTML = 
-            `<h2 class="store_title" 
-                data-adult="${dataAll[i].properties.mask_adult}" 
+
+            ` <h2 class="store_title"  data-adult="${dataAll[i].properties.mask_adult}" 
                 data-child="${dataAll[i].properties.mask_child}"
-                data-key="${dataAll[i].properties.id}"
-            >
-                ${dataAll[i].properties.name}
-            </h2>
-            <span>${dataAll[i].properties.address}</span>
-            
+                data-key="${dataAll[i].properties.id}">${dataAll[i].properties.name}</h2>    
+            <p><i class="fas fa-briefcase"></i>  
+                ${dataAll[i].properties.address}
+            </p>
+
+            <p><i class="fas fa-phone fa-flip-horizontal"></i><a href="tel:${dataAll[i].properties.phone}">${dataAll[i].properties.phone}</a></p>
+            <p><i class="fas fa-tag"></i>${dataAll[i].properties.note}</p>
+         
+
             <div class="mask_size">
-                <span data-size='adult'>
-                ${dataAll[i].properties.mask_adult}
-                </span>
-                <span data-size='child'>
-                ${dataAll[i].properties.mask_child}
-                </span>
+                <span data-size='adult'>${dataAll[i].properties.mask_adult}</span>
+                <span data-size='child'>${dataAll[i].properties.mask_child}</span>
             </div>
+
+            <span>最後更新:${dataAll[i].properties.updated}</span>
             `;
 
             s_list.appendChild(el);        
