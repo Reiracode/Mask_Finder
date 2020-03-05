@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>MaskFinder</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"></link> 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css"></link>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"></link>
+<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> -->
+<!-- https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
+ -->
+<style>
+    /* https://developer.mozilla.org/zh-TW/docs/Web/API/Fetch_API/Using_Fetch */
+    *{
+        padding: 0;
+        margin:0;
+        border:none;
+        box-sizing:border-box;
+    }
+    html,body{
+        /* width: 100%;
+        height: 100%;
+        overflow: hidden;
+        padding: 0;
+        margin:0;
+        /* Fallback for browsers that do not support Custom Properties */
+        width: 100vw;
+        height: 100vh; 
+        height: calc(var(--vh, 1vh) * 100);   
+    }
+
+    .main{
+        display: flex;
+        width:100vw;
+        height:100vh;
+        height: calc(var(--vh, 1vh) * 100);
+    }
+
+    #loading{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+        /* background-color: #e4dede80; */
+        background-color: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+    }
+
+    .loader {
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #cbcbe9;
+        border-bottom: 16px solid #cbcbe9;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    #map { 
+        flex:3;
+        /* z-index: -1; */
+    }
+
+    #list{
+        padding: 10px 15px;
+        flex:1;
+        background-color:rgba(255, 255, 255, 0.6);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #open_arrow{
+        display:none;
+    }
+
+
+
+    @media only screen and (max-width: 600px) {
+        .main{
+            flex-direction:column;
+        }
+        #map{
+            position: relative;
+        }
+        #list{
+            /* z-index: 1; */
+            flex:2;
+            transition:all .5s ease-in-out;
+            /* transition: cubic-bezier(0.075, 0.82, 0.165, 1); */
+        }
+
+        #list.active {
+            flex:8;
+        }
+
+
+        #open_arrow{
+            display: block;
+            border-radius: 12px 12px 0 0;
+            background-color: royalblue;
+            color: white;
+            position:absolute;
+            left: calc(50% - 25px);
+            z-index: 9999;
+            bottom: 0;
+            cursor: pointer;
+            width:50px;
+        }
+
+        #open_arrow.active,#open_arrow.hover{
+            color:#fff;
+            background-color: #8cbcf1;
+        }  
+
+        #open_arrow svg{
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            font-size: 36px; 
+            pointer-events: none;
+        }
+
+        #open_arrow.active svg{
+            transform: rotate(180deg);
+        }
+    }
+
+    .select-selected{
+        padding: 10px 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 20px;
+        letter-spacing: 0.5px;
+        width: 100%;
+        margin-bottom:5px;
+
+    }
+
+    .select-selected:after{
+        position: absolute;
+        content: "";
+        top: 14px;
+        right: 10px;
+        width: 0;
+        height: 0;
+        border: 6px solid transparent;
+        border-color: #fff transparent transparent transparent;
+    }
+
+
+    .d-none{
+        display: none;
+    }
+
+    .store_detail{
+        padding:10px;
+        margin:10px 0;
+        background-color: #90b1ec;
+        color:white;
+    }
+
+    .mask_size{
+        display: flex;
+        justify-content:space-around;
+    }
+
+    .mask_size span{
+        width: 45%;
+        border: 1px solid;
+        border-radius: 20px;
+        height: 48px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mask_size [data-size="adult"]{
+        background-color: #bdd0f3;
+    }
+
+    .mask_size [data-size="child"]{
+        background-color: #afdae6;
+    }
+
+
+/*   */
+    /* cluster map */
+    .marker-cluster-small {
+        background-color: rgba(181, 226, 140, 0.6);
+    }
+    .marker-cluster-small div {
+        background-color: rgba(110, 204, 57, 0.6);
+    }
+    .marker-cluster-medium {
+        background-color: #FFEB3B;
+    }
+    .marker-cluster-medium div {
+        background-color: rgba(240, 194, 12, 0.6);
+    }
+    .marker-cluster-large {
+        background-color: rgba(253, 156, 115, 0.6);
+    }
+    .marker-cluster-large div {
+        background-color: rgba(241, 128, 23, 0.6);
+    }
+    .marker-cluster {
+        background-clip: padding-box;
+        border-radius: 20px;
+    }
+    .marker-cluster div {
+        width: 30px;
+        height: 30px;
+        margin-left: 5px;
+        margin-top: 5px;
+        text-align: center;
+        border-radius: 15px;
+        font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    }
+    .marker-cluster span {
+        line-height: 30px;
+    }
+</style>
+</head>
+<body>
+    <div id="loading"><div class="loader"></div></div>
+
+    <div class="main">
+
+        <div id="map">
+            <button id="open_arrow">
+                <i class="fas fa-angle-up"></i>
+            </button>
+        </div>
+
+
+        <div id="list"   class="my-selector-c">
+            <div>
+                <!-- <select class="county  custom-select"></select> -->
+                <select class="county select-selected"></select>
+            </div>
+            <div>
+                <select class="district select-selected"></select>
+            </div>
+
+            <div id="mask_sel">
+                <button class="mask_all" data-item="all">ALL</button>
+                <button class="mask_all" data-item="adult">Adult</button>
+                <button class="mask_all" data-item="child">Child</button>  
+            </div>
+            <div id="day"></div>
+
+            <div id="storelist"></div>
+
+             
+        </div>
+    </div>
+
+
+<!-- <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script> -->
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tw-city-selector@2.1.0/dist/tw-city-selector.min.js"></script>
+<!-- <script src="http://maximeh.github.io/leaflet.bouncemarker/bouncemarker.js"></script> -->
+<script src="https://use.fontawesome.com/releases/v5.0.0/js/solid.js"></script>
+<script src="https://use.fontawesome.com/releases/v5.0.0/js/fontawesome.js"></script>
+<script>
+//  window.addEventListener("load", function(event) {
+//   // All resources finished loading!
+//     console.log("loading")
+// });
+let vh = window.innerHeight * 0.01;
+console.log(vh)
+document.documentElement.style.setProperty('--vh', `${vh}px`); 
+// We listen to the resize event
+window.addEventListener('resize', () => {
+    // We execute the same script as before
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+});
+
+(async function(){
+    new TwCitySelector({
+        el: ".my-selector-c",
+        elCounty: ".county", // 在 el 裡查找 dom
+        elDistrict: ".district" 
+    });
+
+    const loading = document.getElementById("loading");
+    const selectDist= document.querySelector('.district');
+    const mask_sel_btn= document.querySelector('#mask_sel');
+    const maskBtn= document.querySelector('.mask_all');
+
+    const open_arrow = document.getElementById("open_arrow");
+    // const open_arrow2 = document.getElementById("open_arrow2");
+    const auto_menu = document.getElementById("list");
+
+
+    // const sideInfo= document.querySelectorAll('.store_detail')
+    var setloading = false;
+    var selCity;
+    var selZone;
+    // var markers = [],
+    var markers = new L.markerClusterGroup();
+    // var markers =L.markerClusterGroup();
+    var markersRef = {};
+
+//192.168.104
+    let [latitude, longitude] = await getPosition();
+    console.log(latitude,longitude)
+    let geoInfo = await getGeoInfo();
+    let userPosition = await getUserPosition();
+
+    let infoData = await getMaskInfo();
+
+    let infoDay = await getDatInfo();
+
+    var greenIcon = new L.Icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    var redIcon = new L.Icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    // const map = L.map('map').setView([latitude, longitude], 16).on('dragend', getAroundStore).on('zoomend', getAroundStore);
+    const map = L.map('map', {
+        //192.168.104
+        center: [latitude,longitude],
+        // center: [25.040065, 121.523235],
+        zoom: 16
+    });  
+
+    const userIcon = L.icon({
+        iconUrl: './img/dot.svg',
+        iconSize: [38, 95],
+        iconAnchor: [22, 94],
+    })
+
+    //192.168.104
+    // L.marker([latitude, longitude], {icon: userIcon}, {bounceOnAdd: true}).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    function onLocationFound(e) {
+		var radius = e.accuracy / 2;
+        console.log(e.latlng)
+        console.log(e.accuracy)
+        //use e.latlng get longtide/latitude not necessary use geolocation
+		L.marker(e.latlng).addTo(map)
+			.bindPopup("You are within " + radius + " meters from this point").openPopup();
+		L.circle(e.latlng, radius).addTo(map);
+	}
+
+	function onLocationError(e) {
+		alert(e.message);
+    }
+    
+    map.on('locationfound', onLocationFound);
+    map.on('locationerror', onLocationError);
+    map.locate({setView: true, maxZoom: 16});
+
+    // var getPosition = function (options) {
+    // return new Promise(function (resolve, reject) {
+    //     navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    // });
+    // }
+
+    // getPosition()
+    // .then((position) => {
+    //     console.log(position);
+    // })
+    // .catch((err) => {
+    //     console.error(err.message);
+    // });
+     // 取得使用者的地理位置。
+    function getUserPosition() {
+        if (navigator.geolocation) {
+            function showPosition(position) {
+                // L.marker([position.coords.latitude, position.coords.longitude], ).addTo(map);
+                // map.setView([position.coords.latitude, position.coords.longitude], 16);
+                console.log("success")
+                console.log([position.coords.latitude, position.coords.longitude])
+            }
+            function showError() {
+                console.log('抱歉，現在無法取的您的地理位置。')
+            }
+
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            console.log('抱歉，您的裝置不支援定位功能。');
+        }
+    }
+
+    // var getPosition = function (options) {
+    // return new Promise(function (resolve, reject) {
+    //     navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    // });
+    // }
+
+    // getPosition()
+    // .then((position) => {
+    //     console.log(position);
+    // })
+    // .catch((err) => {
+    //     console.error(err.message);
+    // });
+
+
+    function getGeoInfo(){
+        return new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    let coordinates = `${position.coords.longitude}, 
+                        ${position.coords.latitude}`
+
+                    resolve(coordinates);
+                },
+                error => reject(error),
+                { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
+            )
+        })
+    }
+    // captureImage = async () => {
+//     if (this.camera) {
+//     }
+//     this.sendImageData(data); // data is what you got from camera.
+// }
+
+
+    // sendImageData = (cameraData) => {
+    //     let coordinates = '';
+    //     getGeoInfo.then(crdnts => coordinates = crdnts );
+    //    // now coordinates have all relevant data you wished.
+    
+    //    //... make the object as you want 
+    //     const data = { }
+    //     // do the API call using axios as you've already done.
+    // }
+
+    function getPosition(){
+        return new Promise(resolve=>{
+        //     // navigator.geolocation.getCurrentPosition(position => {
+        //     //     resolve([position.coords.latitude, position.coords.longitude])
+        //     // });
+
+            !!(navigator.geolocation)
+                ? navigator.geolocation.getCurrentPosition(position => {     
+                    resolve([position.coords.latitude, position.coords.longitude])
+                    })
+                : alert("Geolocation is not supported by your browser")
+        })
+            // return new Promise((resolve, reject) => {
+            // navigator.geolocation.getCurrentPosition(
+            //     position => { resolve([position.coords.latitude, position.coords.longitude]) },
+            //     error => { reject(error) }
+            // )
+            // }).catch(error => error)
+    }
+
+
+    function getMaskInfo(){
+        // main.innerHTML = "<p>Loading...";
+        // setloading = true;
+        // main.style.display = "block";
+        return new Promise(resolve=>{
+            // fetch('http://localhost:8080/dashboard/F2E_project/Maskfinder/points.json?fbclid=IwAR2faivZHghmapjOcGiuSocqD09wboudZpWjQIfxwG9xCutufqr7Bw06yVk')
+            fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json?fbclid=IwAR2faivZHghmapjOcGiuSocqD09wboudZpWjQIfxwG9xCutufqr7Bw06yVk')
+            .then(res=>res.json())
+            .then(json=>resolve(json.features))
+            .catch(err=>console.log(err))
+            .then(response => 
+            // console.log('Success:', response)
+            // main.innerHTML ="success"
+            loading.style.display = "none"
+            
+            );
+        })
+    }
+
+    function getStore(){ 
+        // map.setView([this.dataset['lat'],this.dataset['lng']],18)
+        // markersRef[sideInfo.indexOf(this)].fire('click');
+        console.log(this)
+        console.log(markersRef)
+        console.log([sideInfo.indexOf(this)])
+        // map.setView([this.dataset['lat'],this.dataset['lng']],18)
+        // this.fire('click');
+    
+        if(!markersRef[sideInfo.indexOf(this)].isPopupOpen()){
+            let marker = markersRef[sideInfo.indexOf(this)]
+            console.log(marker)
+            // map.panTo([marker._latlng.lat, marker._latlng.lng], 18)
+            map.setView([marker._latlng.lat, marker._latlng.lng], 18)
+            /*問題panto 士林華榮街:博惠  閃退  萬華:正盛
+            setView vs panTo不同
+            */
+            markers.zoomToShowLayer(marker, function() {
+                marker.openPopup();
+            });
+        }
+        console.log(this.children)
+        console.log(this.childNodes)
+    }
+
+    function getDatInfo() {
+        const dayInfo = ['日', '一', '二', '三', '四', '五', '六']
+        let day = new Date().getDay();
+        document.getElementById('day').innerText = "今天星期"+ dayInfo[day]      
+    }
+
+    // open_arrow2.addEventListener("click", function() {
+    //     var element = document.getElementById("list");
+    //             element.classList.toggle("active");
+    //             this.classList.toggle('active')
+    // })
+
+
+    var element = document.getElementById("list");
+    open_arrow.addEventListener("click", function() {
+            element.classList.toggle("active");
+            this.classList.toggle('active')
+
+    })
+
+    selectDist.addEventListener('change', (event) => {
+        console.log(event.target.value);
+        selZone = event.target.value;
+        var ey= document.querySelector('.county');
+        selCity =ey.value;
+        getDatInfo() ;
+        findMask();
+    });
+
+    mask_sel_btn.addEventListener('click', (e) =>{
+        if(e.target.nodeName=='BUTTON'){
+            const showTitle = document.querySelectorAll(".store_title");
+            // console.log(showTitle)
+            //  console.log(showTitle.parentElement.classList);
+            // alert(e.target.textContent);
+            var a_item = e.target.dataset['item'];
+            console.log(e.target.dataset['item']);
+
+            //  sideInfo.forEach(child => container.removeChild(child))
+            showTitle.forEach(item=>hideUser(item,a_item));
+        }
+            // console.log(event.dataset.item);   //  "1"
+    })
+
+
+    function hideUser(user,userclass){
+        //store_tile
+        userclass =='all' 
+            ? user.parentElement.classList.remove('d-none') 
+            : (user.dataset[userclass] > 0 )? user.parentElement.classList.remove('d-none')
+                                            : user.parentElement.classList.add('d-none');
+    }
+// ) [25.027077, 121.5064] (2) [25.0248897, 121.51818759999999]
+
+  // var markers = new L.MarkerClusterGroup().addTo(map);
+function getDistance(origin, destination) {
+    console.log(origin,destination)
+
+    lat1 = origin[0]
+    lng1 = origin[1] 
+    lat2 = destination[0]
+    lng2 = destination[1]
+
+return 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1-lat2)/360), 2)+Math.cos(Math.PI * lat1/180) * Math.cos(Math.PI * lat2/180)*Math.pow(Math.sin(Math.PI*(lng1-lng2)/360), 2)))
+
+    // return distance in meters
+    // var lon1 = toRadian(origin[1]),
+    //     lat1 = toRadian(origin[0]),
+    //     lon2 = toRadian(destination[1]),
+    //     lat2 = toRadian(destination[0]);
+    // var deltaLat = lat2 - lat1;
+    // var deltaLon = lon2 - lon1;
+    // var a = Math.pow(Math.sin(deltaLat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon/2), 2);
+    // var c = 2 * Math.asin(Math.sqrt(a));
+    // var EARTH_RADIUS = 6371;
+    // return c * EARTH_RADIUS /1000;
+    // return c;
+}
+
+function toRadian(degree) {
+    return degree*Math.PI/180;
+}
+
+//************************************************
+// 算距離Longitude 經度121.504164 Latitude  緯度25.233
+// function calcraddistance(){ 
+//calculate readian distance, assume lat1, lon1, lat2, lon2 are in degrees
+// 緯度座標的整數須介於 -90 和 90 之間。
+// 經度座標的整數須介於 -180 和 180 之間。 // 
+//************************************************
+
+// function gDistance(lat1, lng1, lat2, lng2) {
+//      var d = 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1-lat2)/360), 2)+Math.cos(Math.PI * lat1/180) * Math.cos(Math.PI * lat2/180)*Math.pow(Math.sin(Math.PI*(lng1-lng2)/360), 2)))
+//     // if (d>1) return Math.round(d)+"km";
+//     // else if (d<=1) return Math.round(d*1000)+"m";
+//     return d;
+// }
+
+//************************************************
+function filterPharmacy () {
+    // 原本寫這個  
+    // map.removeLayer(markers);
+    let res = [];
+    // let city = this.city
+    // let area = this.area
+    // let tw = /(台|臺)../
+    // if (!!city && !!area) {
+    //   if (city !== null && city.match(tw)) {
+    //     city = city.split('台').join('')
+    //   }
+    //   let regExp = new RegExp(city + area, 'g')
+    //   res = this.Tw_Stores.filter((features) => {
+    //     return features.properties.address.match(regExp)
+    //   })
+    // };
+    let filterStore = infoData;
+    // let filterStore= JSON.parse(localStorage.getItem("allMask"));
+    // let filterStore= JSON.parse(sessionStorage.getItem("msg1"));
+    // res = filterStore.filter((item)=>{
+    //     return item.properties.address.indexOf("萬華區")> -1;
+    // });
+    res = filterStore.filter((item)=>item.properties.address.indexOf(selZone)> -1);
+    return res;
+
+    console.log(res);
+}
+
+function findMask() {
+    markers.clearLayers();
+    
+    var res=[];
+    markersRef =[]
+    var dataAll = filterPharmacy();
+    console.log(dataAll)
+    
+    var focus = dataAll[0].geometry.coordinates;
+    map.setView([focus[1], focus[0]], 16);
+
+
+    dataAll.forEach(({properties, geometry: {coordinates},index})=>{
+        mask = (!!properties.mask_adult)? greenIcon :redIcon
+        // var marker = L.marker([coordinates[1], coordinates[0]],{icon: mask});
+        var marker = L.marker(new L.LatLng(coordinates[1],coordinates[0]),{icon:mask});
+
+
+        var  getDis =  getDistance([latitude,longitude],[coordinates[1], coordinates[0]])
+        console.log(properties.name +" : "+getDis)
+
+        
+        // markersRef.push(L.marker(new L.LatLng(coordinates[1],coordinates[0])));
+        marker.bindPopup(
+        `<h2>${properties.name} </h2>
+                            <a href="tel:'${properties.phone}">${properties.phone}</a>
+                            <p>成人口罩數量${properties.mask_adult}</p>
+                            <p>小孩口罩數量${properties.mask_child}</p>
+                        `
+        )
+        // markersRef.push(L.marker([coordinates[1], coordinates[0]],{icon: mask})
+        //         .bindPopup(
+        //         `<h2>${properties.name} </h2>
+        //             <a href="tel:'${properties.phone}">${properties.phone}</a>
+        //             <p>成人口罩數量${properties.mask_adult}</p>
+        //             <p>小孩口罩數量${properties.mask_child}</p>
+        //         `
+        // ));
+                
+        markersRef.push(marker);
+        markers.addLayer(marker);
+                
+
+        // markers.addLayer(
+        //         L.marker([coordinates[1], coordinates[0]],{icon: mask})
+        //         .bindPopup(
+        //         `<h2>${properties.name} </h2>
+        //             <a href="tel:'${properties.phone}">${properties.phone}</a>
+        //             <p>成人口罩數量${properties.mask_adult}</p>
+        //             <p>小孩口罩數量${properties.mask_child}</p>
+        //         `
+        //         )
+        // )
+    })  
+
+    map.addLayer(markers);
+
+    console.log(markers)
+    console.log(markersRef)
+    
+    const s_list = document.getElementById('storelist');
+    s_list.innerHTML = '';
+    for (let i=0; dataAll.length>i; i++){
+        // if (dataAll[i].properties.mask_adult == 0){
+        //     mask = redIcon;
+        // }else{
+        //     mask = greenIcon;
+        // } 
+        // markers.addLayer(
+        //     L.marker([dataAll[i].geometry.coordinates[1],
+        //             dataAll[i].geometry.coordinates[0]], 
+        //             {icon: mask})
+        //     .bindPopup('<h2>'+dataAll[i].properties.name+'</h2>'+
+        //         '<a href="tel:'+dataAll[i].properties.phone+'">' +
+        //                         dataAll[i].properties.phone +'</a>'+
+        //         '<p>成人口罩數量'+dataAll[i].properties.mask_adult+'</p>'+
+        //         '<p>小孩口罩數量'+dataAll[i].properties.mask_child+'</p>'
+        //     )); 
+
+        var el = document.createElement('div');
+        el.setAttribute('class','store_detail');
+        el.innerHTML = 
+            `<h2 class="store_title" 
+                data-adult="${dataAll[i].properties.mask_adult}" 
+                data-child="${dataAll[i].properties.mask_child}"
+                data-key="${dataAll[i].properties.id}"
+            >
+                ${dataAll[i].properties.name}
+            </h2>
+            <span>${dataAll[i].properties.address}</span>
+            
+            <div class="mask_size">
+                <span data-size='adult'>
+                ${dataAll[i].properties.mask_adult}
+                </span>
+                <span data-size='child'>
+                ${dataAll[i].properties.mask_child}
+                </span>
+            </div>
+            `;
+
+            s_list.appendChild(el);        
+            sideInfo = [...document.querySelectorAll('.store_detail')]           
+            sideInfo.forEach(dom => dom.addEventListener('click', getStore))
+        }
+
+    map.addLayer(markers);
+}
+
+
+})()
+</script>
+    
+</body>
+</html>
