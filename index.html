@@ -16,7 +16,7 @@
 <style>
     /* https://developer.mozilla.org/zh-TW/docs/Web/API/Fetch_API/Using_Fetch */
     *{
-        padding: 0;
+        padding:100px;
         margin:0;
         border:none;
         box-sizing:border-box;
@@ -685,7 +685,7 @@ function findMask() {
         // markersRef.push(L.marker(new L.LatLng(coordinates[1],coordinates[0])));
         marker.bindPopup(
         `<h2>${properties.name} </h2>
-                            <a href="tel:'${properties.phone}">${properties.phone}</a>
+                            <a href="tel:${properties.phone}">${properties.phone}</a>
                             <p>成人口罩數量${properties.mask_adult}</p>
                             <p>小孩口罩數量${properties.mask_child}</p>
                         `
