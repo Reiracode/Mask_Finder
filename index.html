@@ -8,15 +8,17 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"></link> 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css"></link>
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.0/css/all.min.css"></link> -->
-<!-- <link rel="stylesheet" href="https://static.fontawesome.com/css/fontawesome-app.css"></link> -->
-<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> -->
+<!-- <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet"> -->
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC&display=swap" rel="stylesheet">
+
 <style>
     *{
         padding:0;
         margin:0;
         border:none;
         box-sizing:border-box;
+        /* font-family: 'Noto Sans TC', sans-serif; */
+        font-family: 'Noto Serif TC', serif;
         
     }
     html,body{
@@ -45,7 +47,6 @@
         width: 100vw;
         height: 100vh;
         height: calc(var(--vh, 1vh) * 100);
-        /* background-color: #e4dede80; */
         background-color: #ddd;
         display: flex;
         align-items: center;
@@ -76,11 +77,10 @@
 
     #map { 
         flex:3;
-        /* z-index: -1; */
     }
 
     #list{
-        /* padding: 10px 15px; */
+        min-width: 300px;
         flex:1;
         background-color:rgba(255, 255, 255, 0.6);
         overflow-y: auto;
@@ -91,57 +91,6 @@
         display:none;
     }
 
-
-
-    @media only screen and (max-width: 600px) {
-        .main{
-            flex-direction:column;
-        }
-        #map{
-            position: relative;
-        }
-        #list{
-            /* z-index: 1; */
-            flex:2;
-            transition:all .5s ease-in-out;
-            /* transition: cubic-bezier(0.075, 0.82, 0.165, 1); */
-        }
-
-        #list.active {
-            flex:8;
-        }
-
-
-        #open_arrow{
-            display: block;
-            border-radius: 12px 12px 0 0;
-            background-color: royalblue;
-            color: white;
-            position:absolute;
-            left: calc(50% - 25px);
-            z-index: 9999;
-            bottom: 0;
-            cursor: pointer;
-            width:50px;
-        }
-
-        #open_arrow.active,#open_arrow.hover{
-            color:#fff;
-            background-color: #8cbcf1;
-        }  
-
-        #open_arrow svg{
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            font-size: 36px; 
-            pointer-events: none;
-        }
-
-        #open_arrow.active svg{
-            transform: rotate(180deg);
-        }
-    }
-
     .select-selected{
         padding: 10px 5px;
         border: 1px solid #ccc;
@@ -150,7 +99,6 @@
         letter-spacing: 0.5px;
         width: 100%;
         margin-bottom:10px;
-
     }
 
     .select-selected:after{
@@ -164,7 +112,6 @@
         border-color: #fff transparent transparent transparent;
     }
 
-
     .d-none{
         display: none;
     }
@@ -172,8 +119,9 @@
     .list_selector{
         padding: 10px;
     }
+
     .store_detail{
-        padding:20px 10px;
+        padding:1rem;
         background-color: #90b1ec;
         color:white;
         margin-bottom: 10px;
@@ -187,21 +135,21 @@
         line-height: 2rem;
     }
 
-    .store_detail>h2{
-        line-height: 20px;
-    }
-
     .store_detail>span{
         text-align: right;
         font-size: 0.8rem;
         display: block;
     }
     
+    .store_detail svg {
+        margin: 0 5px 0 0px;
+    }
 
     #mask_sel{
         display: flex;
         justify-content: space-around;
     }
+
     #mask_sel>button{
         padding: 0.3rem;
         /* border:1px solid grey; */
@@ -237,10 +185,66 @@
         background-color: #afdae6;
     }
 
+    .store_detail a[href^="tel:"] {
+        color: #fff;
+        text-decoration: none;
+    }
 
-    a[href^="tel:"] {
-    color: #fff;
-    text-decoration: none;
+    @media only screen and (max-width: 600px) {
+        .main{
+            flex-direction:column;
+        }
+
+        #map{
+            position: relative;
+        }
+
+        #list{
+            flex:2;
+            transition:all .5s ease-in-out;
+            /* transition: cubic-bezier(0.075, 0.82, 0.165, 1); */
+        }
+
+        #list.active {
+            flex:8;
+        }
+
+        #open_arrow{
+            display: block;
+            border-radius: 12px 12px 0 0;
+            background-color:#90b1ec;
+            color: white;
+            position:absolute;
+            left: calc(50% - 25px);
+            z-index: 9999;
+            bottom: 0;
+            cursor: pointer;
+            width:50px;
+        }
+
+        #open_arrow.active,#open_arrow.hover{
+            color:#fff;
+            background-color: #8cbcf1;
+        }  
+
+        #open_arrow svg{
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            font-size: 36px; 
+            pointer-events: none;
+        }
+
+        #open_arrow.active svg{
+            transform: rotate(180deg);
+        }
+
+        .store_detail{
+            padding: 1rem 2rem;
+        }
+
+        .mask_size span{
+            font-size: 1.5rem;
+        }
     }
 
 
@@ -286,21 +290,18 @@
     <div id="loading"><div class="loader"></div></div>
 
     <div class="main">
-
         <div id="map">
             <button id="open_arrow">
                 <i class="fas fa-angle-up"></i>
-                <!-- <i class="fas fa-clinic-medical"></i> -->
             </button>
         </div>
-
 
         <div id="list"   class="my-selector-c">
             <div class="list_selector">
                     <!-- <select class="county  custom-select"></select>
                     <select class="district custom-select"></select> -->
-                    <select class="county select-selected"></select>  
-                    <select class="district select-selected"></select>
+                <select class="county select-selected"></select>  
+                <select class="district select-selected"></select>
 
                 <div id="mask_sel">
                     <button class="mask_all" data-item="all">ALL</button>
@@ -308,7 +309,8 @@
                     <button class="mask_all" data-item="child">Child</button>  
                 </div>
 
-                <div id="day"></div>
+                <div id="day">身份末1碼可憑健保卡購買</div>
+                <span id="dayno"></span>
             </div>
 
             <div id="storelist"></div>
@@ -321,14 +323,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tw-city-selector@2.1.0/dist/tw-city-selector.min.js"></script>
 <!-- <script src="http://maximeh.github.io/leaflet.bouncemarker/bouncemarker.js"></script> -->
-<!-- <script src="https://use.fontawesome.com/releases/v5.0.0/js/fontawesome.js"></script> -->
-<!-- <script src="https://use.fontawesome.com/releases/v5.0.0/js/solid.js"></script> -->
 <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
-<!-- <script src="https://use.fontawesome.com/releases/v5.0.0/js/solid.js"></script> -->
-<!-- <script src="https://use.fontawesome.com/releases/v5.0.0/js/regular.js"></script> -->
-<!-- <script src="https://use.fontawesome.com/releases/v5.0.0/js/fontawesome.js"></script> -->
-
-
 <script>
 let vh = window.innerHeight * 0.01;
 document.documentElement.style.setProperty('--vh', `${vh}px`); 
@@ -451,7 +446,6 @@ window.addEventListener('resize', () => {
             )
         })
     }
- 
 
     function getPosition(){
         return new Promise(resolve=>{
@@ -482,7 +476,6 @@ window.addEventListener('resize', () => {
     }
 
     function getStore(){ 
-
         console.log(this)
         console.log(markersRef)
         console.log([sideInfo.indexOf(this)])
@@ -500,9 +493,19 @@ window.addEventListener('resize', () => {
     function getDatInfo() {
         const dayInfo = ['日', '一', '二', '三', '四', '五', '六']
         let day = new Date().getDay();
-        document.getElementById('day').innerText = "今天星期"+ dayInfo[day]      
-    }
 
+        let daydescript = day === 0  
+            ? '全部<span>皆</span>可購買' 
+            : day % 2 === 0 
+                ? '身分證末碼為偶數0 2 4 6 8可購買'
+                : '身分證末碼為基數1 3 5 7 可購買'
+                console.log(daydescript)
+        // var ddesript = (day % 2 == 0)? （"雙數 購買"): （"雙數 可購買")
+        document.getElementById('day').innerText = "星期"+ dayInfo[day]
+        document.getElementById('dayno').innerText =  daydescript
+            // document.getElementById('buyInfo').innerHTML = day === 0 
+
+    }
 
 
     open_arrow.addEventListener("click", function() {
@@ -522,16 +525,11 @@ window.addEventListener('resize', () => {
     mask_sel_btn.addEventListener('click', (e) =>{
         if(e.target.nodeName=='BUTTON'){
             const showTitle = document.querySelectorAll(".store_title");
-            // console.log(showTitle)
-            //  console.log(showTitle.parentElement.classList);
-            // alert(e.target.textContent);
             var a_item = e.target.dataset['item'];
             console.log(e.target.dataset['item']);
-
             //  sideInfo.forEach(child => container.removeChild(child))
             showTitle.forEach(item=>hideUser(item,a_item));
         }
-            // console.log(event.dataset.item);   //  "1"
     })
 
 
@@ -542,129 +540,100 @@ window.addEventListener('resize', () => {
             : (user.dataset[userclass] > 0 )? user.parentElement.classList.remove('d-none')
                                             : user.parentElement.classList.add('d-none');
     }
-// ) [25.027077, 121.5064] (2) [25.0248897, 121.51818759999999]
-
-  // var markers = new L.MarkerClusterGroup().addTo(map);
-function getDistance(origin, destination) {
-    console.log(origin,destination)
-    lat1 = origin[0]
-    lng1 = origin[1] 
-    lat2 = destination[0]
-    lng2 = destination[1]
-
-    return 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1-lat2)/360), 2)+Math.cos(Math.PI * lat1/180) * Math.cos(Math.PI * lat2/180)*Math.pow(Math.sin(Math.PI*(lng1-lng2)/360), 2)))
-
-}
-
-function toRadian(degree) {
-    return degree*Math.PI/180;
-}
-
-//************************************************
-// 算距離Longitude 經度121.504164 Latitude  緯度25.233
-// function calcraddistance(){ 
-//calculate readian distance, assume lat1, lon1, lat2, lon2 are in degrees
-// 緯度座標的整數須介於 -90 和 90 之間。
-// 經度座標的整數須介於 -180 和 180 之間。 // 
-//************************************************
-
-// function gDistance(lat1, lng1, lat2, lng2) {
-//      var d = 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1-lat2)/360), 2)+Math.cos(Math.PI * lat1/180) * Math.cos(Math.PI * lat2/180)*Math.pow(Math.sin(Math.PI*(lng1-lng2)/360), 2)))
-//     // if (d>1) return Math.round(d)+"km";
-//     // else if (d<=1) return Math.round(d*1000)+"m";
-//     return d;
-// }
-
-//************************************************
-function filterPharmacy () {
- 
-    let res = [];
-
-    let filterStore = infoData;
-    // let filterStore= JSON.parse(localStorage.getItem("allMask"));
-    // let filterStore= JSON.parse(sessionStorage.getItem("msg1"));
-    // res = filterStore.filter((item)=>{
-    //     return item.properties.address.indexOf("萬華區")> -1;
-    // });
-    res = filterStore.filter((item)=>item.properties.address.indexOf(selZone)> -1);
-    return res;
-
-    console.log(res);
-}
-
-function findMask() {
-    markers.clearLayers();
     
-    var res=[];
-    markersRef =[]
-    var dataAll = filterPharmacy();
-    console.log(dataAll)
-    
-    var focus = dataAll[0].geometry.coordinates;
-    map.setView([focus[1], focus[0]], 16);
+    // var markers = new L.MarkerClusterGroup().addTo(map);
+    function getDistance(origin, destination) {
+        console.log(origin,destination)
+        lat1 = origin[0]
+        lng1 = origin[1] 
+        lat2 = destination[0]
+        lng2 = destination[1]
 
+        return 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1-lat2)/360), 2)+Math.cos(Math.PI * lat1/180) * Math.cos(Math.PI * lat2/180)*Math.pow(Math.sin(Math.PI*(lng1-lng2)/360), 2)))
 
-    dataAll.forEach(({properties, geometry: {coordinates},index})=>{
-        mask = (!!properties.mask_adult)? greenIcon :redIcon
-        // var marker = L.marker([coordinates[1], coordinates[0]],{icon: mask});
-        var marker = L.marker(new L.LatLng(coordinates[1],coordinates[0]),{icon:mask});
+    }
 
+    function toRadian(degree) {
+        return degree*Math.PI/180;
+    }
 
-        var  getDis =  getDistance([latitude,longitude],[coordinates[1], coordinates[0]])
-        console.log(properties.name +" : "+getDis)
+    //************************************************
+    function filterPharmacy () {
+        let res = [];
 
+        let filterStore = infoData;
+        // let filterStore= JSON.parse(localStorage.getItem("allMask"));
+        // let filterStore= JSON.parse(sessionStorage.getItem("msg1"));
+        // res = filterStore.filter((item)=>{
+        //     return item.properties.address.indexOf("萬華區")> -1;
+        // });
+        res = filterStore.filter((item)=>item.properties.address.indexOf(selZone)> -1);
+        return res;
+
+        console.log(res);
+    }
+
+    function findMask() {
+        markers.clearLayers();
         
-        // markersRef.push(L.marker(new L.LatLng(coordinates[1],coordinates[0])));
-        marker.bindPopup(
-        `<h2>${properties.name}</h2>
-        <a href="tel:${properties.phone}"><span class="fas fa-phone fa-flip-horizontal"></span>${properties.phone}</a>
-        <p>成人口罩數量${properties.mask_adult}</i></p>
-        <p>小孩口罩數量${properties.mask_child}</p>
-        `
-        )              
-        markersRef.push(marker);
-        markers.addLayer(marker);
+        var res=[];
+        markersRef =[]
+        var dataAll = filterPharmacy();
+        console.log(dataAll)
+        
+        var focus = dataAll[0].geometry.coordinates;
+        map.setView([focus[1], focus[0]], 16);
+
+        dataAll.forEach(({properties, geometry: {coordinates},index})=>{
+            mask = (!!properties.mask_adult)? greenIcon :redIcon
+            // var marker = L.marker([coordinates[1], coordinates[0]],{icon: mask});
+            var marker = L.marker(new L.LatLng(coordinates[1],coordinates[0]),{icon:mask});
+
+            var  getDis =  getDistance([latitude,longitude],[coordinates[1], coordinates[0]])
+            console.log(properties.name +" : "+getDis)
+
             
-    })  
+            // markersRef.push(L.marker(new L.LatLng(coordinates[1],coordinates[0])));
+            marker.bindPopup(
+            `<h2>${properties.name}</h2>
+            <p><a href="tel:${properties.phone}">${properties.phone}</a></p>
+            <p>成人口罩數量${properties.mask_adult}</i></p>
+            <p>小孩口罩數量${properties.mask_child}</p>
+            `
+            )              
+            markersRef.push(marker);
+            markers.addLayer(marker); 
+        })  
 
-    map.addLayer(markers);
+        map.addLayer(markers);
+        console.log(markers)
+        console.log(markersRef)
 
-    console.log(markers)
-    console.log(markersRef)
-    
-    const s_list = document.getElementById('storelist');
-    s_list.innerHTML = '';
-    for (let i=0; dataAll.length>i; i++){
-        var el = document.createElement('div');
-        el.setAttribute('class','store_detail');
-        el.innerHTML = 
+        const s_list = document.getElementById('storelist');
+        s_list.innerHTML = '';
+        for (let i=0; dataAll.length>i; i++){
+            var el = document.createElement('div');
+            el.setAttribute('class','store_detail');
+            el.innerHTML = `
+            <h2 class="store_title" data-child=${dataAll[i].properties.mask_child}
+                                data-adult=${dataAll[i].properties.mask_adult}>${dataAll[i].properties.name}</h2>
+                            <p><i class="fas fa-briefcase"></i>${dataAll[i].properties.address}</p>
+                            <p><i class="fas fa-phone fa-flip-horizontal"></i><a href="tel:${dataAll[i].properties.phone}">${dataAll[i].properties.phone}</a></p>
+                            <p><i class="fas fa-tag"></i>${dataAll[i].properties.note}</p>
+                            <div class="mask_size">
+                                <span data-size='adult'>${dataAll[i].properties.mask_adult}</span>
+                                <span data-size='child'>${dataAll[i].properties.mask_child}</span>
+                            </div>                       
+                            <span>最後更新:${dataAll[i].properties.updated}</span>
+                        `;
 
-            ` <h2 class="store_title"  data-adult="${dataAll[i].properties.mask_adult}" 
-                data-child="${dataAll[i].properties.mask_child}"
-                data-key="${dataAll[i].properties.id}">${dataAll[i].properties.name}</h2>    
-            <p><i class="fas fa-briefcase"></i>  
-                ${dataAll[i].properties.address}
-            </p>
+                s_list.appendChild(el);        
+                sideInfo = [...document.querySelectorAll('.store_detail')]           
+                sideInfo.forEach(dom => dom.addEventListener('click', getStore))
+            }
 
-            <p><i class="fas fa-phone fa-flip-horizontal"></i><a href="tel:${dataAll[i].properties.phone}">${dataAll[i].properties.phone}</a></p>
-            <p><i class="fas fa-tag"></i>${dataAll[i].properties.note}</p>
-         
-
-            <div class="mask_size">
-                <span data-size='adult'>${dataAll[i].properties.mask_adult}</span>
-                <span data-size='child'>${dataAll[i].properties.mask_child}</span>
-            </div>
-
-            <span>最後更新:${dataAll[i].properties.updated}</span>
-            `;
-
-            s_list.appendChild(el);        
-            sideInfo = [...document.querySelectorAll('.store_detail')]           
-            sideInfo.forEach(dom => dom.addEventListener('click', getStore))
-        }
-
-    map.addLayer(markers);
-}
+        map.addLayer(markers);
+    }
 
 
 })()
