@@ -360,7 +360,7 @@ window.addEventListener('resize', () => {
     var markersRef = {};
 
     let [latitude, longitude] = await getPosition();
-    let geoInfo = await getGeoInfo();
+    // let geoInfo = await getGeoInfo();
     let userPosition = await getUserPosition();
     let infoData = await getMaskInfo();
     let infoDay = await getDatInfo();
@@ -444,20 +444,20 @@ window.addEventListener('resize', () => {
         }
     }
 
-    function getGeoInfo(){
-        return new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    let coordinates = `${position.coords.longitude}, 
-                        ${position.coords.latitude}`
+    // function getGeoInfo(){
+    //     return new Promise((resolve, reject) => {
+    //         navigator.geolocation.getCurrentPosition(
+    //             position => {
+    //                 let coordinates = `${position.coords.longitude}, 
+    //                     ${position.coords.latitude}`
 
-                    resolve(coordinates);
-                },
-                error => reject(error),
-                { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
-            )
-        })
-    }
+    //                 resolve(coordinates);
+    //             },
+    //             error => reject(error),
+    //             { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
+    //         )
+    //     })
+    // }
 
     function getPosition(){
         return new Promise(resolve=>{
