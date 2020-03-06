@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 <title>Mask Finder</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"></link> 
@@ -170,7 +171,7 @@
         width: 45%;
         border: 1px solid;
         border-radius: 20px;
-        height: 48px;
+        /* height: 48px; */
         font-size: 1rem;
         display: flex;
         align-items: center;
@@ -254,7 +255,8 @@
         background-color: rgba(181, 226, 140, 0.6);
     }
     .marker-cluster-small div {
-        background-color: rgba(110, 204, 57, 0.6);
+        /* background-color: rgba(110, 204, 57, 0.6); */
+        background-color:#7aff81;
     }
     .marker-cluster-medium {
         background-color: #FFEB3B;
@@ -283,6 +285,11 @@
     }
     .marker-cluster span {
         line-height: 30px;
+    }
+
+    .leaflet-interactive{
+        stroke:honeydew;
+        fill:white;
     }
 </style>
 </head>
@@ -358,18 +365,22 @@ window.addEventListener('resize', () => {
     let infoDay = await getDatInfo();
 
     var greenIcon = new L.Icon({
-        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        // iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
+        // iconUrl:'./iconmonstr-red1.png',
+        iconUrl:'./iconmonstr-red3.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
+        iconSize: [45, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
         shadowSize: [41, 41]
     });
 
     var redIcon = new L.Icon({
-        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        // iconUrl:'./iconmonstr-blue9.png',
+        iconUrl:'./iconmonstr-blue1.png',
+        // iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
+        iconSize: [45, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
         shadowSize: [41, 41]
@@ -379,14 +390,17 @@ window.addEventListener('resize', () => {
     const map = L.map('map', {
         //192.168.104
         center: ss = ![latitude,longitude]? [latitude,longitude] :[25.040065, 121.523235],
-        // center: [25.040065, 121.523235],
         zoom: 16
     });  
 
     const userIcon = L.icon({
-        iconUrl: './img/dot.svg',
-        iconSize: [38, 95],
-        iconAnchor: [22, 94],
+        iconUrl: './iconmonstr-1-grey.png',
+        // iconSize: [38, 95],
+        // iconAnchor: [22, 94]
+        iconSize: [40, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
     })
 
     //192.168.104
@@ -400,7 +414,8 @@ window.addEventListener('resize', () => {
         console.log(e.latlng)
         console.log(e.accuracy)
         //use e.latlng get longtide/latitude not necessary use geolocation
-		L.marker(e.latlng).addTo(map)
+        //  L.marker([latitude, longitude], {icon: userIcon}, {bounceOnAdd: true}).addTo(map);
+		L.marker(e.latlng,{icon: userIcon}).addTo(map)
 			.bindPopup("You are within " + radius + " meters from this point").openPopup();
 		L.circle(e.latlng, radius).addTo(map);
 	}
