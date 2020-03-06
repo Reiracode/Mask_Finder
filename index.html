@@ -289,6 +289,7 @@
 
     .leaflet-interactive{
         stroke:honeydew;
+        -webkit-text-stroke :honeydew;
         fill:white;
     }
 </style>
@@ -365,8 +366,6 @@ window.addEventListener('resize', () => {
     let infoDay = await getDatInfo();
 
     var greenIcon = new L.Icon({
-        // iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
-        // iconUrl:'./iconmonstr-red1.png',
         iconUrl:'./iconmonstr-red3.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
         iconSize: [45, 41],
@@ -376,9 +375,7 @@ window.addEventListener('resize', () => {
     });
 
     var redIcon = new L.Icon({
-        // iconUrl:'./iconmonstr-blue9.png',
         iconUrl:'./iconmonstr-blue1.png',
-        // iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
         iconSize: [45, 41],
         iconAnchor: [12, 41],
