@@ -3,12 +3,14 @@
         margin:0;
         border:none;
         box-sizing:border-box;
-        font-family: 'Noto Serif TC', serif;  
+        font-family: 'Noto Serif TC', serif; 
+        text-decoration: none; 
     }
     html,body{
         width: 100vw;
         height: 100vh; 
-        height: calc(var(--vh, 1vh) * 100);   
+        height: calc(var(--vh, 1vh) * 100); 
+        overflow:hidden ; 
     }
 
     .main{
@@ -57,12 +59,19 @@
         flex:3;
     }
 
+
+
     #list{
         min-width: 300px;
+        height: 100%;;
         flex:1;
-        background-color:rgba(255, 255, 255, 0.6);
+        background-color:rgba(255, 255, 255, 1);
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
+    }
+
+    .my-selector-c{
+        padding: 10px;
     }
     #buyday,#dayno{
         color:#ff8550;
@@ -101,13 +110,15 @@
 
     .list_selector{
         padding: 10px;
+        display: flex;
+        justify-content: space-around;
     }
 
     .store_detail{
         padding:1rem;
         background-color: #90b1ec;
         color:white;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 
     .store_detail:last-child{
@@ -151,9 +162,9 @@
 
     .mask_size span{
         width: 45%;
-        border: 1px solid;
+        border: 1px solid #fff;
         border-radius: 20px;
-        /* height: 48px; */
+        height: 48px;
         font-size: 1rem;
         display: flex;
         align-items: center;
@@ -173,6 +184,15 @@
         text-decoration: none;
     }
 
+    .leaflet-popup-content span{
+        color:#fff;
+        width:50%;
+    }
+
+    .leaflet-popup-content .mask_size{
+        width:150px;
+    }
+
     @media only screen and (max-width: 600px) {
         .main{
             flex-direction:column;
@@ -185,21 +205,35 @@
         #list{
             flex:2;
             transition:all .5s ease-in-out;
+            /* position: absolute;
+            height: 100%;
+            right: 0;
+            top:36px;
+            z-index: 9999;
+            width: 50vw;
+            transform: translateX(90%);
+            transition: transform .35s ease-out; */
         }
 
         #list.active {
+            transform: translateX(0%);
             flex:8;
         }
-
+        .my-selector-c p{
+            padding-left: 10px;
+            color:#423737;
+        }
         #open_arrow{
             display: block;
             border-radius: 12px 12px 0 0;
             background-color:#90b1ec;
             color: white;
             position:absolute;
-            left: calc(50% - 25px);
-            z-index: 9999;
+            left: calc(50% - 25px); 
             bottom: 0;
+            /*top:0;
+            right:0;*/
+            z-index: 9999;           
             cursor: pointer;
             width:50px;
         }
@@ -221,12 +255,26 @@
         }
 
         .store_detail{
+            margin-bottom: 1px;
             padding: 1rem 2rem;
         }
 
         .mask_size span{
             font-size: 1.5rem;
+            border-radius: 10px;
         }
+
+
+        .leaflet-popup-content span{
+            font-size: 1rem;
+        }
+
+
+        .store_detail>p{
+            word-break: keep-all;
+        }
+
+
     }
 
 
@@ -271,4 +319,8 @@
         stroke:honeydew;
         -webkit-text-stroke :honeydew;
         fill:white;
+    }
+
+    .leaflet-popup-content p {
+        margin:10px 0;
     }
