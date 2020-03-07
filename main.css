@@ -164,7 +164,7 @@
         width: 45%;
         border: 1px solid #fff;
         border-radius: 20px;
-        height: 48px;
+        line-height: 2.5rem;
         font-size: 1rem;
         display: flex;
         align-items: center;
@@ -273,6 +273,7 @@
 
         .mask_size span{
             font-size: 1rem;
+            line-height: 2rem;
             border-radius: 10px;
         }
 
