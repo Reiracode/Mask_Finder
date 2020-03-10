@@ -200,12 +200,12 @@
 
             const result = infoData.filter(item => getDistance([latitude, longitude],[item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1);
             console.log(result);
-            findMask2(result)
+            findMaskDefault(result)
             return result;
             
         }
 
-        function findMask2(result) {
+        function findMaskDefault(result) {
             L.marker([latitude,longitude],{icon: userIcon})
                 .addTo(map)
                 .bindPopup("我的位置").openPopup();
@@ -214,7 +214,8 @@
             var dataAll = result;
             markersRef = [];
             var focus = dataAll[0].geometry.coordinates;
-            map.setView([focus[1], focus[0]], 16);
+            map.setView([latitude,longitude], 16);
+            // map.setView([focus[1], focus[0]], 16);
 
             const s_list = document.getElementById('storelist');
             s_list.innerHTML = '';
