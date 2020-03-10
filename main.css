@@ -91,6 +91,8 @@
         letter-spacing: 0.5px;
         width: 100%;
         margin-bottom:10px;
+        /*改變右邊箭頭樣式*/
+  background: url("arrow.png") no-repeat right center transparent;
     }
 
     .select-selected:after{
@@ -114,11 +116,21 @@
         justify-content: space-around;
     }
 
+  
     .store_detail{
         padding:1rem;
         background-color: #90b1ec;
         color:white;
         margin-bottom: 5px;
+        /* position: relative; */
+    }
+
+    .store_title{
+        display:  inline-block;
+    }
+
+    .store_detail>p:nth-of-type(1){
+        float: right;
     }
 
     .store_detail:last-child{
@@ -203,6 +215,7 @@
         }
 
         #list{
+ 
             flex:2;
             transition:all .5s ease-in-out;
             /* position: absolute;
@@ -219,7 +232,7 @@
             transform: translateX(0%);
             flex:8;
         }
-
+ 
         .select-selected{
             font-size:1rem;
             padding: 5px;
@@ -269,6 +282,10 @@
         .store_detail{
             margin-bottom: 1px;
             padding: 1rem 2rem;
+ 
+        }
+        .store_title{
+            font-size: 1.2rem;
         }
 
         .mask_size span{
