@@ -22,6 +22,8 @@
             <button id="open_arrow">
                 <i class="fas fa-angle-up"></i>
             </button>
+
+            <div id="relocate"><img src="./relocate.png" class="" alt=""></div>
         </div>
 
         <div id="list">
@@ -74,7 +76,7 @@
         const loading = document.getElementById("loading");
         const selectDist= document.querySelector('.district');
         const mask_sel_btn= document.querySelector('#mask_sel');
-        const maskBtn= document.querySelector('.mask_all');
+        // const maskBtn= document.querySelector('.mask_all');
         const open_arrow = document.getElementById("open_arrow");
         const open_menu = document.getElementById("list");
         var setloading = false;
@@ -153,7 +155,7 @@
             //     fillOpacity: 0.5,
             // }).addTo(map);
             // L.circle(e.latlng, radius).addTo(map);
-            L.circle(e.latlng, {radius: 1500}).addTo(map);
+            L.circle(e.latlng, {radius:500}).addTo(map);
 
         }
 
@@ -164,17 +166,25 @@
         map.on('locationfound', onLocationFound);
         map.on('locationerror', onLocationError);
         // map.locate({setView: true, maxZoom: 30});
-        // map.locate({setView: true, Zoom: 12});
+        // map.locate({setView: true, Zoom: 30});
         //    map.setView([51.505, -0.09], 13);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         function getLocationA() {
             if (navigator.geolocation) {
-                // navigator.geolocation.getCurrentPosition(showPositionA);
                 navigator.geolocation.getCurrentPosition(showPositionA);
+
             } else { 
                 console.log("Geolocation is not supported by this browser.");
             }
+            
         }
+
+        document.getElementById("relocate").addEventListener("click" ,function(){
+            // getPosition();
+            getLocationA()
+            // filterRange(); 
+        })
+        
 
         function showPositionA(position) {
             var [nowlat,nowlon]= [position.coords.latitude,position.coords.longitude];
@@ -185,24 +195,11 @@
 
         // 顯示1KM距離內的藥局
         function filterRange(){
-            // infoData.sort(({geometry: {coordinates: a}}, {geometry: {coordinates: b}})=>{
-            //     return getDistance([position[0], position[1]], [a[1], a[0]]) - getDistance([position[0], position[1]], [b[1], b[0]])
-            // }).forEach(({ properties, geometry: { coordinates } }) => {
-            //     let distance =  getDistance([position[0], position[1]],[coordinates[1], coordinates[0]])       
-            //     console.log(properties.name+" KM" +distance)
-            // })
-
-            // infoData.filter((item)=>
-            //     getDistance([position[0], position[1]],[item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1
-            // );
-            // return rdes;
-            // console.log(rdes);
-
+            // [latitude, longitude] =[25.016668,121.530123]
             const result = infoData.filter(item => getDistance([latitude, longitude],[item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1);
             console.log(result);
             findMaskDefault(result)
-            return result;
-            
+            return result;     
         }
 
         function findMaskDefault(result) {
@@ -215,7 +212,7 @@
             markersRef = [];
             var focus = dataAll[0].geometry.coordinates;
             map.setView([latitude,longitude], 16);
-            // map.setView([focus[1], focus[0]], 16);
+            
 
             const s_list = document.getElementById('storelist');
             s_list.innerHTML = '';
@@ -227,7 +224,7 @@
 
                 var marker = L.marker(new L.LatLng(coordinates[1],coordinates[0]),{icon:mask});
                 var distance =  getDistance([latitude,longitude],[coordinates[1], coordinates[0]])
-                console.log(properties.name +" : "+distance)
+                // console.log(properties.name +" : "+distance)
 
 
                 marker.bindPopup(
@@ -296,6 +293,7 @@
                     ? navigator.geolocation.getCurrentPosition(position => {     
                         resolve([position.coords.latitude, position.coords.longitude])
                         })
+                    
                     : alert("Geolocation is not supported by your browser")
             })
         }
@@ -350,11 +348,11 @@
         })
 
         selectDist.addEventListener('change', (event) => {
-            console.log(event.target.value);
-            selZone = event.target.value;
-            var ey= document.querySelector('.county');
-            selCity =ey.value;
-            getDatInfo() ;
+            // console.log(event.target.value);
+            // selZone = event.target.value;
+            // var ey= document.querySelector('.county');
+            // selCity =ey.value;
+    
             findMask();
         });
 
@@ -372,7 +370,6 @@
                 var a_item = e.target.dataset['item'];
                 console.log(e.target.dataset['item']);
                 showTitle.forEach(item=>hideUser(item,a_item));
-                 //  sideInfo.forEach(child => container.removeChild(child))
             }
         })
 
@@ -410,8 +407,11 @@
         //************************************************
         function filterPharmacy () {
             let res = [];
-            // let filterStore = infoData;
-            res = infoData.filter((item)=>item.properties.address.indexOf(selZone)> -1);
+            selCity = document.querySelector('.county').value;
+            selDist = document.querySelector('.district').value;
+            res = infoData.filter((item)=>(item.properties.address.indexOf(selCity.replace(/臺/g, '台'))> -1 && item.properties.address.indexOf(selDist)> -1));
+            // res = infoData.filter((item)=>(item.properties.county.indexOf(selCity.replace(/臺/g, '台'))> -1 && item.properties.town.indexOf(selDist)> -1));
+
             return res;
             console.log(res);
         }
