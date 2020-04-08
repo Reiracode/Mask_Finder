@@ -144,7 +144,7 @@
         let [latitude, longitude] = await getPosition();
         let infoPOSI = await getLocationA();
         let infoTest = await getTest();
-        let loveDatA = await getStorage();
+        // let loveDatA = await getStorage();
 
         var greyIcon = new L.Icon({
             iconUrl:'./iconmonstr-grey.png',
@@ -509,7 +509,8 @@
             //我的最愛id == > 到infoData 把藥局資料帶出
             //判斷空陣列 !!arr.length
             var loveIndex = JSON.parse(localStorage.getItem('maskStore'));
-            if (!!loveIndex.length) {
+            if (!!loveIndex){
+                if (!!loveIndex.length) {
                 var filteredArray = infoData.filter(function(item){
                     return loveIndex.indexOf(item.properties.id) > -1;
                 });
@@ -519,16 +520,23 @@
             }else{
                 return "";            
             }
+
+            }
             //return 主動找資料，findMask被趨動
         }
 
         function indexPink(id){
             var loveIndex = JSON.parse(localStorage.getItem('maskStore'));
-            if (loveIndex.indexOf(id)>0){
-                return true
+            if (!!loveIndex){
+                if (loveIndex.indexOf(id)>0){
+                  return true
+                }else{
+                   return false
+                }
             }else{
                 return false
             }
+          
         }
 
 
@@ -721,7 +729,7 @@
                 console.log(window.screen.height)
                 if (sum < window.screen.height) {
                     s_list.style.height = sum+"px";
-                    // s_list.parentElement.style.height = "unset";
+                    s_list.parentElement.style.height = "unset";
                 }else{
 
                 }
