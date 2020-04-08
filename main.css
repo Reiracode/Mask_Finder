@@ -15,6 +15,8 @@
         text-decoration: none; 
         outline: none;
         list-style: none;
+        transition: all .5s;
+          /* -webkit-appearance:none; */
     }
 
     html,body{
@@ -350,6 +352,7 @@
             z-index: 9999;           
             cursor: pointer;
             width:50px;
+            /* height: 60px; */
         }
 
         .open_arrow.active,.open_arrow.hover{
@@ -597,6 +600,7 @@
 
     @media only screen and (max-width: 600px) {
         .overlay{
+            -webkit-clip-path: polygon(42% 0, 58% 0, 58% 5%, 100% 5%, 100% 100%, 0 100%, 0 5%, 42% 5%);
             clip-path: polygon(42% 0, 58% 0, 58% 5%, 100% 5%, 100% 100%, 0 100%, 0 5%, 42% 5%);
             /* clip-path: polygon(45% 0, 55% 0, 55% 4%, 100% 4%, 100% 100%, 0 100%, 0 4%, 45% 4%); */
             background-color: rgba(255,255,255,0);
@@ -608,17 +612,22 @@
             left: 0;
             bottom: 38px;
             top:unset;
+            height: unset;
             /* display: flex;
             flex-flow: column; */
         }
 
 
-        .overlay.ctrl_size{
+        /* .overlay.ctrl_size{
             height: 40%;
-            clip-path: polygon(42% 0, 58% 0, 58% 12%, 100% 12%, 100% 100%, 0 100%, 0 12%, 42% 12%);
-            /* clip-path: polygon(45% 0, 55% 0, 55% 8%, 100% 8%, 100% 100%, 0 100%, 0 8%, 45% 8%); */
-        }
+           
+        } */
 
+
+
+        .overlay.ctrl_size .datalist{
+            height: 40vh;
+        }
         .overlay.active{
             transform: translateY(0%); 
         }
@@ -631,5 +640,9 @@
             display: flex;
             flex-flow: row;
             justify-content:space-around;
+        }
+
+        .datalist{
+            height:50vh;
         }
     }
