@@ -642,7 +642,7 @@
             // // const s_list = document.getElementById('storelist')
             s_list.innerHTML = ''; 
 
-        if (dataAll.length >0){
+        if (dataAll && dataAll.length >0){
             var focus = dataAll[0].geometry.coordinates;
             map.setView([latitude,longitude], 16);
             // map.setView([focus[1], focus[0]], 16);
