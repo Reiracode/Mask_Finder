@@ -15,7 +15,7 @@
         text-decoration: none; 
         outline: none;
         list-style: none;
-        transition: all .5s;
+        /* transition: all .5s; */
           /* -webkit-appearance:none; */
     }
 
@@ -352,6 +352,7 @@
             z-index: 9999;           
             cursor: pointer;
             width:50px;
+            transition: all .5s;
             /* height: 60px; */
         }
 
@@ -565,6 +566,10 @@
         overflow: hidden;
         position: absolute;
         left: 50px;
+        transition: all .35s ease-out;  
+    }
+
+    .overlay >*{   
         transition: all .35s ease-out;  
     }
 
