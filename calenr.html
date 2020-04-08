@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>jsCalendar</title>
+		<meta name="description" content="jsCalendar example">
+		<meta name="author" content="GramThanos">
+
+		<!-- jsCalendar -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-jscalendar@1.4.4/source/jsCalendar.min.css"   >
+        <!-- <link rel="stylesheet" type="text/css" href="./jsCalendar.micro.css"> -->
+        <script src="https://cdn.jsdelivr.net/npm/simple-jscalendar@1.4.4/source/jsCalendar.min.js"></script>
+		<script type="text/javascript" src="./jsCalendar.datepicker.min.js"></script>
+            <style>
+                #my-calendar{
+                    display: none;
+                    position: absolute;
+                    top: 50px;
+                }
+
+                #my-calendar.active{
+                    display: block;
+                }
+                
+            </style>
+    
+    </head>
+	<body>
+ 
+        
+
+
+
+<div id="my-calendar"></div>
+ 
+<input id="my-input-a">
+
+<input  type="text"
+        name="test-1"
+        id="reserve_day"
+        data-datepicker/>
+<br> 
+
+
+<!-- Create the calendar -->
+<script type="text/javascript">
+    var newCal = document.getElementById('reserve_day');
+    newCal.addEventListener('onchange',(e)=>{
+        console.log(newCal.value)
+        console.log(e)
+    })
+ 
+
+ newCal.onblur = function() {
+  if (!newCal.value.includes('@')) { // not email
+    newCal.classList.add('invalid');
+    console.log('Please enter a correct email.')
+  }
+};
+ 
+
+    // Get the element
+  
+    var element = document.getElementById("my-calendar");
+    console.log(element)
+    // Create the calendar
+    var myCalendar = jsCalendar.new(element);
+    console.log(myCalendar)
+
+
+    // Get the inputs
+    var inputA = document.getElementById("my-input-a");
+    var inputB = document.getElementById("my-input-b");
+    // Add events
+
+    inputA.addEventListener('click',()=>{
+        console.log(inputA.value)
+        element.classList.add("active");
+    })
+
+    element.addEventListener('click', (event) => {
+        element.classList.remove("active");
+    });
+
+
+    myCalendar.onDateClick(function(event, date){
+        var bdate = date;
+
+        let YYYY = bdate.getFullYear();
+
+        let MM = bdate.getMonth()+1; 
+
+        let DD = bdate.getDate();
+        
+        let YMD = YYYY + '-' + MM + '-' + DD;
+        // console.log(d);
+
+        inputA.value = YMD;
+        console.log(YYYY + '-' + MM + '-' + DD) 
+
+    });
+
+    DatePicker.onDateClick(function(event, date) {
+        console.log(event)
+
+    })
+
+
+</script>
+
+
+	</body>
+</html>
