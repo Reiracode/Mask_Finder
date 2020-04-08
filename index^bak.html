@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="icon" href="./favico.png" type="image/png" />
+    <title>Mask Finder</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"></link> 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css"></link>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC:300,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
+    <link rel="stylesheet" href="./main.css">
+</head>
+<body>
+    <div id="loading"><div class="loader"></div></div>
+
+    <div class="main">
+        <div id="map">
+            <button id="open_arrow">
+                <i class="fas fa-angle-up"></i>
+            </button>
+
+            <div id="relocate"><img src="./relocate.png" class="" alt=""></div>
+        </div>
+<!-- <div class="overlay">
+    <div class="close"><i class="fas fa-times"></i></div>
+        <div class="my-selector-c">
+            <div class="list_selector">
+                <select class="county select-selected"></select>  
+                <select class="district select-selected"></select>
+            </div>
+
+            <div id="mask_sel">
+                    <button class="mask_all active" data-item="all">ALL</button>
+                    <button class="mask_all" data-item="adult">Adult</button>
+                    <button class="mask_all" data-item="child">Child</button>  
+            </div>
+
+            <p>星期<span id="buyday"></span>身分證末碼<span id="dayno"></span>可購買</p>
+        </div>
+        <div id="storelist"></div>
+</div> -->
+        <div id="list">  
+            <!-- <ul class="mobile_menu ">
+                <li class="list_menu">
+                    <a href=""> <i class="fas fa-user"></i></a>
+                    <span class="dialog">個人記錄</span>
+                </li>
+
+                <li class="list_menu">
+                    <a href=""><i class="fas fa-folder-open"></i></a>
+                    <span class="dialog">設定日期</span>
+                </li>
+                <li class="list_menu">
+                    <a href=""><i class="fas fa-calendar-plus"></i></a>
+                    <span class="dialog">search</span>
+                </li>
+                <li class="list_menu" id="relocatea">
+                    <a href=""><i class="fas fa-compass"></i></a>
+                    <span class="dialog">重新定位</span>
+                </li>
+            </ul> -->
+
+            <div class="my-selector-c">
+                <div class="list_selector">
+                    <select class="county select-selected"></select>  
+                    <select class="district select-selected"></select>
+                </div>
+
+                <div id="mask_sel">
+                        <button class="mask_all active" data-item="all">ALL</button>
+                        <button class="mask_all" data-item="adult">Adult</button>
+                        <button class="mask_all" data-item="child">Child</button>  
+                </div>
+
+                <p>星期<span id="buyday"></span>身分證末碼<span id="dayno"></span>可購買</p>
+            </div>
+
+            
+            <div id="storelist"></div>
+        </div>
+    </div>
+
+
+<!-- <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script> -->
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tw-city-selector@2.1.0/dist/tw-city-selector.min.js"></script>
+<!-- <script src="http://maximeh.github.io/leaflet.bouncemarker/bouncemarker.js"></script> -->
+<script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
+
+
+<script>
+    //pharmacy
+    //
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`); 
+    window.addEventListener('resize', () => {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    });
+
+
+    (async function(){
+
+        new TwCitySelector({
+            el: ".my-selector-c",
+            elCounty: ".county", // 在 el 裡查找 dom
+            elDistrict: ".district" 
+        });
+
+        const loading = document.getElementById("loading");
+        const seltDist= document.querySelector('.district');
+        // const selPop = document.querySelector('.leaflet-marker-icon');
+        //  marker.addEventListener('click', _markerOnClick);
+        // marker.addEventListener('click', (e)=>{
+        //     console.log(e)
+        // })
+
+        const mask_sel_btn= document.querySelector('#mask_sel');
+        // const maskBtn= document.querySelector('.mask_all');
+        const open_arrow = document.getElementById("open_arrow");
+        const open_menu = document.getElementById("list");
+        var setloading = false;
+
+        var selCity,selZone;
+        // var markers = new L.markerClusterGroup();
+
+// var markers =new L.markerClusterGroup({
+//     iconCreateFunction: function (cluster) {
+//         console.log(cluster)
+//     var markers = cluster._childCount;
+//     var n = 0;
+//     for (var i = 0; i < markers.length; i++) {
+//         n += markers[i].number;
+//     }
+//     console.log(n)
+//     return L.divIcon({
+//     iconUrl:'./cluster.png',
+//     iconSize: [30, 30],
+//     iconAnchor: [20, 10],
+//     popupAnchor: [1, -34],
+//         // html: n,
+//         className: 'mycluster',
+//         iconSize: L.point(40, 40)
+//     });
+//     }
+// });
+
+
+//Custom radius and icon create function
+		var markers = L.markerClusterGroup({
+			maxClusterRadius: 120,
+			iconCreateFunction: function (cluster) {
+                var childCount = cluster.getChildCount();
+                var c = ' marker-cluster-';
+                if (childCount < 5) {
+                    c += 'small';
+                } else if (childCount < 10) {
+                    c += 'medium';
+                } else {
+                    c += 'large';
+                }
+                return new L.DivIcon({ 
+                    // html: '<div><span>' + childCount + '</span></div>', 
+                    html: '<div></div>', 
+                    className: 'marker-cluster' + c, 
+                    iconSize: new L.Point(40, 40) 
+                });
+			},
+			//Disable all of the defaults:
+			// spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false
+		});
+
+    // var markers = L.markerClusterGroup({
+    //     iconCreateFunction: function(cluster) {
+    //         return L.divIcon({ 
+    //             //  className: 'marker-cluster' + c, 
+    //             className: 'marker-cluster-small',
+    //             iconSize: new L.Point(40, 40) 
+    //             // html: '<b>' + cluster.getChildCount() + '</b>' 
+    //         });
+    //     }
+    // });  
+
+// var markers = L.markerClusterGroup({
+// 	iconCreateFunction: function(cluster) {
+// 		return L.divIcon({ html: '<b>' + cluster.getChildCount() + '</b>' });
+// 	}
+// });
+
+// var clusterIcon = new L.markerClusterGroup({
+//     iconUrl:'./cluster.png',
+//     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+//     iconSize: [30, 30],
+//     iconAnchor: [20, 10],
+//     popupAnchor: [1, -34],
+//     shadowSize: [0, 0]
+// });
+
+
+        // var markersRef = {};
+ var markersRef = [];
+        let infoDay = await getDatInfo();
+        let infoData = await getMaskInfo();
+        let [latitude, longitude] = await getPosition();
+        let infoPOSI = await getLocationA();
+
+        // let filterRange = await filterRange();
+
+
+        var greyIcon = new L.Icon({
+            iconUrl:'./iconmonstr-grey.png',
+            iconSize: [20, 20],
+            iconAnchor: [20, 10],
+            popupAnchor: [1, -34]
+        });
+
+        var greenIcon = new L.Icon({
+            // iconUrl:'./iconmonstr-plus-4-48.png',
+            iconUrl:'./green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            // iconSize: [42, 41],
+            // iconAnchor: [21, 41],-10 36
+            iconSize: [20, 20],
+            iconAnchor: [7, 38],
+            popupAnchor: [1, -34],
+            shadowSize: [0, 0]
+        });
+
+        var redIcon = new L.Icon({
+            iconUrl:'./iconmonstr-blue1.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [20, 20],
+            iconAnchor: [7, 38],
+            popupAnchor: [1, -34],
+            shadowSize: [0, 0]
+        });
+
+        var userIcon = L.icon({
+            iconUrl: './iconmonstr-yellow1.png',
+            iconSize: [40, 41],
+            iconAnchor: [16, 36],
+            popupAnchor: [1, -34],
+            shadowSize: [0, 0]
+        })
+
+
+        const map = L.map('map', {
+            center: ss = ![latitude,longitude]? [latitude,longitude] :[25.040065, 121.523235],
+            zoom: 16
+        });  
+
+        map.doubleClickZoom.disable();
+
+
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        function onLocationFound(e) {
+            var radius = e.accuracy / 2;
+            console.log(e.latlng)
+            console.log(radius)
+            console.log(e.accuracy)
+
+            L.marker(e.latlng,{icon: userIcon})
+                .addTo(map)
+                .bindPopup("我的位置").openPopup();
+
+            // var circle = L.circle([51.508, -0.11], {
+            //     color: 'red',
+            //     fillColor: '#f03',
+            //     fillOpacity: 0.5,
+            //     radius: 500
+            // }).addTo(mymap);    
+
+            // L.circle(e.latlng, {
+            //     color: 'red',
+            //     fillColor: '#f03',
+            //     fillOpacity: 0.5,
+            // }).addTo(map);
+            // L.circle(e.latlng, radius).addTo(map);
+            L.circle(e.latlng, {radius:500}).addTo(map);
+
+        }
+
+        function onLocationError(e) {
+            console.log(e.message);
+        }
+        
+        map.on('locationfound', onLocationFound);
+        map.on('locationerror', onLocationError);
+        // map.locate({setView: true, maxZoom: 30});
+        // map.locate({setView: true, Zoom: 30});
+        //    map.setView([51.505, -0.09], 13);
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        function getLocationA() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPositionA);
+
+            } else { 
+                console.log("Geolocation is not supported by this browser.");
+            }
+            
+        }
+
+        document.getElementById("relocate").addEventListener("click" ,function(){
+            // console.log(this)
+            // getPosition();
+            getLocationA()
+            // filterRange(); 
+        })
+        
+
+        function showPositionA(position) {
+            var [nowlat,nowlon]= [position.coords.latitude,position.coords.longitude];
+            console.log("Latitude: " + position.coords.latitude + 
+                    "Longitude: " + position.coords.longitude);
+            filterRange([nowlat,nowlon]); 
+        }
+
+        // 顯示1KM距離內的藥局
+        function filterRange(){
+            // [latitude, longitude] =[25.016668,121.530123]
+            const result = infoData.filter(item => getDistance([latitude, longitude],[item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1);
+            console.log(result);
+            findMaskDefault(result)
+            return result;     
+        }
+
+
+
+        function findMaskDefault(result) {
+            L.marker([latitude,longitude],{icon: userIcon})
+                .addTo(map)
+                .bindPopup("我的位置").openPopup();
+
+            markers.clearLayers();
+            var dataAll = result;
+            markersRef = [];
+            var focus = dataAll[0].geometry.coordinates;
+              console.log(focus)
+            map.setView([latitude,longitude], 16);
+            
+            const s_list = document.getElementById('storelist');
+            s_list.innerHTML = '';
+
+            // markers.on("click", markClick);
+
+//grey both:0 
+            dataAll.sort(({geometry: {coordinates: a}}, {geometry: {coordinates: b}})=>{
+                return getDistance([latitude, longitude], [a[1], a[0]]) - getDistance([latitude, longitude], [b[1], b[0]])
+            }).forEach(({properties, geometry: {coordinates}})=>{
+                mask = (!!properties.mask_adult)? greenIcon :redIcon
+                // mask = (!!properties.mask_adult)
+                //         ? greenIcon //true
+                //         : (!!properties.child)? greyIcon :redIcon//false mask_adult=0
+
+
+
+                var marker = L.marker(new L.LatLng(coordinates[1],coordinates[0]),{icon:mask});
+                var distance =  getDistance([latitude,longitude],[coordinates[1], coordinates[0]])
+                // console.log(properties.name +" : "+distance)
+
+                marker.bindPopup(
+                    `<h2>${properties.name}</h2>
+                    <p><a href="tel:${properties.phone}">${properties.phone}</a></p>
+                    <div class="mask_size">
+                    <span data-size="adult">成人${properties.mask_adult}</span>
+                    <span data-size="child">兒童${properties.mask_child}</span>
+                    </div>
+                `)    
+                markersRef.push(marker);
+                markers.addLayer(marker); 
+
+// markers.on("click", markClick);   
+//https://codepen.io/ReiraWorld/pen/QWbQKJw?editors=1010
+
+
+
+                var el = document.createElement('div');
+                el.setAttribute('class','store_detail');
+                // el.setAttribute('class','swiper-slide');
+                var ps = (properties.note.length <= 1)
+                    ? " "
+                    : `<p><i class="fas fa-tag"></i>${properties.note}</p>`
+                //   <a href="https://www.google.com.tw/maps/dir//${properties.name}+${properties.address}/@${latitude},${longitude},15z" target="new" class="navigate material-icons" style="font-size: 16px;letter-spacing: .6px;">aa</a>          
+                el.innerHTML = `
+                        <h2 class="store_title" data-child=${properties.mask_child} 
+                        data-adult=${properties.mask_adult}>${properties.name}
+                        </h2>
+                
+                    <p>約 ${distance >= 1 ? distance.toFixed(1) + 'km' : (distance * 1000 >>0) + 'm'}</p>
+                    <p><i class="fas fa-briefcase"></i>${properties.address}</p>
+                    <p><i class="fas fa-phone fa-flip-horizontal"></i><a href="tel:${properties.phone}">${properties.phone}</a></p>
+                    ${ps}
+                    <div class="mask_size">
+                        <span data-size='adult'>成人${properties.mask_adult}</span>
+                        <span data-size='child'>兒童${properties.mask_child}</span>
+                    </div> 
+                    <span>最後更新:${properties.updated}</span>
+                `;
+
+                    s_list.appendChild(el);        
+                    sideInfo = [...document.querySelectorAll('.store_detail')]           
+                    sideInfo.forEach(dom => dom.addEventListener('click', getStore))
+            })  
+
+            map.addLayer(markers);
+markers.on("click", markClick); 
+
+function markClick(event) {
+    console.log(event)
+    console.log(markers)
+    console.log('marker')
+    console.log(event.layer);
+    console.log(event.layer._leaflet_id);//81
+    // console.log(event.layer._popup._latlng);
+    // console.log(event.layer._popup._content);
+    var id = event.layer._leaflet_id;
+    console.log(markersRef)
+
+    var ss = markersRef.find(item => item._leaflet_id === id);
+    console.log(ss)
+    //[{},{}]
+    //objectvalue=>
+    const markIndex = Object.values(markersRef)
+                    .map(items => items._leaflet_id)//nameList   array[81, 82, 98, 100, 103, 105, 109, 110, 111, 114, 115, 116, 118, 119, 120, 123, 127, 131, 132, 133, 136, 139,
+                    .indexOf(id);        //index
+    console.log(markIndex);
+//filter() 方法會建立一個經指定之函式運算後，由原陣列中通過該函式檢驗之元素所構成的新陣列。
+    var filteredArray = markersRef.filter((item)=>item._leaflet_id == id);
+    console.log(filteredArray)
+    //  markersRef[sideInfo.indexOf(this)]
+
+    document.getElementById('list').scrollTo(0,markIndex*345)
+    var firsthei = document.querySelector('.my-selector-c').offsetHeight;
+
+    var all = document.querySelectorAll('.store_detail')    
+ 
+    elem = document.querySelector('.store_detail');
+    style = getComputedStyle(elem);
+    marginBtom = style.marginBottom;
+    // marginBtom.substr(0,marginBtom.length-2)
+    console.log(marginBtom)
+    console.log( marginBtom.substr(0,marginBtom.length-2))
+
+    var margbtm = marginBtom.substr(0,marginBtom.length-2);
+    //5px  scrollto 只算前段的div的高度  index=5  len=6 calcu div*index
+    //index 3  ==>  0+1+2 
+    var sum = 0; 
+    for (var i = 0; i < markIndex; i++) {
+            // console.log(i)
+            // console.log(all[i].scrollHeight)
+            sum += parseInt(all[i].scrollHeight) + parseInt(margbtm);
+        };
+    sum = sum + firsthei
+    console.log(sum)
+    document.getElementById('list').scrollTo(0,sum)
+} 
+console.log(markersRef)
+// console.log(markers); // i(45 markers) ._leaflet_id
+
+
+
+
+
+        }
+
+        function filterRangeStore(info){
+            return info.filter(({geometry: {coordinates}})=>{
+            if(range){
+                return getDistance(latitude, longitude, coordinates[1], coordinates[0]) < range
+            }else {
+                let bounds = {
+                W: map.getBounds().getNorthWest().lng,
+                E: map.getBounds().getNorthEast().lng,
+                N: map.getBounds().getNorthWest().lat,
+                S: map.getBounds().getSouthEast().lat
+                }
+                return (coordinates[0] < bounds.E && coordinates[0] > bounds.W)
+                && (coordinates[1] < bounds.N && coordinates[1] > bounds.S)
+            }
+            })
+        }
+
+        function getPosition(){
+            return new Promise(resolve=>{
+                !!(navigator.geolocation)
+                    ? navigator.geolocation.getCurrentPosition(position => {     
+                        resolve([position.coords.latitude, position.coords.longitude])
+                        })
+                    
+                    : alert("Geolocation is not supported by your browser")
+            })
+        }
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        function getMaskInfo(){
+            return new Promise(resolve=>{
+                fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
+                    .then(res=>res.json())
+                    .then(json=>resolve(json.features))
+                    .catch(err=>console.log(err))
+                    .then(response => 
+                        loading.style.display = "none",
+                    );
+            })
+        }
+
+        function getStore(){ 
+            // console.log(this)
+            // console.log(markersRef)
+            // console.log([sideInfo.indexOf(this)])
+        
+            if(!markersRef[sideInfo.indexOf(this)].isPopupOpen()){
+                let marker = markersRef[sideInfo.indexOf(this)]
+                console.log(marker)
+                map.setView([marker._latlng.lat, marker._latlng.lng], 18)
+                markers.zoomToShowLayer(marker, function() {
+                    marker.openPopup();
+                });
+            }
+        }
+
+        function getDatInfo() {
+            const dayInfo = ['日', '一', '二', '三', '四', '五', '六']
+            let day = new Date().getDay();
+
+            let daydescript = day === 0  
+                ? '全部<span>皆</span>' 
+                : day % 2 === 0 
+                    ? '0 2 4 6 8'
+                    : '1 3 5 7 9'
+                    // console.log(daydescript)
+            document.getElementById('buyday').innerText = dayInfo[day]
+            document.getElementById('dayno').innerHTML =  daydescript
+        }
+
+
+        open_arrow.addEventListener("click", function() {
+            // console.log("open_menu"+open_menu.classList)
+            open_menu.classList.toggle("active");
+            this.classList.toggle('active')
+        })
+//選擇行政區
+        seltDist.addEventListener('change', (event) => {
+            // console.log(event.target.value);
+            // selZone = event.target.value;
+            // var ey= document.querySelector('.county');
+            // selCity =ey.value;
+        
+            // mask_sel_btn.childNodes.classList.remove('active');
+            // mask_sel_btn.children.classList.remove('active');
+
+            //document.querySelectorAll('#mask_sel .mask_all')
+            mask_sel_btn.querySelector('.active').classList.remove('active');
+            mask_sel_btn.firstElementChild.classList.add('active')
+            // for (let sibling of mask_sel_btn.children) {
+            //         if (sibling !== e.target) sibling.classList.remove('active');
+            // }
+
+            findMask();
+        });
+
+        mask_sel_btn.addEventListener('click', (e) =>{
+            if(e.target.nodeName=='BUTTON'){
+                //h2 store_title to parent
+                // const showTitle = document.querySelectorAll(".store_title");
+                // var a_item = e.target.dataset['item'];
+                // console.log(e.target.dataset['item']);
+                // showTitle.forEach(item=>hideUser(item,a_item));
+                // div store_detail to child
+                const showTitle = document.querySelectorAll(".store_detail");
+                var a_item = e.target.dataset['item'];
+                showTitle.forEach(item=>hideUser(item,a_item));
+                //button sibling
+                e.target.classList.add('active');
+                for (let sibling of e.target.parentNode.children) {
+                    if (sibling !== e.target) sibling.classList.remove('active');
+                }
+            }
+        })
+
+
+
+        function hideUser(user,userclass){
+            // console.log(user)
+            // console.log(userclass)
+            // console.log(user.firstElementChild)
+            //store_tile
+            // userclass =='all' 
+            //     ? user.parentElement.classList.remove('d-none') 
+            //     : (user.dataset[userclass] > 0 )? user.parentElement.classList.remove('d-none')
+            //                                     : user.parentElement.classList.add('d-none');
+
+        //  
+            userclass =='all' 
+                ? user.classList.remove('d-none') 
+                : (user.firstElementChild.dataset[userclass] > 0 )? user.classList.remove('d-none')
+                                                : user.classList.add('d-none');
+        }
+        
+        // var markers = new L.MarkerClusterGroup().addTo(map);
+        function getDistance(origin, destination) {
+            // console.log(origin,destination)
+            lat1 = origin[0]
+            lng1 = origin[1] 
+            lat2 = destination[0]
+            lng2 = destination[1]
+            return 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1-lat2)/360), 2)+Math.cos(Math.PI * lat1/180) * Math.cos(Math.PI * lat2/180)*Math.pow(Math.sin(Math.PI*(lng1-lng2)/360), 2)))
+        }
+
+        function toRadian(degree) {
+            return degree*Math.PI/180;
+        }
+
+        //************************************************
+        function filterPharmacy () {
+            let res = [];
+            selCity = document.querySelector('.county').value;
+            selDist = document.querySelector('.district').value;
+            res = infoData.filter((item)=>(item.properties.address.indexOf(selCity.replace(/臺/g, '台'))> -1 && item.properties.address.indexOf(selDist)> -1));
+            // res = infoData.filter((item)=>(item.properties.county.indexOf(selCity.replace(/臺/g, '台'))> -1 && item.properties.town.indexOf(selDist)> -1));
+
+            return res;
+            console.log(res);
+        }
+
+
+
+        function findMask() {
+            markers.clearLayers();
+            var res =[];
+            markersRef = [];
+            var dataAll = filterPharmacy();
+            console.log(dataAll)
+            
+            var focus = dataAll[0].geometry.coordinates;
+            map.setView([focus[1], focus[0]], 16);
+            const s_list = document.getElementById('storelist');
+            s_list.innerHTML = '';
+
+
+            // dataAll.sort(({geometry: {coordinates: a}}, {geometry: {coordinates: b}})=>{
+            //     console.log(latitude, longitude);
+            //     console.log([a[1], a[0]]);
+            //     console.log(getDistance([latitude, longitude], [a[1], a[0]]));
+            //     return getDistance([latitude, longitude], [a[1], a[0]]) - getDistance([latitude, longitude], [b[1], b[0]])
+            // }).forEach(({ properties, geometry: { coordinates } }) => {
+            //     let distance =  getDistance([latitude,longitude],[coordinates[1], coordinates[0]])
+            //     console.log(properties.name+" KM" +distance)
+            // })
+        //   mask = (!!properties.mask_adult)? greenIcon :redIcon
+            dataAll = !document.querySelector('.county') 
+                            ?  dataAll.filter((item) => getDistance([position[0], position[1]],[item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1)
+                            //  dataAll.filter(({geometry: {coordinates}})=>{
+                            //     // if(range){
+                            //     //     return getDistance([latitude, longitude], [coordinates[1], coordinates[0]]) < range
+                            //     // }else {
+                            //         let bounds = {
+                            //         W: map.getBounds().getNorthWest().lng,
+                            //         E: map.getBounds().getNorthEast().lng,
+                            //         N: map.getBounds().getNorthWest().lat,
+                            //         S: map.getBounds().getSouthEast().lat
+                            //         }
+                            //         return (coordinates[0] < bounds.E && coordinates[0] > bounds.W)
+                            //         && (coordinates[1] < bounds.N && coordinates[1] > bounds.S)
+                            //     // }
+                            //     })
+
+                                
+                            : dataAll
+
+            console.log(dataAll)    
+
+            //  }).forEach(({properties, geometry: {coordinates}},index)=>{
+            dataAll.sort(({geometry: {coordinates: a}}, {geometry: {coordinates: b}})=>{
+                // console.log(latitude, longitude);
+                // console.log([a[1], a[0]]);
+                // console.log(getDistance([latitude, longitude], [a[1], a[0]]));
+                return getDistance([latitude, longitude], [a[1], a[0]]) - getDistance([latitude, longitude], [b[1], b[0]])
+            }).forEach(({properties, geometry: {coordinates}})=>{
+                mask = (!!properties.mask_adult)? greenIcon :redIcon
+
+                var marker = L.marker(new L.LatLng(coordinates[1],coordinates[0]),{icon:mask});
+
+                var distance =  getDistance([latitude,longitude],[coordinates[1], coordinates[0]])
+                console.log(properties.name +" : "+distance)
+
+
+                marker.bindPopup(
+                    `<h2>${properties.name}</h2>
+                    <p><a href="tel:${properties.phone}">${properties.phone}</a></p>
+                    <div class="mask_size">
+                    <span data-size="adult">成人${properties.mask_adult}</span>
+                    <span data-size="child">兒童${properties.mask_child}</span>
+                    </div>
+                `)              
+                markersRef.push(marker);
+                markers.addLayer(marker); 
+
+
+                var el = document.createElement('div');
+                el.setAttribute('class','store_detail');
+                var ps = (properties.note.length <= 1)
+                    ? " "
+                    : `<p><i class="fas fa-tag"></i>${properties.note}</p>`
+                //   <a href="https://www.google.com.tw/maps/dir//${properties.name}+${properties.address}/@${latitude},${longitude},15z" target="new" class="navigate material-icons" style="font-size: 16px;letter-spacing: .6px;">aa</a>          
+                el.innerHTML = `
+                        <h2 class="store_title" data-child=${properties.mask_child} 
+                        data-adult=${properties.mask_adult}>${properties.name}
+                        </h2>
+                
+                    <p>約 ${distance >= 1 ? distance.toFixed(1) + 'km' : (distance * 1000 >>0) + 'm'}</p>
+                    <p><i class="fas fa-briefcase"></i>${properties.address}</p>
+                    <p><i class="fas fa-phone fa-flip-horizontal"></i><a href="tel:${properties.phone}">${properties.phone}</a></p>
+                    ${ps}
+                    <div class="mask_size">
+                        <span data-size='adult'>成人${properties.mask_adult}</span>
+                        <span data-size='child'>兒童${properties.mask_child}</span>
+                    </div> 
+                    <span>最後更新:${properties.updated}</span>
+                `;
+
+                    s_list.appendChild(el);        
+                    sideInfo = [...document.querySelectorAll('.store_detail')]           
+                    sideInfo.forEach(dom => dom.addEventListener('click', getStore))
+            })  
+
+            map.addLayer(markers);
+        }
+
+    })()
+</script>
+    
+</body>
+</html>
