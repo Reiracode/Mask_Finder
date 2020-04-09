@@ -728,8 +728,18 @@
                 console.log(sum)
                 console.log(window.screen.height)
                 if (sum < window.screen.height) {
+                const mq = window.matchMedia( "(max-width: 600px)" );  
+                if(mq.matches){
+                    // JavaScript here 
+                    // 當視窗寬度小於767px時執行
+                } else {
                     s_list.style.height = sum+"px";
-                    // s_list.parentElement.style.height = "unset";
+                    s_list.parentElement.style.height = "unset";
+                    // JavaScript here
+                    // 當視窗寬度不小於767px時執行
+                }
+                            
+               
                 }else{
 
                 }
