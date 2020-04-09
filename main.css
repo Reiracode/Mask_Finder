@@ -628,10 +628,8 @@
            
         } */
 
-
-
         .overlay.ctrl_size .datalist{
-            height: 40vh;
+            height: 30vh;
         }
         .overlay.active{
             transform: translateY(0%); 
