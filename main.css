@@ -575,11 +575,20 @@
 
     #personal.overlay{
         height: 120px;
+        padding: 15px;
+        background-color: #90b1ec;
+        color: #fff;
+        clip-path:unset;
     }
 
     #personal input{
         padding: 10px;
         margin:5px 0;
+    }
+    #personal p{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
     }
 
     .close_overlay{
@@ -633,6 +642,10 @@
         }
         .overlay.active{
             transform: translateY(0%); 
+        }
+
+        #personal.overlay{
+            height: unset;
         }
 
         .mobile_menu{

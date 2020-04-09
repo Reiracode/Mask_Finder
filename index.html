@@ -26,14 +26,13 @@
 
         <div class="taboverlay">
             <div class="overlay " id="personal">
-                <button class="open_arrow"  ><i class="fas fa-angle-up"></i></button>
                 <div class="close_overlay"><i class="fas fa-times"></i></div>
 
-                <p><i class="fas fa-user"></i>  <label class="user2" for="birthday">領取日期:</label>
+                <p>
+                <i class="fas fa-user"></i>  <label class="user2" for="birthday">領取日期:</label>
                 <input type="date" placeholder="Username"  name="userno" class="userday" id="userday" required>
-                </p>
                 <button id="date_btn">確定</button>
-
+                </p>
             </div>
 
             <div class="overlay " id="setdate">
@@ -645,7 +644,11 @@
         if (dataAll && dataAll.length >0){
             var focus = dataAll[0].geometry.coordinates;
             map.setView([latitude,longitude], 16);
-            // map.setView([focus[1], focus[0]], 16);
+
+            // map.setView([focus[1], focus[0]], 18)
+                // markers.zoomToShowLayer(marker, function() {
+                //     marker.openPopup();
+                // });
 
             dataAll.sort(({geometry: {coordinates: a}}, {geometry: {coordinates: b}})=>{
                 return getDistance([latitude, longitude], [a[1], a[0]]) - getDistance([latitude, longitude], [b[1], b[0]])
