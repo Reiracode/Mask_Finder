@@ -554,9 +554,10 @@
             overflow: hidden;
             position: absolute;
             left: 0;
-            bottom: 38px;
+            bottom: 37px;
             top:unset;
             height: unset;
+            border-bottom: 1px solid #fff;
         }
 
         .overlay.ctrl_size .datalist{

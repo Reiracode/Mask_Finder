@@ -659,9 +659,10 @@
                             s_list.style.height = sum+"px";
                             s_list.parentElement.style.height = "unset";
                         }else{
-                            console.log("當視窗寬度<600px時執行")
-
-
+                            console.log("當視窗寬度<1/2H時執行")
+                            if (sum <  (window.screen.height/2)){
+                                s_list.style.height =  "unset";
+                            }
                             
                         }
                 
@@ -675,9 +676,6 @@
                             // s_list.parentElement.style.height = "unset";
                         }else{
                             console.log("當視窗寬度<600px時執行")
-
-
-
                             
                         }
 
