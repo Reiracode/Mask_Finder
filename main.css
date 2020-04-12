@@ -5,7 +5,7 @@
         url('./fonts/jf-openhuninn.woff') format("woff")
 }
 
- *{
+    *{
         padding:0;
         margin:0;
         border:none;
@@ -15,8 +15,7 @@
         text-decoration: none; 
         outline: none;
         list-style: none;
-        /* transition: all .5s; */
-          /* -webkit-appearance:none; */
+        /* -webkit-appearance:none; */
     }
 
     html,body{
@@ -144,6 +143,7 @@
     .store_title{
         display:  inline-block;
     }
+    
     .store_title span{
         font-size: 0.8rem;
     }
@@ -155,11 +155,13 @@
     .store_detail>p{
         line-height: 2rem;
     }
+
     .addtolist{
         float: right;
         padding: 5px;
         cursor: pointer;
     }
+
     .addtolist svg{
         pointer-events: none;
     }
@@ -187,7 +189,6 @@
         justify-content: space-around;
     }
 
-        /* #mask_sel>button{ */
     button{
         padding: 0.3rem;
         border-radius: 4px;
@@ -246,41 +247,6 @@
 
 
     @media only screen and (max-width: 600px) {
-        /* .overlay{
-            height: 80vh;
-            width:80vw;
-            overflow: hidden;
-            position: absolute;
-            left: calc(50% - 40vw);
-            bottom: 38px;
-        }
-        .mobile_menu{
-            position: fixed;
-            bottom: 0;
-            width: 100vw;
-            display: flex;
-            flex-flow: row;
-            justify-content:space-around;
-        } */
-        /* #relocate{
-            display: block;
-            position: absolute;
-            left: 12px;
-            top: 75px;
-            z-index: 9999;
-            cursor: pointer;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: white;
-        }
-
-        #relocate img{
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
-        } */
-
         @keyframes fadeinHand {
             0%{
                 opacity: 1;
@@ -304,41 +270,25 @@
             position: relative;
         }
 
-
-        /* #list{
-            flex:2;
-            transition:all .5s ease-in-out;
-
-        }*/
-                    /* position: absolute;
-            height: 100%;
-            right: 0;
-            top:36px;
-            z-index: 9999;
-            width: 50vw;
-            transform: translateX(90%);
-            transition: transform .35s ease-out; 
-
-        #list.active {
-            transform: translateX(0%);
-            flex:8;
-        } */
- 
         .select-selected{
             font-size:1rem;
             padding: 5px;
             margin-bottom:5px;
         }
+
         .list_selector{
             padding:5px;
         }
+
         .my-selector-c p{
             padding-left: 10px;
             color:#423737;
         }
+
         .mask_size{
             margin:5px 0;
         }
+
         .open_arrow{
             display: block;
             border-radius: 12px 12px 0 0;
@@ -346,14 +296,10 @@
             color: white;
             position: relative;;
             margin-left: calc(50% - 25px); 
-            /* bottom: 0; */
-            /*top:0;
-            right:0;*/
             z-index: 9999;           
             cursor: pointer;
             width:50px;
             transition: all .5s;
-            /* height: 60px; */
         }
 
         .open_arrow.active,.open_arrow.hover{
@@ -388,25 +334,15 @@
             border-radius: 10px;
         }
 
-
         .leaflet-popup-content span{
             font-size: 1rem;
         }
-
-
-        /* .store_detail>p{
-            word-break: keep-all;
-        } */
-
-
     }
 
 
-/*   */
     /* cluster map */
     .marker-cluster-small {
         /* background-color:rgb(178, 175, 255) ; */
-       
         /* background-color:#fff; */
         /* background-size: cover;
         background-image: url('./plus.png'); */
@@ -414,7 +350,6 @@
     }
     .marker-cluster-small div {
         /* background-color:#fefffe; */
-
         background-image: url('./cluster.png');
         background-color:#fff;
         background-size: cover;
@@ -447,25 +382,21 @@
     .marker-cluster span {
         line-height: 30px;
     }
-.mycluster{
-     width: 32px;
-        height: 32px;
-        line-height: 32px;
-        background-image: url('./iconmonstr-location-9-48.png');
-        background-size:cover;
-        text-align: center;
 
-
-       
-
-}
+    .mycluster{
+        width: 32px;
+            height: 32px;
+            line-height: 32px;
+            background-image: url('./iconmonstr-location-9-48.png');
+            background-size:cover;
+            text-align: center;
+    }
     .leaflet-interactive{
         /* width: 32px;
         height: 32px;
         line-height: 32px;
         background-image: url('./cluster.png');
         text-align: center; */
-
         stroke:honeydew;
         -webkit-text-stroke :honeydew;
         fill:white;
@@ -482,7 +413,6 @@
         font-size: 1em;
     }
 
-
     .mobile_menu {
         position: fixed;
         left: 8px;
@@ -490,9 +420,9 @@
         background-color:#90b1ec;
         /* background-color: rgba(40, 75, 137, 0.5); */
         color:#fff;
-        
         z-index: 9999;
     }
+
     .mobile_menu  .list_menu{
         cursor: pointer;
         flex: 1;
@@ -509,12 +439,10 @@
 
     .list_menu:hover,  .list_menu.active{
         color:#e9ff00;
-      
     }
- 
 
 
-    /* 對話氣泡框 */
+    /* dialog list_menu對話氣泡框 */
     .dialog {
         display: none;
         color: #444;
@@ -539,6 +467,7 @@
         height: 0;
         position: absolute;
     }
+
     .dialog:before {
         border-width: 13px 13px 0 13px;
         border-top-color: #c4e1ff; /*深色*/
@@ -546,6 +475,7 @@
         top: 100%;
         right: 26px;
     }
+
     .dialog:after {
         border-width: 10px 10px 0 10px;
         border-top-color: #ecf5ff; /*淺色*/
@@ -601,16 +531,16 @@
         font-size: 1rem;
         cursor: pointer;
     }
+
     .close_overlay svg{
         pointer-events:none;
     }
 
     .overlay.active{
-        /* opacity: 1; */
         display: flex;
         flex-flow: column; 
     }
- 
+
 
     @media only screen and (max-width: 600px) {
         .overlay{
@@ -627,15 +557,7 @@
             bottom: 38px;
             top:unset;
             height: unset;
-            /* display: flex;
-            flex-flow: column; */
         }
-
-
-        /* .overlay.ctrl_size{
-            height: 40%;
-           
-        } */
 
         .overlay.ctrl_size .datalist{
             height: 30vh;
