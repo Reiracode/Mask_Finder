@@ -42,6 +42,11 @@
             <div class="overlay " id="personal">
                 <div class="close_overlay"><i class="fas fa-times"></i></div>
                 <p>
+                    <i class="fas fa-user"></i>  <label class="user2" for="birthday">預約日期:</label>
+                    <input type="date" placeholder="Username"  name="userno" class="userday" id="userday" required>
+                    <button id="date_btn">確定</button>
+                </p>
+                <p>
                     <i class="fas fa-user"></i>  <label class="user2" for="birthday">領取日期:</label>
                     <input type="date" placeholder="Username"  name="userno" class="userday" id="userday" required>
                     <button id="date_btn">確定</button>
@@ -177,7 +182,7 @@
 
         var markersRef = [];
         // let infoDay = await getDatInfo();
-        let infoData = await getMaskInfo();
+        var infoData = await getMaskInfo();
 
         let [latitude, longitude] = await getPosition();
         let infoPOSI = await getLocationA();
@@ -329,6 +334,7 @@
                             findMask("setdate");
                             break;
                         case "list":
+                            console.log("findmask")
                             findMask();
                             break;
                         case "relocate":
@@ -572,15 +578,40 @@
     //************************************************
     function filterPharmacy () {
         let res = [];
+        console.log(infoData)
         selCity = document.querySelector('.county').value;
         selDist = document.querySelector('.district').value;
-        // res = infoData.filter((item)=>(item.properties.address.indexOf(selCity.replace(/臺/g, '台'))> -1 && item.properties.address.indexOf(selDist)> -1));
+        console.log(selCity)//台北市  json 臺北市
+        console.log(selDist)
+        //json 臺北市
 
-        res = infoData.filter(item=>
-                (item.properties.address.indexOf(selCity.replace(/臺/g, '台'))> -1 && 
-                 item.properties.address.indexOf(selDist)> -1));
+        // var test = infoData.filter(({properties: {address, name}}) => {
+        //     // return county=="臺北市"
+        //     return address.indexOf("台北市") !== -1
+        // });
+
+        res = infoData.filter(({properties: {address, county, town}}) => {
+            //return county=="臺北市" && town=="萬華區" 
+            return county.indexOf(selCity.replace(/台/g, '臺'))> -1  && town.indexOf(selDist)> -1
+        });
+        console.log(res)
+
+    
+        // var tres = infoData.filter(item=>
+        //         (item.properties.address.indexOf(selCity.replace(/臺/g, '台'))> -1 && 
+        //         item.properties.address.indexOf(selDist)> -1));
+        // console.log(tres)
+//有資料
+// return address.indexOf("台北市")> -1  
+//return county.indexOf("臺北市")> -1 
+//return county.indexOf("臺北市".replace(/'台'/g, '臺'))> -1 
+//no data
+//  return address.indexOf("臺北市")> -1 
+
+        // res = infoData.filter((item)=>(item.properties.address.indexOf(selCity.replace(/臺/g, '台'))> -1 && item.properties.address.indexOf(selDist)> -1));
+        // console.log(res);
+    
         return res;
-        console.log(res);
     }
 
     function findMask(e) {
@@ -595,6 +626,11 @@
                         : !(document.querySelector('.county').value)
                                 ?  filterRange()
                                 :  filterPharmacy()
+        var s  = !! e ? "1"
+                        : !(document.querySelector('.county').value)
+                                ?  "2 filterRange()"
+                                :  "3"
+        console.log(s)
 
         const s_list =!! e ?  document.getElementById('lovestorelist')
                             : document.getElementById('storelist');
@@ -610,8 +646,8 @@
         // if (dataAll && dataAll.length >0){
         if (dataAll.length){
             var focus = dataAll[0].geometry.coordinates;
-            map.setView([latitude,longitude], 16);
-            // map.setView([focus[1], focus[0]], 18)
+           // map.setView([latitude,longitude], 16);
+            map.setView([focus[1], focus[0]], 18)
                 // markers.zoomToShowLayer(marker, function() {
                 //     marker.openPopup();
                 // });
