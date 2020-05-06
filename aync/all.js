@@ -257,6 +257,7 @@ function onMapLoad() {
                 console.log("Stuff worked!");
                 // resolve("Stuff worked!");
                 navigator.geolocation.getCurrentPosition(position => {   
+                    alert([position.coords.latitude, position.coords.longitude])
                     console.log([position.coords.latitude, position.coords.longitude])
                     resolve([position.coords.latitude, position.coords.longitude])
                 })   
