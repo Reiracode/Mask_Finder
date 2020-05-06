@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Mask Finder</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"></link> 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css"></link>
+    <link rel="stylesheet" href="../main.css">
+    <!-- jsCalendar -->
+
+</head>
+<body>
+    <div id="loading"><div class="loader"></div></div>
+
+    <div class="main">
+        <div id="map"></div>
+
+        <div class="taboverlay">
+            <div class="overlay"  data-id="personal" id="personal">
+                <div class="close_overlay"><i class="fas fa-times"></i></div>
+                <p>
+                    <i class="fas fa-user"></i>  <label class="user2" for="birthday">預約日期:</label>
+                    <input type="date" placeholder="Username"  name="userno" class="userday" id="userday" required>
+                    <button id="date_btn">確定</button>
+                </p>
+                <p>
+                    <i class="fas fa-user"></i>  <label class="user2" for="birthday">領取日期:</label>
+                    <input type="date" placeholder="Username"  name="userno" class="userday" id="userday" required>
+                    <button id="date_btn">確定</button>
+                </p>
+
+                <div id="my-calendar"></div>
+                <input  type="text"
+                        name="test-1"
+                        id="reserve_day"
+                        data-datepicker/>
+                <br> 
+            </div>
+
+            <div class="overlay"  data-id="setdate"  id="setdate">
+                <button class="open_arrow"  ><i class="fas fa-angle-up"></i></button>
+                <div class="close_overlay"><i class="fas fa-times"></i></div>
+                <div class="datalist"   id="lovestorelist" ></div>
+            </div>
+
+            <div class="overlay"  data-id="list" id="list">
+                <button class="open_arrow"   ><i class="fas fa-angle-up"></i></button>
+                <div class="close_overlay"><i class="fas fa-times"></i></div>
+                <div class="my-selector-c">
+                    <div class="list_selector">
+                        <select class="county select-selected"></select>  
+                        <select class="district select-selected"></select>
+                    </div>
+
+                    <div id="mask_sel">
+                        <button class="mask_all active" data-item="all">ALL</button>
+                        <button class="mask_all" data-item="adult">Adult</button>
+                        <button class="mask_all" data-item="child">Child</button>  
+                    </div>
+
+                    <!-- <p>星期<span id="buyday"></span>身分證末碼<span id="dayno"></span>可購買</p> -->
+                </div>          
+                <div class="datalist"  id="storelist"></div>     
+            </div>
+        </div>
+
+        <ul class="mobile_menu" id="menu_bar" data-id="menu_bar">
+            <li class="list_menu" data-id="personal">
+                <i class="fas fa-user"></i>
+                <span class="dialog">個人記錄</span>
+            </li>
+
+            <li class="list_menu"  data-id="setdate">
+                <i class="fas fa-folder-open"></i>
+                <span class="dialog">設定日期</span>
+            </li>
+
+            <li class="list_menu" data-id="list">
+                <i class="fas fa-calendar-plus"></i>
+                <span class="dialog">search</span>
+            </li>
+
+            <li class="list_menu" id="relocate" data-id="relocate">
+                <i class="fas fa-compass"></i>      
+                <span class="dialog">重新定位</span>
+            </li>
+        </ul>
+    </div>
+
+<!-- <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script> -->
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tw-city-selector@2.1.0/dist/tw-city-selector.min.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
+<script src="./all.js"></script>
+
+    
+</body>
+</html>

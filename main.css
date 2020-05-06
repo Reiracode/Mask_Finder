@@ -430,6 +430,8 @@
         position: relative;
         padding: 5px;
         font-size: 1.2rem;
+
+
         /* pointer-events: none; */
     }
 
@@ -543,6 +545,11 @@
 
 
     @media only screen and (max-width: 600px) {
+        .mobile_menu  .list_menu{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .overlay{
             -webkit-clip-path: polygon(42% 0, 58% 0, 58% 5%, 100% 5%, 100% 100%, 0 100%, 0 5%, 42% 5%);
             clip-path: polygon(42% 0, 58% 0, 58% 5%, 100% 5%, 100% 100%, 0 100%, 0 5%, 42% 5%);

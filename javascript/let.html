@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    for (var x=0;x<3;x++){
+        console.log("var"+x)
+
+        setTimeout(() => {
+            console.log("var setTimeout"+x)
+        }, x*1000);  
+    }
+    console.log(x)
+
+    for (let i=0;i<3;i++){
+        console.log("let"+i)
+        setTimeout(() => {
+            console.log("let setTimeout"+i)
+        }, 0);
+    }
+    console.log(i)
+
+    /*
+    for 0
+    for 1
+    for 2
+    3
+    0
+    1 
+    2
+    undefined
+
+    */
+</script>
+   
+</body>
+</html>

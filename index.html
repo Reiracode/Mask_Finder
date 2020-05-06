@@ -116,7 +116,8 @@
 <script src="https://cdn.jsdelivr.net/npm/tw-city-selector@2.1.0/dist/tw-city-selector.min.js"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
 <script>
-    //pharmacy
+    //document.readyState
+    //solution ios vh
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`); 
     window.addEventListener('resize', () => {
@@ -125,6 +126,7 @@
     });
 
     (async function(){
+        //calendar
         var element = document.getElementById("my-calendar");
         var inputB = document.getElementById("my-input-b");
         var myCalendar = jsCalendar.new(element);
@@ -145,6 +147,7 @@
             inputB.value = YMD;
             console.log(YYYY + '-' + MM + '-' + DD) 
         });
+        //calendar
 
         new TwCitySelector({
             el: ".my-selector-c",
@@ -158,7 +161,24 @@
         const open_menu =document.querySelector('.overlay');
         let selCity,selZone;
 
-        //Custom radius and icon create function
+        //fetch json data
+        var infoData = await getMaskInfo();  
+        var getPromise=  await getPromise();
+        //user position
+        let positionWathing =await getMaskData();
+        let [latitude, longitude] = await getPosition();
+        let infoPOSI = await getLocationA();
+        let infoTest = await getTest();
+        let maskStore = JSON.parse(localStorage.getItem('maskStore')) || [];
+        const map = L.map('map', {
+            center: ss = ![latitude,longitude]? [latitude,longitude] :[25.040065, 121.523235],
+            zoom: 16
+        })
+
+
+
+
+          //Custom radius and icon create function
 		let markers = L.markerClusterGroup({
 			maxClusterRadius: 120,
 			iconCreateFunction: function (cluster) {
@@ -182,13 +202,7 @@
 
         var markersRef = [];
         // let infoDay = await getDatInfo();
-        var infoData = await getMaskInfo();
 
-        let [latitude, longitude] = await getPosition();
-        let infoPOSI = await getLocationA();
-        let infoTest = await getTest();
-
-        let maskStore = JSON.parse(localStorage.getItem('maskStore')) || [];
 
         var greyIcon = new L.Icon({
             iconUrl:'./iconmonstr-grey.png',
@@ -226,10 +240,9 @@
             shadowSize: [0, 0]
         })
 
-        const map = L.map('map', {
-            center: ss = ![latitude,longitude]? [latitude,longitude] :[25.040065, 121.523235],
-            zoom: 16
-        });  
+ 
+        // const map = L.map('map').setView([latitude, longitude], 16).on('dragend', getAroundStore).on('zoomend', getAroundStore);
+        // var map = L.map('map').on('load', findMask).setView([25.040065, 121.523235], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -262,6 +275,38 @@
         // map.locate({setView: true, Zoom: 30});
         //    map.setView([51.505, -0.09], 13);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        function positionWath() {
+            navigator.geolocation.watchPosition((data) => {
+                // 若成功取回，就會回傳一組Position，將其印出
+                console.log(data);
+                // 利用coords.speed取得速度(公尺/秒)
+                // speed.textContent = data.coords.speed;
+                // 用coords.heading取得方位（表示偏離北方的角度，0為正北，90為正東）
+                // 用element.style.transform =rotate()deg來旋轉指針
+                // arrow.style.transform = `rotate(${data.coords.heading}deg)`;
+            }, (err) => {
+                // 假設未取得定位授權，回傳錯誤訊息
+                console.error(err);
+            });                    
+        }
+
+
+
+        const getdelay = (s) => {
+            return new Promise(resolve=>{
+                !!(navigator.geolocation)
+                    ? navigator.geolocation.getCurrentPosition(position => {   
+                        resolve([position.coords.latitude, position.coords.longitude])
+                        })                
+                    : alert("Geolocation is not supported by your browser")
+            })
+        };
+
+        getdelay().then(() => {
+            console.log("findMask");     // 顯示 1
+            findMask();   
+        });
+
         function getPosition(){
             return new Promise(resolve=>{
                 !!(navigator.geolocation)
@@ -271,28 +316,29 @@
                     : alert("Geolocation is not supported by your browser")
             })
         }
-
-        function getTest(){
-            // var promise = 
-            return new Promise(function(resolve, reject) {
-                // do a thing, possibly async, then…
-                if (navigator.geolocation) {
-                    console.log("Stuff worked!");
-                    // resolve("Stuff worked!");
-                     navigator.geolocation.getCurrentPosition(position => {   
-                        resolve([position.coords.latitude, position.coords.longitude])
-                    })   
-                }
-                else {
-                    console.log("It broke");
-                    reject(Error("It broke"));  
-                }
-            });
+        // function getPosition(){
+        //     return new Promise(resolve=>{
+        //         navigator.geolocation.getCurrentPosition(position => {
+        //             resolve([position.coords.latitude, position.coords.longitude])
+        //         });
+        //     })
+        // }
+function getNumber(num) {
+    return new Promise(function(resolve, reject) {
+        if (!num) {
+            setTimeout(function() {
+                resolve(num);
+            }, 1000);
+        } else {
+            reject("Falied!");    
         }
+    });  
+}  
+
 /* getLocationA */
         function getLocationA() {
-            console.log('getLocationA')
             if (navigator.geolocation) {
+                console.log('getLocationA--OK')
                 navigator.geolocation.getCurrentPosition(success, error);          
             } else { 
                 console.log("Geolocation is not supported by this browser.");
@@ -308,8 +354,33 @@
         function success(pos) {
             console.log([pos.coords.latitude, pos.coords.longitude])
             console.log(`${pos.coords.latitude}, ${pos.coords.longitude}`)
-            findMask();          
+            // findMask();          
         }
+
+        function getTest(){
+            // var promise = 
+            return new Promise(function(resolve, reject) {
+                // do a thing, possibly async, then…
+                if (navigator.geolocation) {
+                    console.log("Stuff worked!");
+                    // resolve("Stuff worked!");
+                    navigator.geolocation.getCurrentPosition(position => {   
+                        resolve([position.coords.latitude, position.coords.longitude])
+                    })   
+                }
+                else {
+                    console.log("It broke");
+                    reject(Error("It broke"));  
+                }
+            });
+        }
+
+        function getAroundStore(){
+                // filterMaskType(filterRangeStore(infoData)).filter((info, index) => index < 200)
+                dataAll= filterRange()
+                console.log(dataAll)
+        }
+
 /**/
 //left menu and overlay
 //data vs layout
@@ -387,19 +458,13 @@
 
     function markClick(event) {
         var id = event.layer._leaflet_id;
-        console.log(markersRef)
-        var ss = markersRef.find(item => item._leaflet_id === id);
-        console.log(ss)
-        //[{},{}]
-        //objectvalue=>
-        const markIndex = Object.values(markersRef)
-                        .map(items => items._leaflet_id)//nameList   array[81, 82, 98, 100, 103, 105, 109, 110, 111, 114, 115, 116, 118, 119, 120, 123, 127, 131, 132, 133, 136, 139,
-                        .indexOf(id);        //index
-        console.log(markIndex);
 
-        //filter() 方法會建立一個經指定之函式運算後，由原陣列中通過該函式檢驗之元素所構成的新陣列。
-        var filteredArray = markersRef.filter(item=>item._leaflet_id == id);
-        console.log(filteredArray)
+        console.log(markersRef)//map上所有的點
+        const markIndex = markersRef.map(items => items._leaflet_id) 
+                        .indexOf(id);        
+        console.log(markIndex);
+        //點地圖上icon位置的 ，找到click id的index 15
+        //scroll對應到overlay id的位子
 
         var firsthei = document.querySelector('.my-selector-c').offsetHeight;
         var all = document.querySelectorAll('.store_detail')    
@@ -416,7 +481,7 @@
         document.getElementById('storelist').scrollTo(0,sum)
     } 
 
-    console.log(markersRef)
+    // console.log(markersRef)
     // console.log(markers); // i(45 markers) ._leaflet_id
 
     function filterRangeStore(info){
@@ -436,18 +501,84 @@
         })
     }
 
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     function getMaskInfo(){
         return new Promise(resolve=>{
             fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
                 .then(res=>res.json())
-                .then(json=>resolve(json.features))
+                .then(json=>{
+                    resolve(json.features)
+                    // console.log(json.features);
+                })
                 .catch(err=>console.log(err))
-                .then(response => 
-                    loading.style.display = "none",
-                );
+                .then(response => {
+                    loading.style.display = "none"
+                });
         })
     }
+
+    const getFetch=()=>{
+        return fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
+                    .then((res)=>{
+                        if (res.status ==200){
+                            return res.json()
+                        }else{
+                            throw new Error("unable to get the json")
+                        }
+                    }).then((data)=>{
+                            //return data
+                            //filter
+                            console.log(data)
+                    })   
+    }
+    let aa = await getFetch;
+    console.log(aa)
+
+    function getPromise(){
+        // let promise = new Promise(resolve => resolve("done!"));
+        // promise.then(alert); // done! (shows up right now)
+
+        //let promise = new Promise(resolve =>resolve("done!"));
+        // (resolve => resolve("done!"));
+        let promise = new Promise(function(resolve, reject){
+            fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
+            .then(res=>res.json())
+            .then(json=>resolve(json.features))
+                // console.log(json.features);
+            reject(new Error("whoops"))
+        })
+    
+
+        promise.then(result=>console.log(result)); 
+
+
+        // let promise = new Promise(resolve =>{
+        //         fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
+        //         .then(res=>res.json())
+        //         .then(json=>resolve(json.features))
+        //             // console.log(json.features);
+        //     })
+    
+        // promise.then(result=>console.log(result)); 
+        //promise.then(result=>console.log(`${result}`)); 
+
+
+    }
+
+    function getMaskData(){
+        fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
+        .then(res => {
+            return res.json();
+        }).then(result => {
+            console.log(result.features);
+            // let city = result.cwbopendata.location[14].parameter[0].parameterValue;
+            // let temp = result.cwbopendata.location[14].weatherElement[3].elementValue.value;
+            // console.log(`${city}的氣溫為 ${temp} 度 C`); // 得到 高雄市的氣溫為 29.30 度 C
+        });
+    }
+
+
 
     function getStore(){ 
         console.log(this)
@@ -578,7 +709,6 @@
     //************************************************
     function filterPharmacy () {
         let res = [];
-        console.log(infoData)
         selCity = document.querySelector('.county').value;
         selDist = document.querySelector('.district').value;
         console.log(selCity)//台北市  json 臺北市
@@ -647,7 +777,7 @@
         if (dataAll.length){
             var focus = dataAll[0].geometry.coordinates;
            // map.setView([latitude,longitude], 16);
-            map.setView([focus[1], focus[0]], 18)
+             map.setView([focus[1], focus[0]], 18)
                 // markers.zoomToShowLayer(marker, function() {
                 //     marker.openPopup();
                 // });
