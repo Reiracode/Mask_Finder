@@ -169,8 +169,7 @@ Promise.all([getMaskInfo(), getUrposition()]).then(resultDatas => {
         // console.log([latitude, longitude])
 
         drawMap()
-    getLocationA();
-        console.log(lati)
+
 
         markers = L.markerClusterGroup({
 			maxClusterRadius: 120,
@@ -273,6 +272,9 @@ async function main() {
     var result = await getUrposition()
     // result === "Success"
     console.log(result)
+
+    yourPositon = result
+    findMask(0)
 }
 
 
@@ -634,7 +636,9 @@ function filterPharmacy () {
 }
 
     function findMask(e) {
-        // console.log([latitude, longitude])
+        console.log(e)
+        console.log([latitude, longitude])
+        console.log(yourPositon)
         // console.log(infoData)
       
         L.marker(yourPositon,{icon: userIcon})
