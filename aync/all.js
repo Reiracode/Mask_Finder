@@ -18,49 +18,22 @@
     const maskSize= document.querySelector('#mask_sel');
 
     let selCity, selZone, markers, infoData;
-    let yourPositon ;
-    let latitude, longitude;
-
+    var yourPositon ;
+var markersRef = [];
     var greyIcon = createIcon('iconmonstr-grey');
     var greenIcon = createIcon('iconmonstr-blue1');
     var redIcon = createIcon('iconmonstr-grey');
     var userIcon = createIcon('iconmonstr-yellow1');
     let maskStore = JSON.parse(localStorage.getItem('maskStore')) || [];
-    var lati;
+    // var lati;
 
-var alldata;// global promise=>get value
-var testInfo = getMaskInfo();
-console.log(testInfo)
-testInfo.finally(() => alert("Promise ready"))
-    //.then(result => console.log(result)); 
-    .then(result => alldata = result)
-    // .then(result => {
-    //     alldata = result;
-    //     console.log(alldata)
-    // })
-
-console.log(alldata)//undefined
-
-//可掌握promise狀況
-//promise pending resolved
-/*
-new Promise((resolve, reject) => {
-  setTimeout(() => resolve("reira you get it"), 2000)
-})
-  .finally(() => alert("Promise ready"))
-  .then(result => alert(result)); // <-- .then handles the result
-
-
-
-  let test =new Promise((resolve, reject) => {
-  setTimeout(() => resolve("reira you get it"), 2000)
-})
-
-test.finally(() => alert("Promise ready"))
-  .then(result => alert(result)); //
-
-
-   */
+    var alldata;// global promise=>get value
+    var testInfo = getMaskInfo();
+    testInfo.finally(() => console.log("getMaskInfo Promise ready"))
+        .then(result => {
+            alldata = result;
+            console.log(alldata)
+        });
 
     function createIcon(name) {
         if (name == 'iconmonstr-yellow1') {
@@ -80,24 +53,11 @@ test.finally(() => alert("Promise ready"))
         }
     } 
 
-
-
 //map on load
     function drawMap(){
-        console.log(alldata)
+        //console.log(alldata)//defalut load json
         console.log(yourPositon)
-        // const map = L.map('map').setView([latitude, longitude], 16).on('dragend', getAroundStore).on('zoomend', getAroundStore);
-        // var map = L.map('map').on('load', findMask).setView([25.040065, 121.523235], 13);
-        //  map = L.map('map', {
-        //     center: yourPositon,
-        //     zoom: 16
-        // })
-        // .on('load', onMapLoad);
         map = L.map('map').on('load', onMapLoad).setView(yourPositon, 13);
-        // map = L.map('map').on('load', onMapLoad).setView([25.040065, 121.523235], 13);
-        
-        // map.setView([51.505, -0.09], 13);
-
         //Custom radius and icon create function
         markers = L.markerClusterGroup({
             maxClusterRadius: 120,
@@ -112,15 +72,15 @@ test.finally(() => alert("Promise ready"))
                     c += 'large';
                 }
                 return new L.DivIcon({ 
-                    // html: '<div><span>' + childCount + '</span></div>', 
-                    html: '<div></div>', 
+                    html: '<div><span>' + childCount + '</span></div>', 
+                    // html: '<div></div>', 
                     className: 'marker-cluster' + c, 
                     iconSize: new L.Point(40, 40) 
                 });
             }
         });
 
-        // var markersRef = [];
+        
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map); 
@@ -152,168 +112,113 @@ test.finally(() => alert("Promise ready"))
         console.log(e.message);
     }
 
-    // Promise.allを使って、3つのpromiseを同時に実行している
-    //let [latitude, longitude] = getPosition();
-    //getUserPosition callback function 沒有用 promise.all(new promise 才行嗎)
-Promise.all([getMaskInfo(), getUrposition()]).then(resultDatas => {
-        console.log(resultDatas[0]);
-        console.log(resultDatas[1]);
-
-        //console.log(resultDatas[2]);
-
+ 
+    Promise.all([getMaskInfo(), getYourPosition()]).then(resultDatas => {
+        // console.log(resultDatas[0]);
+        // console.log(resultDatas[1]);
         loading.style.display = "none"
         infoData = resultDatas[0];
-
         yourPositon = resultDatas[1]
-        [latitude, longitude] = resultDatas[1];
-        // console.log([latitude, longitude])
-
         drawMap()
-
-
-        markers = L.markerClusterGroup({
-			maxClusterRadius: 120,
-			iconCreateFunction: function (cluster) {
-                var childCount = cluster.getChildCount();
-                var c = ' marker-cluster-';
-                if (childCount < 5) {
-                    c += 'small';
-                } else if (childCount < 10) {
-                    c += 'medium';
-                } else {
-                    c += 'large';
-                }
-                return new L.DivIcon({ 
-                    // html: '<div><span>' + childCount + '</span></div>', 
-                    html: '<div></div>', 
-                    className: 'marker-cluster' + c, 
-                    iconSize: new L.Point(40, 40) 
-                });
-			}
-		});
         findMask()
-        markers.on("click", markClick); 
-        map.on('load', onMapLoad);
-        map.on('locationfound', onLocationFound);
-}).catch((err) => {
-    console.log(err.message)
-});
-    // }).then(function (msg) {
-    //     console.log(msg);
-    // });
+ 
+        // markers.on("click", markClick); 
+        // map.on('load', onMapLoad);
+        // map.on('locationfound', onLocationFound);
+    }).catch((err) => {
+        console.log(err.message)
+    });
 
 
-function onMapLoad() {
-    alert("Map successfully loaded")
-};
+    function onMapLoad() {
+        alert("Map successfully loaded")
+    };
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    function positionWath() {
-        navigator.geolocation.watchPosition((data) => {
-            // 若成功取回，就會回傳一組Position，將其印出
-            console.log(data);
-            // 利用coords.speed取得速度(公尺/秒)
-            // speed.textContent = data.coords.speed;
-            // 用coords.heading取得方位（表示偏離北方的角度，0為正北，90為正東）
-            // 用element.style.transform =rotate()deg來旋轉指針
-            // arrow.style.transform = `rotate(${data.coords.heading}deg)`;
-        }, (err) => {
-            // 假設未取得定位授權，回傳錯誤訊息
-            console.error(err);
-        });                    
-    }
-
-
-/*   navigator.geolocation     */
-
-/* getLocationA */
-    var getLocationA = function () {
-        if (navigator.geolocation) {
-            console.log('getLocationA--OK')
-            navigator.geolocation.getCurrentPosition(success, error);          
-        } else { 
-            console.log("Geolocation is not supported by this browser.");
-            alert("Geolocation is not supported by this browser.");
-        }  
-    }
-
-    function error(err) {
-        alert(`Failed to locate. Error: ${err.message}`)
-        console.log(`Failed to locate. Error: ${err.message}`)
-    }
-
-    function success(pos) {
-        console.log([pos.coords.latitude, pos.coords.longitude])
-        console.log(`${pos.coords.latitude}, ${pos.coords.longitude}`)
-        // findMask();          
-    }
-
-    function getUrposition(){
-        // var promise = 
+    /*   navigator.geolocation     */
+    function getYourPosition(){ 
         return new Promise(function(resolve, reject) {
             // do a thing, possibly async, then…
             if (navigator.geolocation) {
-                console.log("Stuff worked!");
-                // resolve("Stuff worked!");
+                console.log("getYourPosition!");
                 navigator.geolocation.getCurrentPosition(position => {   
-                    console.log([position.coords.latitude, position.coords.longitude])
                     resolve([position.coords.latitude, position.coords.longitude])
                 })   
             }
             else {
-                alert("It broke");
-                console.log("It broke");
                 reject(Error("It broke"));  
             }
         });
     }
 
-// async function main() {
-//     var result = await getUrposition()
-//     // result === "Success"
-//     console.log(result)
+    // async function main() {
+    //     var result = await getYourPosition()
+    //     // result === "Success"
+    //     console.log(result)
+    //     yourPositon = result
+    //     findMask(0)
+    // }
 
-//     yourPositon = result
-//     findMask(0)
+    function relocate() {
+        console.log("重新整理")
+        // getPosition().then((result)=>console.log(result));
+        // getYourPosition().then(findMask());
+        // getYourPosition()
+        //     .then((result) => yourPositon = [25.029443,121.501673])
+        //     .then(findMask());
+
+        // [120.597116, 24.08167]
+        getYourPosition()
+            .then(yourPositon = [24.08167, 120.597116])
+            .then(console.log(yourPositon))
+            .then(findMask("relocate"));
+        // getYourPosition()
+        // .then((result) => yourPositon = [25.029443, 121.501673])
+        // .then(console.log(yourPositon))
+        // .then(findMask());
+   
+// [25.0302634, 121.5027293]
+        // getYourPosition()
+        //     .then((result) => yourPositon = result)
+        //     .then(findMask());
+    }
+
+
+// var yourPositon1;
+// function getYourPosition() {
+//     return new Promise(function (resolve, reject) {
+//         // do a thing, possibly async, then…
+//         if (navigator.geolocation) {
+//             console.log("getYourPosition!");
+//             navigator.geolocation.getCurrentPosition(position => {
+//                 resolve([position.coords.latitude, position.coords.longitude])
+//             })
+//         }
+//         else {
+//             reject(Error("It broke"));
+//         }
+//     });
 // }
-function main() {
-    console.log("重新整理")
-    // getPosition().then((result)=>console.log(result));
-    getUrposition().then(findMask());
-}
+
+// function relocate() {
+//     console.log("重新整理")
+//     // getPosition().then((result)=>console.log(result));
+//     // getYourPosition().then(findMask());
+//     getYourPosition()
+//         .then((result) => yourPositon1 = [25.029443, 121.501673])
+//         .then(console.log(yourPositon1))
+//         .then(findMask());
+// }
 
 
-function getUserPosition() {
-    if (navigator.geolocation) {
-        function showPosition(position) {
-            var crd = position.coords;
-            lati = [crd.latitude, crd.longitude]
-            //console.log(lati)
+// function findMask() {
+//     console.log(yourPositon1)
+// }
 
-            L.marker([position.coords.latitude, position.coords.longitude], { icon: userIcon }).addTo(map);
-            map.setView([position.coords.latitude, position.coords.longitude], 16);
-            console.log([position.coords.latitude, position.coords.longitude])
-        }
-
-        function showError(err) {
-            console.warn('ERROR(' + err.code + '): ' + err.message);
-            // console.log('抱歉，現在無法取的您的地理位置。')
-        }
-
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-        console.log('抱歉，您的裝置不支援定位功能。');
-    }
-}
-
-/*   navigator.geolocation     */
-
-
-    function getAroundStore(){
-            // filterMaskType(filterRangeStore(infoData)).filter((info, index) => index < 200)
-            dataAll= filterRange()
-            console.log(dataAll)
-    }
+    // function getAroundStore(){
+    //     // filterMaskType(filterRangeStore(infoData)).filter((info, index) => index < 200)
+    //     dataAll= filterRange()
+    //     console.log(dataAll)
+    // }
 
 /**/
 //left menu and overlay
@@ -335,17 +240,16 @@ function getUserPosition() {
                     case "personal":
                         getStorage();
                         break;
-                    case "setdate":
-                        findMask("setdate");
+                    case "mystore":
+                        findMask("mystore");
                         break;
                     case "list":
                         console.log("findmask")
                         findMask();
                         break;
                     case "relocate":
-                        //getLocationA();
-                        main()
-                        //getUrposition();
+                        relocate();
+                        //getYourPosition();
                         break;
                     default:
                         break;
@@ -383,15 +287,11 @@ usersetbtn.addEventListener('click',()=>{
     localStorage.setItem('maskDay', userday.value);
 })
     
-// function showPositionA(position) {
-//     console.log("showPositionA");
-//     var [nowlat,nowlon]= [position.coords.latitude,position.coords.longitude];
-//     console.log("Latitude: " + position.coords.latitude + 
-//             "Longitude: " + position.coords.longitude);
-// }
 
 // 顯示1KM距離內的藥局
 function filterRange(){
+    console.log(infoData)
+    console.log(yourPositon)
     // const result = infoData.filter(item => getDistance([latitude, longitude],[item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1);
     const result = infoData.filter(item => getDistance([yourPositon[0], yourPositon[1]], [item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1);
     console.log(result);
@@ -459,27 +359,6 @@ function getMaskInfo(){
             });
     })
 }
-//如果有錯誤 .catch==>TypeError: Failed to fetch
-
-
-// function getPosition() {
-//     return new Promise(resolve => {
-//         !!(navigator.geolocation)
-//             ? navigator.geolocation.getCurrentPosition(position => {
-//                 resolve([position.coords.latitude, position.coords.longitude])
-//                 console.log([position.coords.latitude, position.coords.longitude]);
-//             })
-//             : alert("Geolocation is not supported by your browser")
-//     })
-// }
-
-// const p = getPosition();
-// p.then(function () { 
-//     console.log("getPosition OK");
-// });
-// p.catch(function (err) { 
-//     console.log("getPosition"+ err.message)
-// });
 
 function getMaskData(){
     fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
@@ -487,9 +366,6 @@ function getMaskData(){
         return res.json();
     }).then(result => {
         console.log(result.features);
-        // let city = result.cwbopendata.location[14].parameter[0].parameterValue;
-        // let temp = result.cwbopendata.location[14].weatherElement[3].elementValue.value;
-        // console.log(`${city}的氣溫為 ${temp} 度 C`); // 得到 高雄市的氣溫為 29.30 度 C
     });
 }
 
@@ -640,29 +516,52 @@ function filterPharmacy () {
     return res;
 }
 
-    function findMask(e) {
-        console.log(e)
-        console.log([latitude, longitude])
+    function findMask(callback) {
+        //relocate:重新整理    setdate:我的最愛
+        console.log(callback)
         console.log(yourPositon)
-        // console.log(infoData)
-      
+        // if (callback == "relocate") { document.querySexlector('.county').value =""}
         L.marker(yourPositon,{icon: userIcon})
                 .addTo(map)
                 .bindPopup("我的位置").openPopup();
-
+        
         markers.clearLayers();
         markersRef = [];
         //資料
-        dataAll = !! e ? getStorage()
-                        : !(document.querySelector('.county').value)
-                                ?  filterRange()
-                                :  filterPharmacy()
+        // dataAll = !!callback ? getStorage()
+        //                 : !(document.querySelector('.county').value)
+        //                         ?  filterRange()
+        //                         :  filterPharmacy()
+        console.log(callback)
+        if (callback){
+            if (callback == "relocate"){    
+                dataAll = filterRange()
+                s_list = document.getElementById('storelist')
+                sdiv = '#storelist'
+                document.querySelector('.county').value =""
+                // document.querySelector('.county').value = ""
+            }else{
+                dataAll = getStorage()
+                s_list = document.getElementById('lovestorelist')
+                sdiv = '#lovestorelist'
+            }
+        }else{
+            if (!document.querySelector('.county').value){
+                dataAll=filterRange()
+            }else{
+                dataAll=filterPharmacy();
+            }
+            
+            s_list = document.getElementById('storelist')
+            sdiv = '#storelist'
+        }
+        
 
-        const s_list =!! e ?  document.getElementById('lovestorelist')
-                            : document.getElementById('storelist');
+        // const s_list = !!callback ?  document.getElementById('lovestorelist')
+        //                     : document.getElementById('storelist');
 
-        const sdiv =!! e ?  '#lovestorelist'
-                        : '#storelist'; 
+        // const sdiv = !!callback ?  '#lovestorelist'
+        //                 : '#storelist'; 
                                 
         console.log(s_list)
         console.log(sdiv)
@@ -734,14 +633,13 @@ function filterPharmacy () {
                 markers.addLayer(marker); 
             })  
             console.log(markersRef)
-            // sideInfo = [...s_list.childNodes];
-            // console.log(sideInfo)  
+            // sideInfo = [...s_list.childNodes]; 
             sideInfo = [...s_list.children];
             console.log(sideInfo)  
             console.log(sideInfo[0].offsetHeight)  
 
             // sideInfo = [...document.querySelectorAll('.store_title')]  
-            // console.log(sideInfo)  
+           
             sideInfo.forEach(dom => dom.addEventListener('click', getStore))
             //checkInfo =[...document.querySelectorAll('.addtolist')] ;
             checkInfo =[...document.querySelectorAll(sdiv+' .addtolist')] ;
@@ -749,15 +647,13 @@ function filterPharmacy () {
             checkInfo.forEach(dom=>dom.addEventListener('click', intoList))
 
             if (s_list.id =="lovestorelist"){
-                var stest = document.getElementById("lovestorelist").children
-                var lovesum = 0;
-                for (let i = 0; i < stest.length; i++) {
-                    console.log(i)
-                    console.log(stest[i].scrollHeight)
-                    console.log(stest[i].offsetHeight)
-                };
-
-
+                // var stest = document.getElementById("lovestorelist").children
+                // var lovesum = 0;
+                // for (let i = 0; i < stest.length; i++) {
+                //     console.log(i)
+                //     console.log(stest[i].scrollHeight)
+                //     console.log(stest[i].offsetHeight)
+                // };
                 var sum = 0; 
                 var test = document.getElementsByClassName('#lovestorelist>.store_detail')
                 console.log(test)
@@ -825,20 +721,21 @@ function filterPharmacy () {
         }
 
         //應該是每次checkbox  都要測試
-        function justifyHeight() {  
-            const mq = window.matchMedia("(max-width: 600px)");                   
-            if(!mq.matches){
-                console.log("*當視窗寬度>600px時執行")
-                s_list.style.height = "100px";
-                s_list.parentElement.style.height = "unset";
-            }else{
-                console.log("*當視窗寬度<600px時執行")
-            }
-        }
-
-        
-
-
-
+        // function justifyHeight() {  
+        //     const mq = window.matchMedia("(max-width: 600px)");                   
+        //     if(!mq.matches){
+        //         console.log("*當視窗寬度>600px時執行")
+        //         s_list.style.height = "100px";
+        //         s_list.parentElement.style.height = "unset";
+        //     }else{
+        //         console.log("*當視窗寬度<600px時執行")
+        //     }
+        // }
+    
+    // drawMap()
+    markers.on("click", markClick); 
+    map.on('load', onMapLoad);
+    map.on('locationfound', onLocationFound);
+    
     }
 
