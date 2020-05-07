@@ -268,13 +268,18 @@ function onMapLoad() {
         });
     }
 
-async function main() {
-    var result = await getUrposition()
-    // result === "Success"
-    console.log(result)
+// async function main() {
+//     var result = await getUrposition()
+//     // result === "Success"
+//     console.log(result)
 
-    yourPositon = result
-    findMask(0)
+//     yourPositon = result
+//     findMask(0)
+// }
+function main() {
+    console.log("重新整理")
+    // getPosition().then((result)=>console.log(result));
+    getUrposition().then(findMask());
 }
 
 

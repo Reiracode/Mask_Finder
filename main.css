@@ -586,6 +586,7 @@
             display: flex;
             flex-flow: row;
             justify-content:space-around;
+            height: 37px;
         }
 
         .datalist{
