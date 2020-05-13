@@ -310,7 +310,7 @@
         let thisdiv = this.parentNode.parentNode;
         let data = callbackData[checkInfo.indexOf(this)];
         let itemid = data.properties.id;
-      
+    
         //我的最愛清單 click => 刪除
         if (this.parentNode.parentNode.id == "lovestorelist"){
             this.parentNode.remove();
@@ -335,24 +335,24 @@
 
         if (thisdiv.id =="lovestorelist") justifyHeight(thisdiv)
     
-        var mq = window.matchMedia("(max-width: 600px)");
-        if (sum < window.innerHeight) {
-            if (!mq.matches) {
-                console.log("當視窗寬度>600px時執行")
-                console.log("資料<window.screen.height，不要scroll")
-                s_list.style.height = sum + "px";
-                s_list.parentElement.style.height = "unset";
-            } else {
-                console.log("當視窗寬度<1/2H時執行")
-                if (sum < (window.screen.height / 2)) {
-                    // s_list.style.height = "unset";
-                }
-            }
-        } else {
-            //console.log("當高度")
-            s_list.style.height = "unset";
-            s_list.parentElement.style.height = "100%";
-        }
+        // var mq = window.matchMedia("(max-width: 600px)");
+        // if (sum < window.innerHeight) {
+        //     if (!mq.matches) {
+        //         console.log("當視窗寬度>600px時執行")
+        //         console.log("資料<window.screen.height，不要scroll")
+        //         s_list.style.height = sum + "px";
+        //         s_list.parentElement.style.height = "unset";
+        //     } else {
+        //         console.log("當視窗寬度<1/2H時執行")
+        //         if (sum < (window.screen.height / 2)) {
+        //             // s_list.style.height = "unset";
+        //         }
+        //     }
+        // } else {
+        //     //console.log("當高度")
+        //     s_list.style.height = "unset";
+        //     s_list.parentElement.style.height = "100%";
+        // }
         
         
     }
@@ -575,6 +575,7 @@
 
     //應該是每次checkbox  都要測試
     function justifyHeight(s_list) {
+        console.log(s_list)
         var mq = window.matchMedia("(max-width: 600px)");
         if (s_list.id == "lovestorelist") {
             var sum = 0;
@@ -598,10 +599,18 @@
                     console.log("資料<window.screen.height，不要scroll")
                     s_list.style.height = sum + "px";
                     s_list.parentElement.style.height = "unset";
-                } else {
-                    console.log("當視窗寬度<1/2H時執行")
-                    if (sum < (window.screen.height / 2)) {
+                } else {//mobile
+                // 249 736/2=350
+                    console.log(sum)
+                    console.log(window.innerHeight/2)
+                    var half = window.innerHeight/2;
+                    if (sum < half ) {
+                        console.log("資料 < 1/2")
                         s_list.style.height = "unset";
+                    }else{
+                        console.log("資料 > 1/2") 
+                        // s_list.style.height = "50vh";
+                        s_list.style.height =  null; 
                     }
                 }
             }else{
