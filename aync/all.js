@@ -307,23 +307,17 @@
 
     //加入最愛 
     function intoList(){
-        console.log(callbackData)//現在的資料
-        console.log([checkInfo])
         let thisdiv = this.parentNode.parentNode;
         let data = callbackData[checkInfo.indexOf(this)];
-        console.log(data)
         let itemid = data.properties.id;
-        console.log(itemid)
-    
+      
         //我的最愛清單 click => 刪除
         if (this.parentNode.parentNode.id == "lovestorelist"){
-            // this.parentNode.style.display = "none"
             this.parentNode.remove();
             //array splice  -取代，刪除
             maskStore.forEach((item, index) => {  
                 if (item == itemid)  maskStore.splice(index, 1);
             })
-
         } else {
             //我的最愛 if>0  PINK  toggle PINK AND LOCALSTORAGE
             console.log(maskStore.indexOf(itemid))
@@ -336,10 +330,30 @@
             }
             console.log(maskStore)                                //index
         }
+
         localStorage.setItem('maskStore', JSON.stringify(maskStore));
 
         if (thisdiv.id =="lovestorelist") justifyHeight(thisdiv)
-        // console.log(this.parentNode.parentNode)
+    
+        var mq = window.matchMedia("(max-width: 600px)");
+        if (sum < window.innerHeight) {
+            if (!mq.matches) {
+                console.log("當視窗寬度>600px時執行")
+                console.log("資料<window.screen.height，不要scroll")
+                s_list.style.height = sum + "px";
+                s_list.parentElement.style.height = "unset";
+            } else {
+                console.log("當視窗寬度<1/2H時執行")
+                if (sum < (window.screen.height / 2)) {
+                    // s_list.style.height = "unset";
+                }
+            }
+        } else {
+            //console.log("當高度")
+            s_list.style.height = "unset";
+            s_list.parentElement.style.height = "100%";
+        }
+        
         
     }
 
@@ -459,9 +473,12 @@
                     : document.querySelector('#list>.datalist');
 
         if (!(callback.length)){
+            console.log(s_list)
             console.log("!callback")
-            s_list.innerHTML="NO data"
-          
+            s_list.innerHTML="no data"
+            s_list.style.height = "100px"
+            s_list.parentNode.style.height = "unset";
+            return
         }
 
         var focus = callback[0].geometry.coordinates;
@@ -523,29 +540,6 @@
         // markers.on("click", markClick);
         if (s_list.id == "lovestorelist") {
             justifyHeight(s_list)
-            // var mq = window.matchMedia("(max-width: 600px)");
-            // var sum = 0;
-            // var listlen = document.querySelectorAll(`#${s_list.id}>.store_detail`)
-            // marginBtom = getComputedStyle(listlen[0]).marginBottom;
-            // var margbtm = marginBtom.substr(0, marginBtom.length - 2);
-            // for (var i = 0; i < listlen.length; i++) {
-            //     sum += parseInt(listlen[i].scrollHeight) + parseInt(margbtm);
-            // };
-            // console.log(sum)
-            // console.log(window.innerHeight)
-            // if (sum < window.innerHeight) {
-            //     if (!mq.matches) {
-            //         console.log("當視窗寬度>600px時執行")
-            //         console.log("資料<window.screen.height，不要scroll")
-            //         s_list.style.height = sum + "px";
-            //         s_list.parentElement.style.height = "unset";
-            //     } else {
-            //         console.log("當視窗寬度<1/2H時執行")
-            //         if (sum < (window.screen.height / 2)) {
-            //             s_list.style.height = "unset";
-            //         }
-            //     }
-            // }
         } 
 
         //marker 點時，算高度到scroll
@@ -579,39 +573,42 @@
     }
 
 
-//應該是每次checkbox  都要測試
-function justifyHeight(s_list) {
-    var mq = window.matchMedia("(max-width: 600px)");
-    console.log(s_list)
-    console.log(s_list.id)
-    if (s_list.id == "lovestorelist") {
-        var sum = 0;
-        var listlen = document.querySelectorAll(`#${s_list.id}>.store_detail`)
-        marginBtom = getComputedStyle(listlen[0]).marginBottom;
-        var margbtm = marginBtom.substr(0, marginBtom.length - 2);
-        for (var i = 0; i < listlen.length; i++) {
-            sum += parseInt(listlen[i].scrollHeight) + parseInt(margbtm);
-        };
-        console.log(sum)
-        console.log(window.innerHeight)
-        if (sum < window.innerHeight) {
-            if (!mq.matches) {
-                console.log("當視窗寬度>600px時執行")
-                console.log("資料<window.screen.height，不要scroll")
-                s_list.style.height = sum + "px";
-                s_list.parentElement.style.height = "unset";
-            } else {
-                console.log("當視窗寬度<1/2H時執行")
-                if (sum < (window.screen.height / 2)) {
-                    s_list.style.height = "unset";
+    //應該是每次checkbox  都要測試
+    function justifyHeight(s_list) {
+        var mq = window.matchMedia("(max-width: 600px)");
+        if (s_list.id == "lovestorelist") {
+            var sum = 0;
+            var listlen = document.querySelectorAll(`#${s_list.id}>.store_detail`)
+            console.log(listlen.length) 
+            if (!(listlen.length)) { 
+                s_list.innerHTML="no data"
+                s_list.style.height ="100px"
+                console.log(listlen) 
+                return
+            };
+            marginBtom = getComputedStyle(listlen[0]).marginBottom;
+            var margbtm = marginBtom.substr(0, marginBtom.length - 2);
+            for (var i = 0; i < listlen.length; i++) {
+                sum += parseInt(listlen[i].scrollHeight) + parseInt(margbtm);
+            };
+            
+            if (sum < window.innerHeight) {
+                if (!mq.matches) {
+                    console.log("當視窗寬度>600px時執行")
+                    console.log("資料<window.screen.height，不要scroll")
+                    s_list.style.height = sum + "px";
+                    s_list.parentElement.style.height = "unset";
+                } else {
+                    console.log("當視窗寬度<1/2H時執行")
+                    if (sum < (window.screen.height / 2)) {
+                        s_list.style.height = "unset";
+                    }
                 }
+            }else{
+                //console.log("當高度")
+                s_list.style.height = "unset";
+                s_list.parentElement.style.height = "100%";
             }
-        }else{
-            console.log("當高度")
-            s_list.style.height = "unset";
-            s_list.parentElement.style.height = "100%";
-
-        }
-    }  
-}
+        }  
+    }
 
