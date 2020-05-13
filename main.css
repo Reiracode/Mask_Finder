@@ -361,10 +361,11 @@
         background-color: #fff32f;
     }
     .marker-cluster-large {
-        background-color: rgba(253, 156, 115, 0.6);
+        background-color:#a9b9fd;
     }
     .marker-cluster-large div {
-        background-color: rgba(241, 128, 23, 0.6);
+        background-color:#dbe0f7;
+        /* background-color: rgba(241, 128, 23, 0.6); */
     }
     .marker-cluster {
         background-clip: padding-box;
