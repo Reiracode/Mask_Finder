@@ -18,19 +18,17 @@
     const seltDist= document.querySelector('.district');
     const maskSize= document.querySelector('#mask_sel');
     //JSON  data
-    let infoData, yourPositon;
-    //data
-    var alldata;// TESTglobal promise=>get value
-    var callbackData, callback;
-    let maskStore = JSON.parse(localStorage.getItem('maskStore')) || [];
-
-    // var yourPositon ;markersRef)=map上所有的點
+    var infoData, yourPositon;
+    //filterdata
+    var callbackData;
+    var maskStore = JSON.parse(localStorage.getItem('maskStore')) || [];
+    // markersRef)=map上所有的點
     var markers, markersRef = [], mymarker,map;
-
     //ICON
-    var greenIcon = createIcon('iconmonstr-blue1');
-    var redIcon = createIcon('iconmonstr-grey');
+    var greenIcon = createIcon('icon-1');
+    var redIcon = createIcon('icon-2');
     var userIcon = createIcon('iconmonstr-location-1-24');
+
     function createIcon(name) {
         return new L.Icon({
             iconUrl: `../${name}.png`,
@@ -47,18 +45,18 @@
             maxClusterRadius: 120,
             iconCreateFunction: function (cluster) {
                 var childCount = cluster.getChildCount();
-                var c = ' marker-cluster-';
+                var group = ' marker-cluster-';
                 if (childCount < 5) {
-                    c += 'small';
+                    group += 'small';
                 } else if (childCount < 10) {
-                    c += 'medium';
+                    group += 'medium';
                 } else {
-                    c += 'large';
+                    group += 'large';
                 }
                 return new L.DivIcon({ 
-                    html: '<div><span>' + childCount + '</span></div>', 
-                    // html: '<div></div>', 
-                    className: 'marker-cluster' + c, 
+                    // html: '<div><span>' + childCount + '</span></div>', 
+                    html: '<div></div>', 
+                    className: 'marker-cluster' +group, 
                     iconSize: new L.Point(40, 40) 
                 });
             }
@@ -69,18 +67,37 @@
         }).addTo(map); 
 
         getMymarker()
-        // map.on('load', onMapLoad);
-        // map.on('load', function () {
-        //     alert('The map load event is fired');
-        // });
     }
 
-    //default
+    /*   navigator.geolocation     */
+    function getYourPosition() {
+        return new Promise(resolve => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    resolve([position.coords.latitude, position.coords.longitude])
+                })
+            }
+            else {
+                reject(Error("It broke"));
+            }
+        });
+    }
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    function getMaskInfo() {
+        return new Promise(resolve => {
+            fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
+                .then(res => res.json())
+                .then(json => {
+                    resolve(json.features)
+                })
+                .catch(err => console.log(err))
+        })
+    }
+
     Promise.all([getMaskInfo(), getYourPosition()]).then(resultDatas => {
         loading.style.display = "none"
         infoData = resultDatas[0];
         yourPositon = resultDatas[1]
-
         console.log(infoData)
         console.log(yourPositon)
         drawMap()
@@ -94,25 +111,25 @@
         console.log("重新整理")
         document.querySelector('.county').value="";
         document.querySelector('.district').value="";
-        getYourPosition()
-            .then(yourPositon = [23.005838, 120.191035])
-            .then(console.log(yourPositon))
-            .then(getMymarker())
-            .then(findMask(filterRange()));
         // getYourPosition()
-        //     .then(result => yourPositon = result)
+        //     .then(yourPositon = [23.005838, 120.191035])
         //     .then(console.log(yourPositon))
+        //     .then(getMymarker())
         //     .then(findMask(filterRange()));
+        getYourPosition()
+            .then(result => yourPositon = result)
+            .then(getMymarker())
+            // .then(console.log(yourPositon))
+            .then(findMask(filterRange()));
     }
 
     function getMymarker() {
         mymarker = L.marker(yourPositon, { icon: userIcon })
-                    .addTo(map).bindPopup("我222relocate的位置").openPopup();
+                    .addTo(map).bindPopup("現在位置").openPopup();
     }
 
-    /**/
     //left menu and overlay
-    var clickBtn = [...document.querySelectorAll('.list_menu')];
+    const clickBtn = [...document.querySelectorAll('.list_menu')];
     clickBtn.forEach(dom => dom.addEventListener('click', (e) => {
         var targetID = e.currentTarget.dataset['id'];
         console.log(targetID)
@@ -152,7 +169,6 @@
                         console.log("relocate")
                         relocate();
                         return
-                        break;
                     default:
                         break;
                 }
@@ -160,14 +176,13 @@
         }
     }))
 
-
-    // acitve的如果等於target.value
-    //close overlay
+    //acitve的如果等於target.value close overlay
     const closeBtn = [...document.querySelectorAll('.close_overlay')];
     closeBtn.forEach(dom => dom.addEventListener('click',(e)=>{
         let closeid = e.target.parentNode;
         closeid.classList.remove('active');
-        document.querySelector(".list_menu[data-id="+closeid.id+"]").classList.remove('active');
+        //    document.querySelector(".list_menu[data-id="+closeid.id+"]").classList.remove('active');
+        document.querySelector(`.list_menu[data-id=${closeid.id}]`).classList.remove('active');
     }))
 
     // 開合箭頭>
@@ -186,119 +201,62 @@
     usersetbtn.addEventListener('click',()=>{
         localStorage.setItem('maskDay', userday.value);
     })
-    
+
+    function getDistance(origin, destination) {
+        lat1 = origin[0]
+        lng1 = origin[1]
+        lat2 = destination[0]
+        lng2 = destination[1]
+        return 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1 - lat2) / 360), 2) + Math.cos(Math.PI * lat1 / 180) * Math.cos(Math.PI * lat2 / 180) * Math.pow(Math.sin(Math.PI * (lng1 - lng2) / 360), 2)))
+    }
 
     // 顯示1KM距離內的藥局
     function filterRange(){
-        console.log(infoData)
-        console.log(yourPositon)
-        // const result = infoData.filter(item => getDistance([latitude, longitude],[item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1);
         const result = infoData.filter(item => getDistance([yourPositon[0], yourPositon[1]], [item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1);
         console.log(result);
         return result;     
     }
 
-    function markClick(event) {
-        var id = event.layer._leaflet_id;
-        console.log(markersRef)//map上所有的點
+    function filterPharmacy() {
+        let res = [];
+        let selCity = document.querySelector('.county').value;
+        let selDist = document.querySelector('.district').value;
+        res = infoData.filter(({ properties: { address, county, town } }) => {
+            return county.indexOf(selCity.replace(/台/g, '臺')) > -1 && town.indexOf(selDist) > -1
+        });
+        findMask(res)
+    }
 
+    function markClick(event) {
+        let id = event.layer._leaflet_id;
         let markIndex = markersRef.map(items => items._leaflet_id) 
                         .indexOf(id);        
-        console.log(markIndex);
+        // console.log(markIndex);
         //點地圖上icon位置的 ，找到click id的index 15
         //scroll對應到overlay id的位子
         if (!!document.querySelector('.overlay.active>.datalist')) {
             var overlaylist = document.querySelector('.overlay.active>.datalist');
             var divid = overlaylist.id;
             var all = document.querySelectorAll(`#${divid}>.store_detail`);
-            console.log(overlaylist)
-            console.log(divid)
-
+            // console.log(overlaylist)
+            // console.log(divid)
             marginBtom = getComputedStyle(all[0]).marginBottom;
             var margbtm = marginBtom.substr(0, marginBtom.length - 2);
 
-            //5px  scrollto 只算前段的div的高度  index=5  len=6 calcu div*index
-            //index 3  ==>  0+1+2 
+            //5px  scrollto 只算前段的div的高度  index=5  len=6 calcu div*index==>index 3  ==>  0+1+2 
             var sum = 0;
             for (var i = 0; i < markIndex; i++) {
                 sum += parseInt(all[i].scrollHeight) + parseInt(margbtm);
             };
-
             document.getElementById(`${divid}`).scrollTo(0, sum)
         }
-        console.log(sum)
-      
+        // console.log(sum)
     } 
-
-    // console.log(markersRef)
-    // console.log(markers); // i(45 markers) ._leaflet_id
-
-    function filterRangeStore(info){
-        return info.filter(({geometry: {coordinates}})=>{
-            if(range){
-                return getDistance(latitude, longitude, coordinates[1], coordinates[0]) < range
-            }else {
-                let bounds = {
-                W: map.getBounds().getNorthWest().lng,
-                E: map.getBounds().getNorthEast().lng,
-                N: map.getBounds().getNorthWest().lat,
-                S: map.getBounds().getSouthEast().lat
-                }
-                return (coordinates[0] < bounds.E && coordinates[0] > bounds.W)
-                && (coordinates[1] < bounds.N && coordinates[1] > bounds.S)
-            }
-        })
-    }
-    /*   navigator.geolocation     */
-    function getYourPosition() {
-        return new Promise(function (resolve, reject) {
-            // do a thing, possibly async, then…
-            if (navigator.geolocation) {
-                console.log("getYourPosition!");
-                navigator.geolocation.getCurrentPosition(position => {
-                    resolve([position.coords.latitude, position.coords.longitude])
-                })
-            }
-            else {
-                reject(Error("It broke"));
-            }
-        });
-    }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    function getMaskInfo(){
-        return new Promise(resolve=>{
-            fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
-                .then(res=>res.json())
-                .then(json=>{
-                    //resolve(json.features)
-                    resolve(json.features)
-                    // console.log(json.features);
-                })
-                .catch(err=>console.log(err))
-        })
-    }
-
-    //******************return new promise+ finally
-    var testInfo = getMaskInfo();
-    testInfo.finally(() => console.log("getMaskInfo Promise ready"))
-        .then(result => {
-            alldata = result;
-            console.log(alldata)
-        });
-    //************************** *358 快於351
 
     //fetch prmoise
     function getStore(){ 
-        console.log("getStore")
-        console.log(this)
-        console.log(markersRef)
-        console.log([sideInfo.indexOf(this)])
-        console.log(sideInfo)
-
         if(!markersRef[sideInfo.indexOf(this)].isPopupOpen()){
-            let marker = markersRef[sideInfo.indexOf(this)]
-            console.log(marker)
-            // map.setView([marker._latlng.lat, marker._latlng.lng], 13)
+            let marker = markersRef[sideInfo.indexOf(this)]    
             markers.zoomToShowLayer(marker, function() {
                 marker.openPopup();
             });
@@ -330,31 +288,8 @@
             }
             console.log(maskStore)                                //index
         }
-
         localStorage.setItem('maskStore', JSON.stringify(maskStore));
-
-        if (thisdiv.id =="lovestorelist") justifyHeight(thisdiv)
-    
-        // var mq = window.matchMedia("(max-width: 600px)");
-        // if (sum < window.innerHeight) {
-        //     if (!mq.matches) {
-        //         console.log("當視窗寬度>600px時執行")
-        //         console.log("資料<window.screen.height，不要scroll")
-        //         s_list.style.height = sum + "px";
-        //         s_list.parentElement.style.height = "unset";
-        //     } else {
-        //         console.log("當視窗寬度<1/2H時執行")
-        //         if (sum < (window.screen.height / 2)) {
-        //             // s_list.style.height = "unset";
-        //         }
-        //     }
-        // } else {
-        //     //console.log("當高度")
-        //     s_list.style.height = "unset";
-        //     s_list.parentElement.style.height = "100%";
-        // }
-        
-        
+        if (thisdiv.id =="lovestorelist") justifyHeight(thisdiv);
     }
 
     function getStorage() {
@@ -363,12 +298,12 @@
             ? infoData.filter(item => maskStore.indexOf(item.properties.id) > -1)
             : []
         console.log(res)
-        return  res
+        return res
     }
 
-    function indexPink(id){
+    function indexPink(id) {
         let res = maskStore.length ? (maskStore.indexOf(id) >= 0) ? true : false
-                                   : false
+            : false
         return res
     }
 
@@ -415,13 +350,7 @@
                                             : user.classList.add('d-none');
     }
 
-    function getDistance(origin, destination) {
-        lat1 = origin[0]
-        lng1 = origin[1] 
-        lat2 = destination[0]
-        lng2 = destination[1]
-        return 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1-lat2)/360), 2)+Math.cos(Math.PI * lat1/180) * Math.cos(Math.PI * lat2/180)*Math.pow(Math.sin(Math.PI*(lng1-lng2)/360), 2)))
-    }
+
 
     //************************************************
     function onMapLoad() {
@@ -432,49 +361,17 @@
         console.log(e.message);
     }
 
-    function filterPharmacy() {
-        let res = [];
-        let selCity = document.querySelector('.county').value;
-        let selDist = document.querySelector('.district').value;
-        res = infoData.filter(({ properties: { address, county, town } }) => {
-            //return county=="臺北市" && town=="萬華區" 
-            return county.indexOf(selCity.replace(/台/g, '臺')) > -1 && town.indexOf(selDist) > -1
-        });
-        findMask(res)
-    }
-
     function findMask(callback) {
         callbackData = callback;
-        // if (!(callback.length)){
-        //     console.log("!callback")
-            
-        //     return
-        // }
-        console.log(markers)
-        console.log(mymarker);
 
         markers.clearLayers();
         markersRef = [];
-
-        // if (!!document.querySelector('.overlay.active>.datalist')) {
-        //     s_list = document.querySelector('.overlay.active>.datalist');
-        //     datadiv = s_list.id
-        //     console.log(s_list)
-        //     console.log(datadiv)
-        // } else {
-        //     //default
-        //     console.log("no overlay")
-        //     s_list = document.querySelector('#list>.datalist');
-        //     datadiv = "storelist"
-        // }
 
         s_list = (!!document.querySelector('.overlay.active>.datalist')) 
                     ? document.querySelector('.overlay.active>.datalist')
                     : document.querySelector('#list>.datalist');
 
         if (!(callback.length)){
-            console.log(s_list)
-            console.log("!callback")
             s_list.innerHTML="no data"
             s_list.style.height = "100px"
             s_list.parentNode.style.height = "unset";
@@ -482,21 +379,18 @@
         }
 
         var focus = callback[0].geometry.coordinates;
-        // map.on('load', onMapLoad);
         map.setView([focus[1], focus[0]], 13)
 
         var el = ""
         callback.sort(({ geometry: { coordinates: a } }, { geometry: { coordinates: b } }) => {
             return getDistance([yourPositon[0], yourPositon[1]], [a[1], a[0]]) - getDistance([yourPositon[0], yourPositon[1]], [b[1], b[0]])
         }).forEach(({ properties, geometry: { coordinates } }) => {
-            // console.log(properties.name)
             mask = (!!properties.mask_adult) ? greenIcon : redIcon
             var typecheck = indexPink(properties.id)
             var marker = L.marker(new L.LatLng(coordinates[1], coordinates[0]), { icon: mask });  
                 //********************************************* */
             var distance = getDistance([yourPositon[0], yourPositon[1]], [coordinates[1], coordinates[0]])
-            el +=
-                `<div class="store_detail">
+            el +=`<div class="store_detail">
                     <h2 class="store_title" data-child="${properties.mask_child}" 
                     data-adult="${properties.mask_adult}">${properties.name}
                     <span><i class="fas fa-map-marker-alt"></i>${distance >= 1 ? distance.toFixed(1) + 'km' : (distance * 1000 >> 0) + 'm'}</span>
@@ -510,11 +404,9 @@
                         <span data-size='child'>兒童${properties.mask_child}</span>
                     </div> 
                     <span>最後更新:${properties.updated}</span>
-                </div> 
-                `;
+                </div> `;
 
             s_list.innerHTML = el;
-
             //********************************************* */
             var customOptions = {'maxWidth': '500','minWidth': '170'}
 
@@ -538,16 +430,12 @@
         map.addLayer(markers);
 
         // markers.on("click", markClick);
-        if (s_list.id == "lovestorelist") {
-            justifyHeight(s_list)
-        } 
+        if (s_list.id == "lovestorelist") {justifyHeight(s_list)} 
 
         //marker 點時，算高度到scroll
         markers.on("click", (event)=>{
             var id = event.layer._leaflet_id;
-            console.log(markersRef) 
-            let markIndex = markersRef.map(items => items._leaflet_id)
-                .indexOf(id);
+            let markIndex = markersRef.map(items => items._leaflet_id).indexOf(id);
             //如果有資料，scroll to index
             if (!!s_list){
                 var all = document.querySelectorAll(`#${s_list.id}>.store_detail`);
@@ -559,35 +447,28 @@
                 };
                 document.getElementById(`${s_list.id}`).scrollTo(0, sum)
             }
-
-            // justifyHeight(s_list)
         });
-
-        
         map.doubleClickZoom.disable();
         sideInfo = [...s_list.children];
         sideInfo.forEach(dom => dom.addEventListener('click', getStore))
-        // checkInfo = [...document.querySelectorAll(`#${datadiv}`+' .addtolist')] ;
         checkInfo = [...document.querySelectorAll(`#${s_list.id}` + ' .addtolist')];
         checkInfo.forEach(dom => dom.addEventListener('click', intoList))
     }
 
-
-    //應該是每次checkbox  都要測試
+    //每次checked 都要調整
     function justifyHeight(s_list) {
-        console.log(s_list)
         var mq = window.matchMedia("(max-width: 600px)");
         if (s_list.id == "lovestorelist") {
             var sum = 0;
             var listlen = document.querySelectorAll(`#${s_list.id}>.store_detail`)
-            console.log(listlen.length) 
+
             if (!(listlen.length)) { 
                 s_list.innerHTML="no data"
                 s_list.style.height ="100px"
-                console.log(listlen) 
                 return
             };
-            marginBtom = getComputedStyle(listlen[0]).marginBottom;
+
+            var marginBtom = getComputedStyle(listlen[0]).marginBottom;
             var margbtm = marginBtom.substr(0, marginBtom.length - 2);
             for (var i = 0; i < listlen.length; i++) {
                 sum += parseInt(listlen[i].scrollHeight) + parseInt(margbtm);
@@ -595,36 +476,28 @@
             
             if (sum < window.innerHeight) {
                 if (!mq.matches) {
-                    console.log("當視窗寬度>600px時執行")
-                    console.log("資料<window.screen.height，不要scroll")
+                    console.log("not mobile 資料<window.innerHeight.height，不要scroll")
                     s_list.style.height = sum + "px";
                     s_list.parentElement.style.height = "unset";
                 } else {//mobile
-                // 249 736/2=350
-                    console.log(sum)
-                    console.log(window.innerHeight/2)
+                    console.log(sum, window.innerHeight/2)
                     var half = window.innerHeight/2;
                     if (sum < half ) {
                         console.log("資料 < 1/2")
                         s_list.style.height = "unset";
                     }else{
                         console.log("資料 > 1/2") 
-                        // s_list.style.height = "50vh";
                         s_list.style.height =  null; 
                     }
                 }
             }else{
                 console.log("sum>window.innerHeight")
-               
-
                 if (!mq.matches) {
                     console.log("當視窗寬度>600px時執行")
                     s_list.style.height = "unset";
                     s_list.parentElement.style.height = "100%";
-                
                 } else {
                     console.log("當視窗寬度<600px  MOBILE時執行")
-                    
                 }
             }
         }  

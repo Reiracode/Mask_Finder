@@ -103,7 +103,7 @@
         width: 100%;
         margin-bottom:10px;
         /*改變右邊箭頭樣式*/
-        background: url("arrow.png") no-repeat right center transparent;
+        /* background: url("arrow.png") no-repeat right center transparent; */
     }
 
     .select-selected:after{
@@ -341,13 +341,12 @@
 
 
     /* cluster map */
-    .marker-cluster-small {
-        /* background-color:rgb(178, 175, 255) ; */
-        /* background-color:#fff; */
-        /* background-size: cover;
-        background-image: url('./plus.png'); */
-
-    }
+    /* .marker-cluster-small {
+        background-color:rgb(178, 175, 255) ;  
+        background-color:#fff;
+        background-size: cover;
+        background-image: url('./plus.png');  
+    } */
     .marker-cluster-small div {
         /* background-color:#fefffe; */
         background-image: url('./cluster.png');
