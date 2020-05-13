@@ -226,6 +226,8 @@
 
             document.getElementById(`${divid}`).scrollTo(0, sum)
         }
+        console.log(sum)
+      
     } 
 
     // console.log(markersRef)
@@ -305,15 +307,14 @@
 
     //加入最愛 
     function intoList(){
-        // console.log(callback)
         console.log(callbackData)//現在的資料
         console.log([checkInfo])
-        // console.log(maskStore)
-
+        let thisdiv = this.parentNode.parentNode;
         let data = callbackData[checkInfo.indexOf(this)];
         console.log(data)
         let itemid = data.properties.id;
         console.log(itemid)
+    
         //我的最愛清單 click => 刪除
         if (this.parentNode.parentNode.id == "lovestorelist"){
             // this.parentNode.style.display = "none"
@@ -336,13 +337,17 @@
             console.log(maskStore)                                //index
         }
         localStorage.setItem('maskStore', JSON.stringify(maskStore));
+
+        if (thisdiv.id =="lovestorelist") justifyHeight(thisdiv)
+        // console.log(this.parentNode.parentNode)
+        
     }
 
     function getStorage() {
         console.log(maskStore)
         res = !!maskStore.length
             ? infoData.filter(item => maskStore.indexOf(item.properties.id) > -1)
-            : " "
+            : []
         console.log(res)
         return  res
     }
@@ -425,29 +430,39 @@
     }
 
     function findMask(callback) {
-        console.log("findMask")
         callbackData = callback;
+        // if (!(callback.length)){
+        //     console.log("!callback")
+            
+        //     return
+        // }
         console.log(markers)
         console.log(mymarker);
 
         markers.clearLayers();
         markersRef = [];
 
-        if (!!document.querySelector('.overlay.active>.datalist')) {
-            s_list = document.querySelector('.overlay.active>.datalist');
-            datadiv = s_list.id
-            console.log(s_list)
-            console.log(datadiv)
-        } else {
-            //default
-            console.log("no overlay")
-            s_list = document.querySelector('#list>.datalist');
-            datadiv = "storelist"
-        }
+        // if (!!document.querySelector('.overlay.active>.datalist')) {
+        //     s_list = document.querySelector('.overlay.active>.datalist');
+        //     datadiv = s_list.id
+        //     console.log(s_list)
+        //     console.log(datadiv)
+        // } else {
+        //     //default
+        //     console.log("no overlay")
+        //     s_list = document.querySelector('#list>.datalist');
+        //     datadiv = "storelist"
+        // }
 
-        // s_list = (!!document.querySelector('.overlay.active>.datalist')) 
-        //             ? document.querySelector('.overlay.active>.datalist')
-        //             : document.querySelector('#list>.datalist');
+        s_list = (!!document.querySelector('.overlay.active>.datalist')) 
+                    ? document.querySelector('.overlay.active>.datalist')
+                    : document.querySelector('#list>.datalist');
+
+        if (!(callback.length)){
+            console.log("!callback")
+            s_list.innerHTML="NO data"
+          
+        }
 
         var focus = callback[0].geometry.coordinates;
         // map.on('load', onMapLoad);
@@ -505,17 +520,98 @@
         s_list.scrollTo(0, 0)
         map.addLayer(markers);
 
+        // markers.on("click", markClick);
+        if (s_list.id == "lovestorelist") {
+            justifyHeight(s_list)
+            // var mq = window.matchMedia("(max-width: 600px)");
+            // var sum = 0;
+            // var listlen = document.querySelectorAll(`#${s_list.id}>.store_detail`)
+            // marginBtom = getComputedStyle(listlen[0]).marginBottom;
+            // var margbtm = marginBtom.substr(0, marginBtom.length - 2);
+            // for (var i = 0; i < listlen.length; i++) {
+            //     sum += parseInt(listlen[i].scrollHeight) + parseInt(margbtm);
+            // };
+            // console.log(sum)
+            // console.log(window.innerHeight)
+            // if (sum < window.innerHeight) {
+            //     if (!mq.matches) {
+            //         console.log("當視窗寬度>600px時執行")
+            //         console.log("資料<window.screen.height，不要scroll")
+            //         s_list.style.height = sum + "px";
+            //         s_list.parentElement.style.height = "unset";
+            //     } else {
+            //         console.log("當視窗寬度<1/2H時執行")
+            //         if (sum < (window.screen.height / 2)) {
+            //             s_list.style.height = "unset";
+            //         }
+            //     }
+            // }
+        } 
 
-        markers.on("click", markClick);
- 
+        //marker 點時，算高度到scroll
+        markers.on("click", (event)=>{
+            var id = event.layer._leaflet_id;
+            console.log(markersRef) 
+            let markIndex = markersRef.map(items => items._leaflet_id)
+                .indexOf(id);
+            //如果有資料，scroll to index
+            if (!!s_list){
+                var all = document.querySelectorAll(`#${s_list.id}>.store_detail`);
+                marginBtom = getComputedStyle(all[0]).marginBottom;
+                var margbtm = marginBtom.substr(0, marginBtom.length - 2);
+                sum = 0;
+                for (var i = 0; i < markIndex; i++) {
+                    sum += parseInt(all[i].scrollHeight) + parseInt(margbtm);
+                };
+                document.getElementById(`${s_list.id}`).scrollTo(0, sum)
+            }
 
-//datadiv
+            // justifyHeight(s_list)
+        });
 
+        
         map.doubleClickZoom.disable();
         sideInfo = [...s_list.children];
         sideInfo.forEach(dom => dom.addEventListener('click', getStore))
-        checkInfo = [...document.querySelectorAll(`#${datadiv}`+' .addtolist')] ;
+        // checkInfo = [...document.querySelectorAll(`#${datadiv}`+' .addtolist')] ;
+        checkInfo = [...document.querySelectorAll(`#${s_list.id}` + ' .addtolist')];
         checkInfo.forEach(dom => dom.addEventListener('click', intoList))
     }
 
+
+//應該是每次checkbox  都要測試
+function justifyHeight(s_list) {
+    var mq = window.matchMedia("(max-width: 600px)");
+    console.log(s_list)
+    console.log(s_list.id)
+    if (s_list.id == "lovestorelist") {
+        var sum = 0;
+        var listlen = document.querySelectorAll(`#${s_list.id}>.store_detail`)
+        marginBtom = getComputedStyle(listlen[0]).marginBottom;
+        var margbtm = marginBtom.substr(0, marginBtom.length - 2);
+        for (var i = 0; i < listlen.length; i++) {
+            sum += parseInt(listlen[i].scrollHeight) + parseInt(margbtm);
+        };
+        console.log(sum)
+        console.log(window.innerHeight)
+        if (sum < window.innerHeight) {
+            if (!mq.matches) {
+                console.log("當視窗寬度>600px時執行")
+                console.log("資料<window.screen.height，不要scroll")
+                s_list.style.height = sum + "px";
+                s_list.parentElement.style.height = "unset";
+            } else {
+                console.log("當視窗寬度<1/2H時執行")
+                if (sum < (window.screen.height / 2)) {
+                    s_list.style.height = "unset";
+                }
+            }
+        }else{
+            console.log("當高度")
+            s_list.style.height = "unset";
+            s_list.parentElement.style.height = "100%";
+
+        }
+    }  
+}
 
