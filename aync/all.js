@@ -605,9 +605,18 @@
                     }
                 }
             }else{
-                //console.log("當高度")
-                s_list.style.height = "unset";
-                s_list.parentElement.style.height = "100%";
+                console.log("sum>window.innerHeight")
+               
+
+                if (!mq.matches) {
+                    console.log("當視窗寬度>600px時執行")
+                    s_list.style.height = "unset";
+                    s_list.parentElement.style.height = "100%";
+                
+                } else {
+                    console.log("當視窗寬度<600px  MOBILE時執行")
+                    
+                }
             }
         }  
     }
