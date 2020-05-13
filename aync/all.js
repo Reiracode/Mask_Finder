@@ -477,7 +477,8 @@
             if (sum < window.innerHeight) {
                 if (!mq.matches) {
                     console.log("not mobile 資料<window.innerHeight.height，不要scroll")
-                    s_list.style.height = sum + "px";
+                    // s_list.style.height = sum + "px";
+                    s_list.style.height = null; 
                     s_list.parentElement.style.height = "unset";
                 } else {//mobile
                     console.log(sum, window.innerHeight/2)
