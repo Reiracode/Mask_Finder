@@ -56,7 +56,7 @@
                 return new L.DivIcon({ 
                     // html: '<div><span>' + childCount + '</span></div>', 
                     html: '<div></div>', 
-                    className: 'marker-cluster' +group, 
+                    className: 'marker-cluster' + group, 
                     iconSize: new L.Point(40, 40) 
                 });
             }
@@ -111,12 +111,8 @@
         console.log("重新整理")
         document.querySelector('.county').value="";
         document.querySelector('.district').value="";
-        // getYourPosition()
-        //     .then(yourPositon = [23.005838, 120.191035])
-        //     .then(console.log(yourPositon))
-        //     .then(getMymarker())
-        //     .then(findMask(filterRange()));
         getYourPosition()
+            // .then(yourPositon = [23.005838, 120.191035])
             .then(result => yourPositon = result)
             .then(getMymarker())
             // .then(console.log(yourPositon))
@@ -193,8 +189,8 @@
     }))
 
     // 設定日期
-    var  userday = document.getElementById('userday');
-    var  usersetbtn = document.getElementById('date_btn');
+    const  userday = document.getElementById('userday');
+    const  usersetbtn = document.getElementById('date_btn');
     userday.value =  !!localStorage.getItem('maskDay')
         ? localStorage.getItem('maskDay')
         : ""
@@ -202,6 +198,7 @@
         localStorage.setItem('maskDay', userday.value);
     })
 
+    //經緯度算距離
     function getDistance(origin, destination) {
         lat1 = origin[0]
         lng1 = origin[1]
@@ -370,6 +367,7 @@
         s_list = (!!document.querySelector('.overlay.active>.datalist')) 
                     ? document.querySelector('.overlay.active>.datalist')
                     : document.querySelector('#list>.datalist');
+        // s_list = document.querySelector('.overlay.active>.datalist')       
 
         if (!(callback.length)){
             s_list.innerHTML="no data"
@@ -450,6 +448,7 @@
         });
         map.doubleClickZoom.disable();
         sideInfo = [...s_list.children];
+        // console.log(sideInfo)
         sideInfo.forEach(dom => dom.addEventListener('click', getStore))
         checkInfo = [...document.querySelectorAll(`#${s_list.id}` + ' .addtolist')];
         checkInfo.forEach(dom => dom.addEventListener('click', intoList))
