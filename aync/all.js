@@ -23,7 +23,7 @@
     var callbackData;
     var maskStore = JSON.parse(localStorage.getItem('maskStore')) || [];
     // markersRef)=map上所有的點
-    var markers, markersRef = [], mymarker,map;
+var markers, markersRef = [], mymarker, map, mymap;
     //ICON
     var greenIcon = createIcon('icon-1');
     var redIcon = createIcon('icon-2');
@@ -40,7 +40,7 @@
 
     //DEAFULT map on load
     function drawMap(){
-        map = L.map('map').on('load', onMapLoad).setView(yourPositon, 13);
+        mymap = L.map('maskmap').on('load', onMapLoad).setView(yourPositon, 13);
         markers = L.markerClusterGroup({
             maxClusterRadius: 120,
             iconCreateFunction: function (cluster) {
@@ -64,7 +64,7 @@
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map); 
+        }).addTo(mymap); 
 
         getMymarker()
     }
@@ -107,7 +107,7 @@
     });
 
     function relocate() {
-        map.removeLayer(mymarker);
+        mymap.removeLayer(mymarker);
         console.log("重新整理")
         document.querySelector('.county').value="";
         document.querySelector('.district').value="";
@@ -121,7 +121,7 @@
 
     function getMymarker() {
         mymarker = L.marker(yourPositon, { icon: userIcon })
-                    .addTo(map).bindPopup("現在位置").openPopup();
+                    .addTo(mymap).bindPopup("現在位置").openPopup();
     }
 
     //left menu and overlay
@@ -188,15 +188,7 @@
         e.currentTarget.parentNode.classList.toggle('ctrl_size');
     }))
 
-    // 設定日期
-    const  userday = document.getElementById('userday');
-    const  usersetbtn = document.getElementById('date_btn');
-    userday.value =  !!localStorage.getItem('maskDay')
-        ? localStorage.getItem('maskDay')
-        : ""
-    usersetbtn.addEventListener('click',()=>{
-        localStorage.setItem('maskDay', userday.value);
-    })
+
 
     //經緯度算距離
     function getDistance(origin, destination) {
@@ -304,6 +296,16 @@
         return res
     }
 
+    // 設定日期
+// const userday = document.getElementById('userday');
+//     const usersetbtn = document.getElementById('date_btn');
+// userday.value = !!localStorage.getItem('maskDay')
+//         ? localStorage.getItem('maskDay')
+//         : ""
+//     usersetbtn.addEventListener('click', () => {
+//         localStorage.setItem('maskDay', userday.value);
+//     })
+
 
     function getDatInfo() {
         const dayInfo = ['日', '一', '二', '三', '四', '五', '六']
@@ -318,6 +320,33 @@
         document.getElementById('buyday').innerText = dayInfo[day]
         document.getElementById('dayno').innerHTML =  daydescript
     }
+
+function setInputDate(_id) {
+    var _dat = document.querySelector(_id);
+    var hoy = new Date(),
+        d = hoy.getDate(),
+        m = hoy.getMonth() + 1,
+        y = hoy.getFullYear(),
+        data;
+
+    if (d < 10) {
+        d = "0" + d;
+    };
+    if (m < 10) {
+        m = "0" + m;
+    };
+
+    data = y + "-" + m + "-" + d;
+    console.log(data);
+    _dat.value = data;
+};
+
+setInputDate("#userday");
+const usersetbtn = document.getElementById('date_btn');
+usersetbtn.addEventListener('click', () => {
+    // localStorage.setItem('maskDay', userday.value);
+    localStorage.setItem('maskDay', [userday.value, userps.value]);
+})
 
     //選擇行政區
     seltDist.addEventListener('change', (event) => {
@@ -377,7 +406,7 @@
         }
 
         var focus = callback[0].geometry.coordinates;
-        map.setView([focus[1], focus[0]], 13)
+        mymap.setView([focus[1], focus[0]], 13)
 
         var el = ""
         callback.sort(({ geometry: { coordinates: a } }, { geometry: { coordinates: b } }) => {
@@ -406,6 +435,7 @@
 
             s_list.innerHTML = el;
             //********************************************* */
+            // popUp 時設定 className
             var customOptions = {'maxWidth': '500','minWidth': '170'}
 
             marker.bindPopup(
@@ -425,7 +455,7 @@
 
 
         s_list.scrollTo(0, 0)
-        map.addLayer(markers);
+        mymap.addLayer(markers);
 
         // markers.on("click", markClick);
         if (s_list.id == "lovestorelist") {justifyHeight(s_list)} 
@@ -446,9 +476,9 @@
                 document.getElementById(`${s_list.id}`).scrollTo(0, sum)
             }
         });
-        map.doubleClickZoom.disable();
+        mymap.doubleClickZoom.disable();
         sideInfo = [...s_list.children];
-        // console.log(sideInfo)
+        console.log(sideInfo)
         sideInfo.forEach(dom => dom.addEventListener('click', getStore))
         checkInfo = [...document.querySelectorAll(`#${s_list.id}` + ' .addtolist')];
         checkInfo.forEach(dom => dom.addEventListener('click', intoList))

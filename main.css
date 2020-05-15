@@ -67,7 +67,7 @@
         100% { transform: rotate(360deg); }
     }
 
-    #map { 
+    #maskmap { 
         flex:3;
     }
 
@@ -266,7 +266,7 @@
             flex-direction:column;
         }
 
-        #map{
+        #maskmap{
             position: relative;
         }
 
@@ -301,7 +301,7 @@
             /* cursor: pointer; */
             width:50px;
             transition: all .5s;
-
+cursor: pointer;
     position: absolute;
     /* top: -12%; */
     top: calc(0% - 46px);
@@ -516,7 +516,7 @@
     }
 
     #personal.overlay{
-        height: 120px;
+        height: 35vh;
         padding: 15px;
         background-color: #90b1ec;
         color: #fff;
@@ -526,6 +526,7 @@
     #personal input{
         padding: 10px;
         margin:5px 0;
+        width: 320px;
     }
     #personal p{
         display: flex;
@@ -603,3 +604,50 @@
             height:50vh;
         }
     }
+
+/* 
+     #maskmap{
+            position: relative;
+            flex:3;
+        } */
+.user2 {
+    position: relative;
+    /* display: inline-block; */
+    display: block;
+    margin: 15px 0;
+}
+.user2 input {
+    width: 100%;
+    font-size: 15px;
+    padding: 12px;
+    text-indent: 45px;
+    background: #fff;
+    border: none;
+    outline: none;
+}
+.user2::before {
+    height: 80%;
+    content: '';
+    width: 1px;
+    border-right: 1px solid #d5c9c9;
+    position: absolute;
+    left: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.cs{
+    position: absolute;
+    top: calc(50% - 0.5em);
+    font-size: 20px;
+    margin: 0 5px;
+    color: #888;
+    left: 10px;
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    /* display: none; */
+    color:grey;
+    -webkit-appearance: none;
+}
