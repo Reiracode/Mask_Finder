@@ -667,15 +667,14 @@ button#date_btn,button#date_btn:hover, button#date_btn:focus, button#date_btn:ac
 }
  
 
-/* input[type='date']{
-    display:block;
-    Solution 1
+input[type='date']{
+    /* display:block; */
     -webkit-appearance: textfield;
     -moz-appearance: textfield;
-    min-height: 1.2em;
-} */
+    /* min-height: 1.2em; */
+}
 
-
+/* 
 /* input[type='date']::placeholder {
     text-indent: 2.3em;
-} */
+} */ 
