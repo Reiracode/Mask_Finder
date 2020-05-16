@@ -153,7 +153,7 @@ var markers, markersRef = [], mymarker, map, mymap;
             } else {
                 switch (targetID) {
                     case "personal":
-                        // getStorage();
+                        getMyRecord();
                         break;
                     case "mystore":
                         findMask(getStorage());
@@ -306,7 +306,6 @@ var markers, markersRef = [], mymarker, map, mymap;
 //         localStorage.setItem('maskDay', userday.value);
 //     })
 
-
     function getDatInfo() {
         const dayInfo = ['日', '一', '二', '三', '四', '五', '六']
         let day = new Date().getDay();
@@ -338,15 +337,62 @@ function setInputDate(_id) {
 
     data = y + "-" + m + "-" + d;
     console.log(data);
-    _dat.value = data;
 };
 
-setInputDate("#userday");
-const usersetbtn = document.getElementById('date_btn');
-usersetbtn.addEventListener('click', () => {
-    // localStorage.setItem('maskDay', userday.value);
-    localStorage.setItem('maskDay', [userday.value, userps.value]);
-})
+function getMyRecord(){
+    setInputDate("#userday");
+    var usersetbtn = document.getElementById('date_btn');
+    var thisdiv = document.querySelector('#personal');
+    var maskDay = JSON.parse(localStorage.getItem("maskDay"))||[];
+
+    get();
+    usersetbtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        let newItem = {
+            userday: userday.value,
+            userps: userps.value
+        };
+        console.log(newItem)
+        console.log(maskDay)
+
+        if (maskDay.some(item => item.userday == newItem.userday)){
+            console.log("data already exited")
+        }else{
+            maskDay.push(newItem)
+            localStorage.setItem('maskDay', JSON.stringify(maskDay));
+            get();
+        }
+
+
+      
+    })
+
+    function get(){
+    var element = document.querySelector('.myrecord');
+    if (!!element) { element.parentNode.removeChild(element); }
+    
+        if (!!maskDay.length) {
+            console.log(maskDay)
+            var newDiv = document.createElement("div");
+            newDiv.className = "myrecord";
+            // if (!!maskDay) {
+                var tnode = "";
+                maskDay.forEach(el => {
+                    console.log(`${el.userday}`)
+                    tnode += `<div><span>${el.userday}</span><span>${el.userps}</span></div>`
+                })
+                tnode = `<div>${tnode}</div>`;
+                newDiv.innerHTML = tnode;
+                // thisdiv.innerHTML = tnode;
+                thisdiv.appendChild(newDiv);
+            // }
+        }else{
+
+        }
+    }
+
+}
+
 
     //選擇行政區
     seltDist.addEventListener('change', (event) => {

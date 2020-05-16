@@ -516,8 +516,8 @@ cursor: pointer;
     }
 
     #personal.overlay{
-        height: 35vh;
-        padding: 15px;
+        height: unset;
+        padding: 15px 20px;
         background-color: #90b1ec;
         color: #fff;
         clip-path:unset;
@@ -526,7 +526,7 @@ cursor: pointer;
     #personal input{
         padding: 10px;
         margin:5px 0;
-        width: 320px;
+        /* width: 320px; */
     }
     #personal p{
         display: flex;
@@ -651,3 +651,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color:grey;
     -webkit-appearance: none;
 }
+button#date_btn,button#date_btn:hover, button#date_btn:focus, button#date_btn:active, button#date_btn.active {
+    background-color: #c8d8dd;
+    color: #fff;
+}
+
+.myrecord>div{
+    /* width:340px; */
+    border:1px solid;
+    margin-top:35px;
+}
+
+.myrecord>div>div>:nth-child(1){
+    margin-right: 30px;
+}
+ 
