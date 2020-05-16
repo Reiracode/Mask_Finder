@@ -523,11 +523,11 @@ cursor: pointer;
         clip-path:unset;
     }
 
-    #personal input{
+    /* #personal input{
         padding: 10px;
         margin:5px 0;
-        /* width: 320px; */
-    }
+          width: 320px; 
+    } */
     #personal p{
         display: flex;
         justify-content: space-around;
