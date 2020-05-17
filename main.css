@@ -652,9 +652,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color:grey;
     -webkit-appearance: none;
 }
-button#date_btn,button#date_btn:hover, button#date_btn:focus, button#date_btn:active, button#date_btn.active {
+button.btn_date,button.btn_date:hover, button.btn_date:focus, button.btn_date:active, button.btn_date.active {
     background-color: #c8d8dd;
     color: #fff;
+}
+button.btn_date:hover{
+    background-color: #849da5;
 }
 
 .myrecord>div{

@@ -342,11 +342,18 @@ function setInputDate(_id) {
 function getMyRecord(){
     setInputDate("#userday");
     var usersetbtn = document.getElementById('date_btn');
+    var userdelbtn = document.getElementById('date_btn_clear');
     var thisdiv = document.querySelector('#personal');
-    var maskDay = JSON.parse(localStorage.getItem("maskDay"))||[];
-
+    // var maskDay = JSON.parse(localStorage.getItem("maskDay"))||[];
     get();
+    userdelbtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem("maskDay");
+        get();
+    });
+
     usersetbtn.addEventListener('click', (e) => {
+        var maskDay = JSON.parse(localStorage.getItem("maskDay")) || [];
         e.preventDefault();
         let newItem = {
             userday: userday.value,
@@ -356,41 +363,34 @@ function getMyRecord(){
         console.log(maskDay)
 
         if (maskDay.some(item => item.userday == newItem.userday)){
-            console.log("data already exited")
+            // alert("data already exited")
+            document.querySelector('#messager_err').innerHTML ="data already exited"
         }else{
+            document.querySelector('#messager_err').innerHTML = ""
             maskDay.push(newItem)
             localStorage.setItem('maskDay', JSON.stringify(maskDay));
             get();
         }
-
-
-      
     })
 
     function get(){
-    var element = document.querySelector('.myrecord');
-    if (!!element) { element.parentNode.removeChild(element); }
-    
+        var maskDay = JSON.parse(localStorage.getItem("maskDay"))||[];
+        var element = document.querySelector('.myrecord');
+        if (!!element) { element.parentNode.removeChild(element); }
         if (!!maskDay.length) {
-            console.log(maskDay)
             var newDiv = document.createElement("div");
             newDiv.className = "myrecord";
-            // if (!!maskDay) {
-                var tnode = "";
-                maskDay.forEach(el => {
-                    console.log(`${el.userday}`)
-                    tnode += `<div><span>${el.userday}</span><span>${el.userps}</span></div>`
-                })
-                tnode = `<div>${tnode}</div>`;
-                newDiv.innerHTML = tnode;
-                // thisdiv.innerHTML = tnode;
-                thisdiv.appendChild(newDiv);
-            // }
-        }else{
-
+            var tnode = "";
+            maskDay.forEach(el => {
+                console.log(`${el.userday}`)
+                tnode += `<div><span>${el.userday}</span><span>${el.userps}</span></div>`
+            })
+            tnode = `<div>${tnode}</div>`;
+            newDiv.innerHTML = tnode;
+            // thisdiv.innerHTML = tnode;
+            thisdiv.appendChild(newDiv);       
         }
     }
-
 }
 
 
