@@ -340,6 +340,7 @@ function setInputDate(_id) {
 };
 
 function getMyRecord(){
+    document.querySelector('#messager_err').innerHTML = ""
     setInputDate("#userday");
     var usersetbtn = document.getElementById('date_btn');
     var userdelbtn = document.getElementById('date_btn_clear');
@@ -364,7 +365,7 @@ function getMyRecord(){
 
         if (maskDay.some(item => item.userday == newItem.userday)){
             // alert("data already exited")
-            document.querySelector('#messager_err').innerHTML ="data already exited"
+            document.querySelector('#messager_err').innerHTML ="此日期資料已存在"
         }else{
             document.querySelector('#messager_err').innerHTML = ""
             maskDay.push(newItem)
