@@ -113,7 +113,12 @@ var markers, markersRef = [], mymarker, map, mymap;
         document.querySelector('.district').value="";
         getYourPosition()
             // .then(yourPositon = [23.005838, 120.191035])
-            .then(result => yourPositon = result)
+            // .then(result=> console.log(result))
+            // .then(result => yourPositon = result)
+            .then((result)=>{
+                console.log(result);
+                yourPositon = result;
+            })
             .then(getMymarker())
             // .then(console.log(yourPositon))
             .then(findMask(filterRange()));
