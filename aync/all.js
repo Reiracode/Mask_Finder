@@ -104,6 +104,7 @@ var markers, markersRef = [], mymarker, map, mymap;
         findMask(filterRange())
     }).catch((err) => {
         console.log(err.message)
+        alert(err.message)
     });
 
     function relocate() {
