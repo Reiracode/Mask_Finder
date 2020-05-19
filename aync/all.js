@@ -451,9 +451,17 @@ function getMyRecord(){
         // s_list = document.querySelector('.overlay.active>.datalist')       
 
         if (!(callback.length)){
-            s_list.innerHTML="no data"
+            // s_list.innerHTML="no data"
             s_list.style.height = "100px"
+            // s_list.style.backgroundColor = "#90b1ec"
+            // s_list.style.color = "#FFF"
+            var nodata = `<p class="nodata">目前沒有資料</p>`
+            s_list.innerHTML = nodata;
             s_list.parentNode.style.height = "unset";
+
+
+
+
             return
         }
 
@@ -544,8 +552,19 @@ function getMyRecord(){
             var listlen = document.querySelectorAll(`#${s_list.id}>.store_detail`)
 
             if (!(listlen.length)) { 
-                s_list.innerHTML="no data"
+                // s_list.innerHTML="no data"
                 s_list.style.height ="100px"
+
+                var nodata = `<p class="nodata">目前沒有資料</p>`
+                s_list.innerHTML = nodata;
+                s_list.parentNode.style.height = "unset";
+
+                // s_list.innerHTML = "no data"
+                // s_list.style.height = "100px"
+                // s_list.style.backgroundColor = "#90b1ec"
+                // s_list.style.color = "#FFF"
+                // s_list.parentNode.style.height = "unset";
+
                 return
             };
 

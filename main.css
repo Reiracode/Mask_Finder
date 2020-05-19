@@ -682,3 +682,9 @@ input[type='date']{
 /* input[type='date']::placeholder {
     text-indent: 2.3em;
 } */ 
+
+.nodata{
+    height: 100%;
+    background-color: #90b1ec;
+    color:#fff;   
+}
