@@ -519,7 +519,7 @@ function getMyRecord(){
         mymap.addLayer(markers);
 
         // markers.on("click", markClick);
-        if (s_list.id == "lovestorelist") {justifyHeight(s_list)} 
+        if (s_list.id == "lovestorelist" || s_list.id == "storelist") {justifyHeight(s_list)} 
 
         //marker 點時，算高度到scroll
         markers.on("click", (event)=>{
@@ -548,7 +548,7 @@ function getMyRecord(){
     //每次checked 都要調整
     function justifyHeight(s_list) {
         var mq = window.matchMedia("(max-width: 600px)");
-        if (s_list.id == "lovestorelist") {
+        if (s_list.id == "lovestorelist" || s_list.id == "storelist") {
             var sum = 0;
             var listlen = document.querySelectorAll(`#${s_list.id}>.store_detail`)
 
