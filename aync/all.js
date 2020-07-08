@@ -202,13 +202,23 @@ var markers, markersRef = [], mymarker, map, mymap;
         lng1 = origin[1]
         lat2 = destination[0]
         lng2 = destination[1]
+        // console.log(lat1,lng1,lat2,lng2)
         return 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1 - lat2) / 360), 2) + Math.cos(Math.PI * lat1 / 180) * Math.cos(Math.PI * lat2 / 180) * Math.pow(Math.sin(Math.PI * (lng1 - lng2) / 360), 2)))
     }
 
     // 顯示1KM距離內的藥局
+    //yourPositon[25.051136, 121.5070208]
     function filterRange(){
-        const result = infoData.filter(item => getDistance([yourPositon[0], yourPositon[1]], [item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1);
-        console.log(result);
+       
+        
+        // const result1 = infoData.map(item => getDistance([yourPositon[0], yourPositon[1]], [item.geometry.coordinates[1], item.geometry.coordinates[0]]));
+        // console.log(result1)
+
+        // const result2 = result1.filter(item => item< 3);
+        // console.log(result2)
+
+        const result = infoData.filter(item => getDistance([yourPositon[0], yourPositon[1]], [item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 3);
+        //console.log(result)
         return result;     
     }
 
@@ -441,6 +451,7 @@ function getMyRecord(){
     }
 
     function findMask(callback) {
+        // console.log(callback)
         callbackData = callback;
 
         markers.clearLayers();
