@@ -22,8 +22,9 @@
     //filterdata
     var callbackData;
     var maskStore = JSON.parse(localStorage.getItem('maskStore')) || [];
-    // markersRef)=map上所有的點
-var markers, markersRef = [], mymarker, map, mymap;
+
+    // 三、leaflet markersRef)=map上所有的點
+    var markers, markersRef = [], mymarker, map, mymap;
     //ICON
     var greenIcon = createIcon('icon-1');
     var redIcon = createIcon('icon-2');
@@ -41,6 +42,9 @@ var markers, markersRef = [], mymarker, map, mymap;
     //DEAFULT map on load
     function drawMap(){
         mymap = L.map('maskmap').on('load', onMapLoad).setView(yourPositon, 13);
+
+        //markerClusterGroup
+        // Customising the Clustered Markers
         markers = L.markerClusterGroup({
             maxClusterRadius: 120,
             iconCreateFunction: function (cluster) {
@@ -69,19 +73,32 @@ var markers, markersRef = [], mymarker, map, mymap;
         getMymarker()
     }
 
-    /*   navigator.geolocation     */
+    /*   navigator.geolocation   未定義reject  */
     function getYourPosition() {
-        return new Promise(resolve => {
+        // return new Promise(resolve => {
+        //     if (navigator.geolocation) {
+        //         navigator.geolocation.getCurrentPosition(position => {
+        //             resolve([position.coords.latitude, position.coords.longitude])
+        //         })
+        //     }
+        //     else {
+        //         reject(Error("It broke"));
+        //     }
+        // });
+
+        return new Promise((resolve, reject) => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
                     resolve([position.coords.latitude, position.coords.longitude])
                 })
-            }
-            else {
+            }else {
                 reject(Error("It broke"));
             }
-        });
+        })
     }
+
+
+
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     function getMaskInfo() {
         return new Promise(resolve => {
@@ -209,15 +226,7 @@ var markers, markersRef = [], mymarker, map, mymap;
     // 顯示1KM距離內的藥局
     //yourPositon[25.051136, 121.5070208]
     function filterRange(){
-       
-        
-        // const result1 = infoData.map(item => getDistance([yourPositon[0], yourPositon[1]], [item.geometry.coordinates[1], item.geometry.coordinates[0]]));
-        // console.log(result1)
-
-        // const result2 = result1.filter(item => item< 3);
-        // console.log(result2)
-
-        const result = infoData.filter(item => getDistance([yourPositon[0], yourPositon[1]], [item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 3);
+        const result = infoData.filter(item => getDistance([yourPositon[0], yourPositon[1]], [item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1);
         //console.log(result)
         return result;     
     }
@@ -234,9 +243,10 @@ var markers, markersRef = [], mymarker, map, mymap;
 
     function markClick(event) {
         let id = event.layer._leaflet_id;
+        console.log(id)
         let markIndex = markersRef.map(items => items._leaflet_id) 
                         .indexOf(id);        
-        // console.log(markIndex);
+        console.log(markIndex);
         //點地圖上icon位置的 ，找到click id的index 15
         //scroll對應到overlay id的位子
         if (!!document.querySelector('.overlay.active>.datalist')) {
@@ -259,7 +269,10 @@ var markers, markersRef = [], mymarker, map, mymap;
     } 
 
     //fetch prmoise
+    //click div store-detail openPopup
     function getStore(){ 
+        console.log(this)
+        console.log(markersRef)
         if(!markersRef[sideInfo.indexOf(this)].isPopupOpen()){
             let marker = markersRef[sideInfo.indexOf(this)]    
             markers.zoomToShowLayer(marker, function() {
@@ -509,7 +522,7 @@ function getMyRecord(){
             //********************************************* */
             // popUp 時設定 className
             var customOptions = {'maxWidth': '500','minWidth': '170'}
-
+// bindPopup
             marker.bindPopup(
                 `<h2>${properties.name}</h2>
                     <p><i class="fas fa-map-marker-alt"></i>${distance >= 1 ? distance.toFixed(1) + 'km' : (distance * 1000 >> 0) + 'm'}</p>
@@ -520,6 +533,8 @@ function getMyRecord(){
                     <span data-size="child">兒童${properties.mask_child}</span>
                     </div>       
                 `, customOptions)
+
+                console.log(marker)
 
             markersRef.push(marker);
             markers.addLayer(marker); 
@@ -597,7 +612,7 @@ function getMyRecord(){
                     var half = window.innerHeight/2;
                     if (sum < half ) {
                         console.log("資料 < 1/2")
-                        s_list.style.height = "unset";
+                        // s_list.style.height = "unset";
                     }else{
                         console.log("資料 > 1/2") 
                         s_list.style.height =  null; 
