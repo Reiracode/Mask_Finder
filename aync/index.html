@@ -19,35 +19,36 @@
     <div class="main">
         <div id="maskmap"></div>
 
-        <div class="taboverlay">
+        <!-- <div class="taboverlay"> -->
             <div class="overlay"  data-id="personal" id="personal">
-                <div class="close_overlay"><i class="fas fa-times"></i></div>
+                <a class="close_overlay"><i class="fas fa-times"></i></a>
     
-                <form id="form_checkout1" action="#">
-                <label class="user2">
-                <div class="cs"><i class="far fa-envelope"></i></div>
-                <input type="date" placeholder="日期" name="userday"   id="userday"/>
-                </label>
+                <form id="form_dateset">
+                    <div>
+                        <label class="lb_icon" for="userday"><i class="far fa-calendar-alt"></i></label>
+                        <input type="date" placeholder="日期" name="userday"   id="userday"/>   
+                    </div>
 
-                <label class="user2">
-                <div class="cs"><i class="far fa-envelope"></i></div>
-                <input type="text" placeholder="備註" name="userps"   id="userps" >
-                </label> 
-                <button class="btn_date" id="date_btn">確定</button> 
-                <button class="btn_date" id="date_btn_clear">清除資料</button> 
+                    <div>
+                        <label class="lb_icon" for="userps"><i class="far fa-clipboard"></i></label> 
+                        <input type="text" placeholder="備註" name="userps"   id="userps" >
+                    </div>
+
+                    <button class="btn_date" id="date_btn">確定</button> 
+                    <button class="btn_date" id="date_btn_clear">清除資料</button> 
                 </form>
                 <div id="messager_err"></div>
             </div>
 
             <div class="overlay"  data-id="mystore"  id="mystore">
                 <button class="open_arrow"  ><i class="fas fa-angle-up"></i></button>
-                <div class="close_overlay"><i class="fas fa-times"></i></div>
+                <a class="close_overlay"><i class="fas fa-times"></i></a>
                 <div class="datalist"   id="lovestorelist" ></div>
             </div>
 
             <div class="overlay"  data-id="list" id="list">
                 <button class="open_arrow"   ><i class="fas fa-angle-up"></i></button>
-                <div class="close_overlay"><i class="fas fa-times"></i></div>
+                <a class="close_overlay"><i class="fas fa-times"></i></a>
                 <div class="my-selector-c">
                     <div class="list_selector">
                         <select class="county select-selected"></select>  
@@ -64,27 +65,26 @@
                 </div>          
                 <div class="datalist"  id="storelist"></div>     
             </div>
-        </div>
+        <!-- </div> -->
 
         <ul class="mobile_menu" id="menu_bar" data-id="menu_bar">
             <li class="list_menu" data-id="personal">
-                <i class="fas fa-user"></i>
+                <a><i class="fas fa-user"></i></a>
                 <span class="dialog">個人記錄</span>
             </li>
 
             <li class="list_menu"  data-id="mystore">
-                <i class="fas fa-folder-open"></i>
+                <a><i class="fas fa-folder-open"></i></a>
                 <span class="dialog">我的最愛</span>
             </li>
 
             <li class="list_menu" data-id="list">
-                <i class="fas fa-calendar-plus"></i>
+                <a><i class="fas fa-calendar-plus"></i></a>
                 <span class="dialog">search</span>
             </li>
 
-              <li class="list_menu" id="relocate" data-id="relocate">
-            <!-- <li class="list_menu" data-id="relocate"> -->
-                <i class="fas fa-compass"></i>      
+            <li class="list_menu" id="relocate" data-id="relocate">
+                <a><i class="fas fa-compass"></i></a>     
                 <span class="dialog">重新定位</span>
             </li>
         </ul>
