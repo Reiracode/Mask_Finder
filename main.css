@@ -583,10 +583,10 @@ cursor: pointer;
         
         /* .half_h{
             height: 50vh;
-        }
+        } */
         .half_a{
             height: auto;
-        } */
+        }
 
         .overlay[data-id="mystore"] {
             height:30vh;

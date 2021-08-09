@@ -460,11 +460,19 @@ function justifyHeight(s_list) {
     }
     console.log(sum);
     console.log(window.innerHeight);
+
     if (sum < window.innerHeight) {
-      console.log("HEIGHT<SUM");
+      console.log("SUM<window.innerHeight");
       s_list.parentElement.classList.add("height_auto");
     } else {
       s_list.parentElement.classList.remove("height_auto");
+    }
+
+    //mobile
+    if (mq.matches) {
+      if (sum < (window.innerHeight * 1) / 3) {
+        s_list.parentElement.classList.remove("ctrl_size");
+      }
     }
   }
 }
@@ -539,7 +547,30 @@ closeBtn.forEach(dom =>
 
 open_arrow.forEach(dom =>
   dom.addEventListener("click", e => {
-    e.currentTarget.classList.toggle("active");
-    e.currentTarget.parentNode.classList.toggle("ctrl_size");
+    //  overlay
+    // console.log(e.currentTarget.parentNode);
+    console.log(e.currentTarget.parentNode.id);
+    var sum = e.currentTarget.parentNode.offsetHeight;
+    // if (this.parentNode.parentNode.id == "lovestorelist") {
+
+    let mq = window.matchMedia("(max-width: 600px)");
+    // //mobile
+    if (mq.matches && e.currentTarget.parentNode.id=="mystore") {
+      const sum = document.querySelector("#mystore>.datalist").children.length;
+      console.log(sum)
+      if (sum < 2) {
+        e.currentTarget.parentNode.classList.add("half_a");
+      } else {
+         e.currentTarget.parentNode.classList.remove("half_a");
+         e.currentTarget.classList.toggle("active");
+         e.currentTarget.parentNode.classList.toggle("ctrl_size");
+      }
+    } else {
+          e.currentTarget.classList.toggle("active");
+          e.currentTarget.parentNode.classList.toggle("ctrl_size");
+    }
+
+    // e.currentTarget.classList.toggle("active");
+    // e.currentTarget.parentNode.classList.toggle("ctrl_size");
   })
 );
