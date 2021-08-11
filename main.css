@@ -1,10 +1,3 @@
-    /* https://iconmonstr.com/plus-4-png/ */
-    /* @font-face {
-        font-family: 'Helvetica';
-        src: url('./fonts/jf-openhuninn.ttf') format("opentype"),
-            url('./fonts/jf-openhuninn.woff') format("woff")
-    } */
-
     *{
         padding:0;
         margin:0;
@@ -84,6 +77,54 @@
     .open_arrow{
         display:none;
     }
+/* input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+    width: 15px;
+    padding: 0px;
+    margin: 0px;
+    margin-top: 10px;
+} */
+
+/* Removes the clear button from date inputs */
+input[type="date"]::-webkit-clear-button {
+    display: none;
+}
+
+/* Removes the spin button */
+input[type="date"]::-webkit-inner-spin-button { 
+    display: none;
+}
+
+/* Always display the drop down caret */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: #2c3e50;
+}
+
+/* A few custom styles for date inputs */
+input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    color: #95a5a6;
+    font-family: "Helvetica", arial, sans-serif;
+    font-size: 18px;
+    border:1px solid #ecf0f1;
+    background:#ecf0f1;
+    padding:5px;
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+input[type="date"], focus {
+    color: #95a5a6;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
+
+
+
+
 
     .select-selected{
         padding: 10px 5px;
@@ -113,7 +154,7 @@
     }
 
     .list_selector{
-        padding: 10px;
+        /* padding:     10px; */
         display: flex;
         justify-content: space-around;
     }
@@ -133,9 +174,15 @@
     .store_title{
         display:  inline-block;
     }
+    .store_detail .fas{
+        margin-right: 10px;
+    }
     
     .store_title span{
         font-size: 0.8rem;
+    }
+    .store_title span .fas{
+        margin-right:       0px;
     }
 
     .store_detail:last-child{
@@ -176,7 +223,7 @@
 
     #mask_sel{
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
     }
 
     button{
@@ -230,12 +277,6 @@
         width:50%;
     }
 
-    /* .leaflet-popup-content .mask_size{
-        width:150px;
-    } */
-
-
-
     @media only screen and (max-width: 600px) {
         @keyframes fadeinHand {
             0%{
@@ -280,26 +321,17 @@
         }
 
         .open_arrow{
-            display: block;
-            border-radius: 12px 12px 0 0;
+            display:block;
+            text-align: center;
             background-color:#90b1ec;
             color: white;
-
-            /* position: relative;; */
-            /* margin-left: calc(50% - 25px); 
-            z-index: 9999;            */
-            /* cursor: pointer; */
-            width:50px;
             transition: all .5s;
-cursor: pointer;
-    position: absolute;
-    /* top: -12%; */
-    top: calc(0% - 46px);
-    left: calc(50% - 25px);
-    border-radius: 5px 5px 0 0;
-    cursor: pointer;
-    /* width: 100px;
-    height: 100px; */
+            cursor: pointer;
+            position: absolute;
+            top: calc(0% - 46px);
+            left: calc(50% - 25px);
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
         }
 
         .open_arrow.active,.open_arrow.hover{
@@ -307,23 +339,24 @@ cursor: pointer;
             background-color: #8cbcf1;
         }  
 
-        .open_arrow svg{
+        .open_arrow .fas{
             font-family: "Font Awesome 5 Free";
             font-weight: 900;
-            font-size: 36px; 
+            font-size: 40px; 
             pointer-events: none;
             transform: rotate(0deg);
+            padding: 3px 15px;
         }
 
-        .open_arrow.active svg{
+        .open_arrow.active .fas{
             transform: rotate(180deg);
         }
 
         .store_detail{
             margin-bottom: 1px;
             padding: 1rem 2rem;
- 
         }
+
         .store_title{
             font-size: 1.2rem;
         }
@@ -341,29 +374,19 @@ cursor: pointer;
 
 
     /* cluster map */
-    /* .marker-cluster-small {
-        background-color:rgb(178, 175, 255) ;  
+    .marker-cluster-small,.marker-cluster-medium, .marker-cluster-large {
         background-color:#fff;
-        background-size: cover;
-        background-image: url('./plus.png');  
-    } */
+    }
     .marker-cluster-small div {
-        /* background-color:#fefffe; */
-        background-image: url('./cluster.png');
-        background-color:#fff;
-        background-size: cover;
+        background-color:#dec0fa;
     }
-    .marker-cluster-medium {
-        background-color:#fbfcf2;
-    }
+
     .marker-cluster-medium div { 
-        background-color: #fff32f;
+        background-color:#eeff96;
     }
-    .marker-cluster-large {
-        background-color:#a9b9fd;
-    }
+    
     .marker-cluster-large div {
-        background-color:#dbe0f7;
+        background-color:#f7f302;
     }
     .marker-cluster {
         background-clip: padding-box;
@@ -376,20 +399,22 @@ cursor: pointer;
         margin-top: 5px;
         text-align: center;
         border-radius: 15px;
-        font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        color: #987706;
+        font-weight: bold;
+        font-size: 14px;
     }
     .marker-cluster span {
         line-height: 30px;
     }
 
-    .mycluster{
+    /* .mycluster{
         width: 32px;
         height: 32px;
         line-height: 32px;
         background-image: url('./iconmonstr-location-9-48.png');
         background-size:cover;
         text-align: center;
-    }
+    } */
     .leaflet-interactive{
         /* width: 32px;
         height: 32px;
@@ -402,7 +427,7 @@ cursor: pointer;
     }
 
     .leaflet-popup-content p {
-        margin:10px 0;
+        margin:0;
     }
 
     .leaflet-popup-content svg{
@@ -424,23 +449,6 @@ cursor: pointer;
         justify-content: space-between;
         flex-direction: column;
     }
-
-    /* .mobile_menu  .list_menu{
-        cursor: pointer;
-        flex: 1;
-        text-align: center;
-        position: relative;
-        padding: 5px;
-        font-size: 1.2rem;
-    }
-
-    .list_menu svg{
-        pointer-events: none;
-    }
-
-    .list_menu:hover,  .list_menu.active{
-            color:#e9ff00;
-        } */
 
     .list_menu a{
         display: block;
@@ -550,7 +558,11 @@ cursor: pointer;
         display: flex;
         flex-flow: column; 
     }
-    .height_auto{
+    /* .height_auto{
+        height: auto;
+    } */
+
+    .overlay[data-id="mystore"].height_auto {
         height: auto;
     }
 
@@ -568,7 +580,7 @@ cursor: pointer;
             left: 0;
             bottom: 37px;
             top:unset;
-            height: unset;
+            height: auto;
             border-bottom: 1px solid #fff;
         }
         .overlay.active{
@@ -581,18 +593,14 @@ cursor: pointer;
             height: 50vh;
         }
         
-        /* .half_h{
-            height: 50vh;
-        } */
-        .half_a{
-            height: auto;
-        }
-
         .overlay[data-id="mystore"] {
             height:30vh;
         }
         .overlay[data-id="mystore"].ctrl_size{
             height: 50vh;
+        }
+        .half_a{
+            height: auto;
         }
 
         #personal.overlay{
@@ -609,8 +617,6 @@ cursor: pointer;
             justify-content:space-around;
             height: 37px;
         }
-
-
     }
 
 #form_dateset div{
@@ -679,7 +685,8 @@ button.btn_date:hover{
  
 
 .nodata{
-    height: 100%;
+    /* height: 100%; */
+    padding:20px 0;
     background-color: #90b1ec;
     color:#fff;  
     display: flex;
@@ -687,6 +694,38 @@ button.btn_date:hover{
     justify-content: center; 
 }
 
-/* .leaflet-popup{
-    width:400px;
-} */
+.leaflet-popup{
+    width:220px;
+}
+
+.leaflet-popup-content h2{
+    color: #9bb9f0;
+    font-size: 1.2rem;
+}   
+
+
+.leaflet-popup-content p{
+    font-size: 14px;
+    line-height: 24px;
+}
+    .icontype{
+        position: relative;
+        margin-left: 15px!important;
+    }
+
+    .icontype::before{
+        position:absolute;
+        left:-20px;
+        top:2px;
+        font-family: "Font Awesome 5 Free"; 
+        font-weight: 900; 
+        color:#bdd0f3;
+        content:attr(data-icon);
+    }
+#messager_err{
+    color:pink;
+}
+#messager_data div>span:first-child{
+    margin-right: 10px;
+
+}

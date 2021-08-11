@@ -6,67 +6,63 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="icon" href="../favico.png" type="image/png" />
     <title>Mask Finder</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"></link> 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css"></link>
     <link rel="stylesheet" href="../main.css">
     <!-- jsCalendar -->
-
 </head>
 <body>
     <div id="loading"><div class="loader"></div></div>
 
     <div class="main">
         <div id="maskmap"></div>
+        <div class="overlay"  data-id="personal" id="personal">
+            <a class="close_overlay dark"><i class="fas fa-times"></i></a>
+            <form id="form_dateset">
+                <div>
+                    <label class="lb_icon" for="userday"><i class="far fa-calendar-alt"></i></label>
+                    <input type="date"   name="userday"   id="userday" required="required"/>   
+                </div>
 
-        <!-- <div class="taboverlay"> -->
-            <div class="overlay"  data-id="personal" id="personal">
-                <a class="close_overlay"><i class="fas fa-times"></i></a>
-    
-                <form id="form_dateset">
-                    <div>
-                        <label class="lb_icon" for="userday"><i class="far fa-calendar-alt"></i></label>
-                        <input type="date" placeholder="日期" name="userday"   id="userday"/>   
-                    </div>
+                <div>
+                    <label class="lb_icon" for="userps"><i class="far fa-clipboard"></i></label> 
+                    <input type="text" placeholder="備註" name="userps"   id="userps" >
+                </div>
 
-                    <div>
-                        <label class="lb_icon" for="userps"><i class="far fa-clipboard"></i></label> 
-                        <input type="text" placeholder="備註" name="userps"   id="userps" >
-                    </div>
+                <button class="btn_date" id="date_set">確定</button> 
+                <button class="btn_date" id="date_set_clear">清除資料</button> 
+            </form>
+            <div id="messager_err"></div>
+            <div id="messager_data"></div>
+        </div>
 
-                    <button class="btn_date" id="date_btn">確定</button> 
-                    <button class="btn_date" id="date_btn_clear">清除資料</button> 
-                </form>
-                <div id="messager_err"></div>
-            </div>
+        <div class="overlay"  data-id="mystore"  id="mystore">
+            <a class="open_arrow"><i class="fas fa-angle-up"></i></a>
+            <a class="close_overlay dark"><i class="fas fa-times"></i></a>
+            <div class="datalist"   id="lovestorelist" ></div>
+        </div>
 
-            <div class="overlay"  data-id="mystore"  id="mystore">
-                <button class="open_arrow"  ><i class="fas fa-angle-up"></i></button>
-                <a class="close_overlay"><i class="fas fa-times"></i></a>
-                <div class="datalist"   id="lovestorelist" ></div>
-            </div>
+        <div class="overlay"  data-id="list" id="list">
+            <a class="open_arrow"><i class="fas fa-angle-up"></i></a>
+            <a class="close_overlay"><i class="fas fa-times"></i></a>
+            <div class="my-selector-c">
+                <div class="list_selector">
+                    <select class="county select-selected"></select>  
+                    <select class="district select-selected"></select>
+                </div>
 
-            <div class="overlay"  data-id="list" id="list">
-                <button class="open_arrow"   ><i class="fas fa-angle-up"></i></button>
-                <a class="close_overlay"><i class="fas fa-times"></i></a>
-                <div class="my-selector-c">
-                    <div class="list_selector">
-                        <select class="county select-selected"></select>  
-                        <select class="district select-selected"></select>
-                    </div>
+                <div id="mask_sel">
+                    <button class="mask_all active" data-item="all">ALL</button>
+                    <button class="mask_all" data-item="adult">Adult</button>
+                    <button class="mask_all" data-item="child">Child</button>  
+                </div>
 
-                    <div id="mask_sel">
-                        <button class="mask_all active" data-item="all">ALL</button>
-                        <button class="mask_all" data-item="adult">Adult</button>
-                        <button class="mask_all" data-item="child">Child</button>  
-                    </div>
-
-                    <!-- <p>星期<span id="buyday"></span>身分證末碼<span id="dayno"></span>可購買</p> -->
-                </div>          
-                <div class="datalist"  id="storelist"></div>     
-            </div>
-        <!-- </div> -->
-
+                <!-- <p>星期<span id="buyday"></span>身分證末碼<span id="dayno"></span>可購買</p> -->
+            </div>          
+            <div class="datalist"  id="storelist"></div>     
+        </div>
         <ul class="mobile_menu" id="menu_bar" data-id="menu_bar">
             <li class="list_menu" data-id="personal">
                 <a><i class="fas fa-user"></i></a>
@@ -74,12 +70,12 @@
             </li>
 
             <li class="list_menu"  data-id="mystore">
-                <a><i class="fas fa-folder-open"></i></a>
+                <a><i class="fas fa-clipboard   "></i></a>
                 <span class="dialog">我的最愛</span>
             </li>
 
             <li class="list_menu" data-id="list">
-                <a><i class="fas fa-calendar-plus"></i></a>
+                <a><i class="fas fa-search  "></i></a>
                 <span class="dialog">search</span>
             </li>
 
@@ -94,7 +90,7 @@
 <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tw-city-selector@2.1.0/dist/tw-city-selector.min.js"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
+<!-- <script defer src="https://use.fo  ntawesome.com/releases/v5.3.0/js/all.js"></script> -->
 <script src="./all.js"></script>
 
     
