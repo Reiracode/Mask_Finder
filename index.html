@@ -6,847 +6,94 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="icon" href="./favico.png" type="image/png" />
     <title>Mask Finder</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"></link> 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css"></link>
     <link rel="stylesheet" href="./main.css">
-    <!-- jsCalendar -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-jscalendar@1.4.4/source/jsCalendar.min.css"   >
-    <!-- <link rel="stylesheet" type="text/css" href="./jsCalendar.micro.css"> -->
-    <script src="https://cdn.jsdelivr.net/npm/simple-jscalendar@1.4.4/source/jsCalendar.min.js"></script>
-    <script type="text/javascript" src="./jsCalendar.datepicker.min.js"></script>
-    <style>
-        #my-calendar{
-            display: none;
-            position: absolute;
-            top: 50px;
-            z-index: 999;
-        }
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 
-        #my-calendar.active{
-            display: block;
-        }
-
-        .jsCalendar{
-            z-index: 999;
-        }
-    </style>
 </head>
 <body>
     <div id="loading"><div class="loader"></div></div>
 
     <div class="main">
-        <div id="map"></div>
+        <div id="maskmap"></div>
+        <div class="overlay"  data-id="personal" id="personal">
+            <a class="close_overlay dark"><i class="fas fa-times"></i></a>
+            <form id="form_dateset">
+                <div>
+                    <label class="lb_icon" for="userday"><i class="far fa-calendar-alt"></i></label>
+                    <!-- <input type="date"   name="userday"   id="userday"  />    -->
+                    <!-- <input type="text" id="datepicker"> -->
+                    <input type="text" name="userday" id="userday">
+                </div>
 
-        <div class="taboverlay">
-            <div class="overlay " id="personal">
-                <div class="close_overlay"><i class="fas fa-times"></i></div>
-                <p>
-                    <i class="fas fa-user"></i>  <label class="lb_icon" for="birthday">預約日期:</label>
-                    <input type="date" placeholder="Username"  name="userno" class="userday" id="userday" required>
-                    <button id="date_btn">確定</button>
-                </p>
-                <p>
-                    <i class="fas fa-user"></i>  <label class="lb_icon" for="birthday">領取日期:</label>
-                    <input type="date" placeholder="Username"  name="userno" class="userday" id="userday" required>
-                    <button id="date_btn">確定</button>
-                </p>
+                <div>
+                    <label class="lb_icon" for="userps"><i class="far fa-clipboard"></i></label> 
+                    <input type="text" placeholder="備註" name="userps"   id="userps" >
+                </div>
 
-                <div id="my-calendar"></div>
-                <input  type="text"
-                        name="test-1"
-                        id="reserve_day"
-                        data-datepicker/>
-                <br> 
-            </div>
 
-            <div class="overlay " id="setdate">
-                <button class="open_arrow"  ><i class="fas fa-angle-up"></i></button>
-                <div class="close_overlay"><i class="fas fa-times"></i></div>
-                <div class="datalist"   id="lovestorelist" ></div>
-            </div>
-
-            <div class="overlay " id="list">
-                <button class="open_arrow"   ><i class="fas fa-angle-up"></i></button>
-                <div class="close_overlay"><i class="fas fa-times"></i></div>
-                <div class="my-selector-c">
-                    <div class="list_selector">
-                        <select class="county select-selected"></select>  
-                        <select class="district select-selected"></select>
-                    </div>
-
-                    <div id="mask_sel">
-                        <button class="mask_all active" data-item="all">ALL</button>
-                        <button class="mask_all" data-item="adult">Adult</button>
-                        <button class="mask_all" data-item="child">Child</button>  
-                    </div>
-
-                    <!-- <p>星期<span id="buyday"></span>身分證末碼<span id="dayno"></span>可購買</p> -->
-                </div>          
-                <div class="datalist"  id="storelist"></div>     
-            </div>
+                <button class="btn_date" id="date_set">確定</button> 
+                <button class="btn_date" id="date_set_clear">清除資料</button> 
+            </form>
+            <div id="messager_err"></div>
+            <div id="messager_data"></div>
         </div>
 
+        <div class="overlay"  data-id="mystore"  id="mystore">
+            <a class="open_arrow"><i class="fas fa-angle-up"></i></a>
+            <a class="close_overlay dark"><i class="fas fa-times"></i></a>
+            <div class="datalist"   id="lovestorelist" ></div>
+        </div>
+
+        <div class="overlay"  data-id="list" id="list">
+            <a class="open_arrow"><i class="fas fa-angle-up"></i></a>
+            <a class="close_overlay"><i class="fas fa-times"></i></a>
+            <div class="my-selector-c">
+                <div class="list_selector">
+                    <select class="county select-selected"></select>  
+                    <select class="district select-selected"></select>
+                </div>
+
+                <div id="mask_sel">
+                    <button class="mask_all active" data-item="all">ALL</button>
+                    <button class="mask_all" data-item="adult">Adult</button>
+                    <button class="mask_all" data-item="child">Child</button>  
+                </div>
+            </div>          
+            <div class="datalist"  id="storelist"></div>     
+        </div>
         <ul class="mobile_menu" id="menu_bar" data-id="menu_bar">
             <li class="list_menu" data-id="personal">
-                <i class="fas fa-user"></i>
+                <a><i class="fas fa-user"></i></a>
                 <span class="dialog">個人記錄</span>
             </li>
 
-            <li class="list_menu"  data-id="setdate">
-                <i class="fas fa-folder-open"></i>
-                <span class="dialog">設定日期</span>
+            <li class="list_menu"  data-id="mystore">
+                <a><i class="fas fa-clipboard   "></i></a>
+                <span class="dialog">我的最愛</span>
             </li>
 
             <li class="list_menu" data-id="list">
-                <i class="fas fa-calendar-plus"></i>
+                <a><i class="fas fa-search  "></i></a>
                 <span class="dialog">search</span>
             </li>
 
             <li class="list_menu" id="relocate" data-id="relocate">
-                <i class="fas fa-compass"></i>      
+                <a><i class="fas fa-compass"></i></a>     
                 <span class="dialog">重新定位</span>
             </li>
         </ul>
     </div>
 
-<!-- <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script> -->
-<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tw-city-selector@2.1.0/dist/tw-city-selector.min.js"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
-<script>
-    //document.readyState
-    //solution ios vh
-    let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`); 
-    window.addEventListener('resize', () => {
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-    });
-
-    (async function(){
-        //calendar
-        var element = document.getElementById("my-calendar");
-        var inputB = document.getElementById("my-input-b");
-        var myCalendar = jsCalendar.new(element);
-        console.log(myCalendar)
-
-        element.addEventListener('click', (event) => {
-            element.classList.remove("active");
-        });
-
-        myCalendar.onDateClick(function(event, date){
-            console.log("test")
-            var bdate = date;
-            let YYYY = bdate.getFullYear();
-            let MM = bdate.getMonth()+1; 
-            let DD = bdate.getDate();
-            let YMD = YYYY + '-' + MM + '-' + DD;
-            // console.log(d);
-            inputB.value = YMD;
-            console.log(YYYY + '-' + MM + '-' + DD) 
-        });
-        //calendar
-
-        new TwCitySelector({
-            el: ".my-selector-c",
-            elCounty: ".county", 
-            elDistrict: ".district" 
-        });
-
-        const loading = document.getElementById("loading");
-        const seltDist= document.querySelector('.district');
-        const maskSize= document.querySelector('#mask_sel');
-        const open_menu =document.querySelector('.overlay');
-        let selCity,selZone;
-        var markersRef = [];
-        //fetch json data
-        var infoData = await getMaskInfo();  
-        var getPromise=  await getPromise();
-
-        //user position
-        let positionWathing =await getMaskData();
-        let [latitude, longitude] = await getPosition();
-        // let [latitude, longitude] = await getdelay();
-        // let infoTest = await getTest();
-    
-        let maskStore = JSON.parse(localStorage.getItem('maskStore')) || [];
-        const map = L.map('map', {
-            center: ss = ![latitude,longitude]? [latitude,longitude] :[25.040065, 121.523235],
-            zoom: 16
-        })
-
-        var greyIcon = new L.Icon({
-            iconUrl:'./iconmonstr-grey.png',
-            iconSize: [20, 20],
-            iconAnchor: [20, 10],
-            popupAnchor: [1, -34]
-        });
-
-        var greenIcon = new L.Icon({
-            // iconUrl:'./iconmonstr-plus-4-48.png',
-            iconUrl:'./green.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            // iconSize: [42, 41],
-            // iconAnchor: [21, 41],-10 36
-            iconSize: [20, 20],
-            iconAnchor: [7, 38],
-            popupAnchor: [1, -34],
-            shadowSize: [0, 0]
-        });
-
-        var redIcon = new L.Icon({
-            iconUrl:'./iconmonstr-blue1.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            iconSize: [20, 20],
-            iconAnchor: [7, 38],
-            popupAnchor: [1, -34],
-            shadowSize: [0, 0]
-        });
-
-        var userIcon = L.icon({
-            iconUrl: './iconmonstr-yellow1.png',
-            iconSize: [40, 41],
-            iconAnchor: [16, 36],
-            popupAnchor: [1, -34],
-            shadowSize: [0, 0]
-        })
-
-         //Custom radius and icon create function
-		const markers = L.markerClusterGroup({
-			maxClusterRadius: 120,
-			iconCreateFunction: function (cluster) {
-                var childCount = cluster.getChildCount();
-                var c = ' marker-cluster-';
-                if (childCount < 5) {
-                    c += 'small';
-                } else if (childCount < 10) {
-                    c += 'medium';
-                } else {
-                    c += 'large';
-                }
-                return new L.DivIcon({ 
-                    // html: '<div><span>' + childCount + '</span></div>', 
-                    html: '<div></div>', 
-                    className: 'marker-cluster' + c, 
-                    iconSize: new L.Point(40, 40) 
-                });
-			}
-		});
-        // const map = L.map('map').setView([latitude, longitude], 16).on('dragend', getAroundStore).on('zoomend', getAroundStore);
-        // var map = L.map('map').on('load', findMask).setView([25.040065, 121.523235], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        markers.on("click", markClick); 
-        // map.doubleClickZoom.disable();
-
-        function onLocationFound(e) {
-            console.log('onLocationFound')
-            var radius = e.accuracy / 2;
-            console.log(e.latlng)
-            console.log(radius)
-            console.log(e.accuracy)
-
-            L.marker(e.latlng,{icon: userIcon})
-                .addTo(map)
-                .bindPopup("我的位置").openPopup();
-
-            L.circle(e.latlng, {radius:500}).addTo(map);
-        }
-
-        function onLocationError(e) {
-            console.log(e.message);
-        }
-        
-        map.on('locationfound', onLocationFound);
-        map.on('locationerror', onLocationError);
-        // map.locate({setView: true, maxZoom: 30});
-        // map.locate({setView: true, Zoom: 30});
-        //    map.setView([51.505, -0.09], 13);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        const getdelay = () => {
-            return new Promise(resolve=>{
-                !!(navigator.geolocation)
-                    ? navigator.geolocation.getCurrentPosition(position => {   
-                        resolve([position.coords.latitude, position.coords.longitude])
-                        })                
-                    : alert("Geolocation is not supported by your browser")
-            })
-        };
-
-        getdelay().then(() => {
-            console.log("findMask getdelay");     // 顯示 1
-            //   console.log(result); 
-            findMask();   
-        });
-
-let promise = new Promise(resolve=>{
-    !!(navigator.geolocation)
-            ? navigator.geolocation.getCurrentPosition(position => {
-                resolve([position.coords.latitude, position.coords.longitude])
-            })
-            : alert("Geolocation is not supported by your browser")
-    });
-
-promise.then((result) =>{
-    console.log("findMask promise");  
-    console.log(result); 
-    return result;
-   //return result時 優先回呼於getdelay
-    //    findMask promise:296
-    // index.html:297 (2) [25.0302634, 121.5027293]
-    // index.html:282 findMask getdelay
-});
-
-
-// 取得位置[latitude,longitude] =resolve([position.coords.latitude, position.coords.longitude])
-        function getPosition(){
-            return new Promise(resolve=>{
-                !!(navigator.geolocation)
-                    ? navigator.geolocation.getCurrentPosition(position => {  
-                    console.log([position.coords.latitude, position.coords.longitude]) 
-                    resolve([position.coords.latitude, position.coords.longitude])
-                })  
-                    : alert("Geolocation is not supported by your browser")
-            })
-        }
-
-        function relocate(){
-            console.log("重新整理")
-            // getPosition().then((result)=>console.log(result));
-            getPosition().then(findMask());
-        }
-
-/*
-async function main() {
-    var result = await getUrposition()
-    // result === "Success"
-    console.log(result)
-
-    yourPositon = result
-    findMask(0)
-}
-*/
-        function getTest(){
-            // var promise = 
-            return new Promise(function(resolve, reject) {
-                // do a thing, possibly async, then…
-                if (navigator.geolocation) {
-                    console.log("Stuff worked!");
-                    // resolve("Stuff worked!");
-                    navigator.geolocation.getCurrentPosition(position => {   
-                        resolve([position.coords.latitude, position.coords.longitude])
-                    })   
-                }
-                else {
-                    console.log("It broke");
-                    reject(Error("It broke"));  
-                }
-            });
-        }
-       const getdelay1 = () => {
-            return new Promise(resolve=>{
-                !!(navigator.geolocation)
-                    ? navigator.geolocation.getCurrentPosition(position => {   
-                        resolve([position.coords.latitude, position.coords.longitude])
-                        })                
-                    : alert("Geolocation is not supported by your browser")
-            }).then(() => {
-            console.log("findMask");     // 顯示 1
-            findMask();   
-            });
-        };
-
-        // getdelay().then(() => {
-        //     console.log("findMask");     // 顯示 1
-        //     findMask();   
-        // });
-
-
-
-
-       
-
-/**/
-//left menu and overlay
-//data vs layout
-        var clickBtn =[...document.querySelectorAll('.list_menu')];
-        clickBtn.forEach(dom => dom.addEventListener('click',(e)=>{  
-            var targetID = e.currentTarget.dataset['id'];
-            e.currentTarget.classList.toggle('active');
-
-            for (let sibling of e.target.parentNode.children) {     
-                if (sibling !== e.target){
-                    var siblingtag = sibling.dataset['id'];
-                    sibling.classList.remove('active')
-                    //別的就要remove   targetID其他的就要remove
-                    if (!!siblingtag)  document.getElementById(siblingtag).classList.remove('active')
-                }else{
-                    document.getElementById(targetID).classList.toggle('active');
-                    switch (targetID) {
-                        case "personal":
-                            getStorage();
-                            break;
-                        case "setdate":
-                            findMask("setdate");
-                            break;
-                        case "list":
-                            console.log("findmask")
-                            findMask();
-                            break;
-                        case "relocate":
-                           // getLocationA();
-                           relocate();
-                            //  getdelay();
-                        default:
-                            break;
-                    }
-                }           
-            }
-        }))
-
-
-    // acitve的如果等於target.value
- //close overlay
-    const closeBtn = [...document.querySelectorAll('.close_overlay')];
-    closeBtn.forEach(dom => dom.addEventListener('click',(e)=>{
-        let closeid = e.target.parentNode;
-        closeid.classList.remove('active');
-        document.querySelector(".list_menu[data-id="+closeid.id+"]").classList.remove('active');
-    }))
-// 開合箭頭>
-    const open_arrow = [...document.querySelectorAll('.open_arrow')];
-    open_arrow.forEach(dom => dom.addEventListener('click',(e)=>{
-        e.currentTarget.classList.toggle('active');
-        e.currentTarget.parentNode.classList.toggle('ctrl_size');
-    }))
-// 設定日期
-    var  userday = document.getElementById('userday');
-    var  usersetbtn = document.getElementById('date_btn');
-    userday.value =  !!localStorage.getItem('maskDay')
-        ? localStorage.getItem('maskDay')
-        : ""
-    usersetbtn.addEventListener('click',()=>{
-        localStorage.setItem('maskDay', userday.value);
-    })
-
-    // 顯示1KM距離內的藥局
-    function filterRange(){
-        const result = infoData.filter(item => getDistance([latitude, longitude],[item.geometry.coordinates[1], item.geometry.coordinates[0]]) < 1);
-        console.log(result);
-        return result;     
-    }
-
-    function getAroundStore(){
-            // filterMaskType(filterRangeStore(infoData)).filter((info, index) => index < 200)
-            dataAll= filterRange()
-            console.log(dataAll)
-    }
-
-
-    function markClick(event) {
-        var id = event.layer._leaflet_id;
-
-        console.log(markersRef)//map上所有的點
-        const markIndex = markersRef.map(items => items._leaflet_id) 
-                        .indexOf(id);        
-        console.log(markIndex);
-        //點地圖上icon位置的 ，找到click id的index 15
-        //scroll對應到overlay id的位子
-
-        var firsthei = document.querySelector('.my-selector-c').offsetHeight;
-        var all = document.querySelectorAll('.store_detail')    
-        style = getComputedStyle(all[0]);
-        marginBtom = style.marginBottom;
-        var margbtm = marginBtom.substr(0,marginBtom.length-2);
-        //5px  scrollto 只算前段的div的高度  index=5  len=6 calcu div*index
-        //index 3  ==>  0+1+2 
-        var sum = 0; 
-        for (var i = 0; i < markIndex; i++) {
-            sum += parseInt(all[i].scrollHeight) + parseInt(margbtm);
-        };
-
-        document.getElementById('storelist').scrollTo(0,sum)
-    } 
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    function getMaskInfo(){
-        return new Promise(resolve=>{
-            fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
-                .then(res=>res.json())
-                .then(json=>{
-                    resolve(json.features)
-                    // console.log(json.features);
-                })
-                .catch(err=>console.log(err))
-                .then(response => {
-                    loading.style.display = "none"
-                });
-        })
-    }
-
-    function getPromise(){
-        let promise = new Promise(function(resolve, reject){
-            fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
-            .then(res=>res.json())
-            .then(json=>resolve(json.features))
-                // console.log(json.features);
-            // reject(new Error("whoops"))
-        })
-        promise.then(result=>console.log(result)); 
-        // let promise = new Promise(resolve =>{
-        //         fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
-        //         .then(res=>res.json())
-        //         .then(json=>resolve(json.features))
-        //             // console.log(json.features);
-        //     })
-    
-        // promise.then(result=>console.log(result)); 
-        //promise.then(result=>console.log(`${result}`)); 
-    }
-
-    function getMaskData(){
-        fetch('https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json')
-        .then(res => {
-            return res.json();
-        }).then(result => {
-            console.log(result.features);
-            // let city = result.cwbopendata.location[14].parameter[0].parameterValue;
-            // let temp = result.cwbopendata.location[14].weatherElement[3].elementValue.value;
-            // console.log(`${city}的氣溫為 ${temp} 度 C`); // 得到 高雄市的氣溫為 29.30 度 C
-        });
-    }
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-    function getStore(){ 
-        console.log(this)
-        console.log(markersRef)
-        console.log([sideInfo.indexOf(this)])
-    
-        if(!markersRef[sideInfo.indexOf(this)].isPopupOpen()){
-            let marker = markersRef[sideInfo.indexOf(this)]
-            console.log(marker)
-            map.setView([marker._latlng.lat, marker._latlng.lng], 18)
-            markers.zoomToShowLayer(marker, function() {
-                marker.openPopup();
-            });
-        }
-    }
-
-    //加入最愛
-    function intoList(){
-        let data = dataAll[checkInfo.indexOf(this)];
-        let itemid = data.properties.id;
-        console.log(this)
-        //我的最愛清單 click => 刪除
-        if (this.parentNode.parentNode.id == "lovestorelist"){
-            // this.parentNode.style.display = "none"
-            this.parentNode.remove();
-            //array splice  -取代，刪除
-            maskStore.forEach((item, index) => {  
-                if (item == itemid)  maskStore.splice(index, 1);
-            })
-
-        } else {
-            //我的最愛 if>0  PINK  toggle PINK AND LOCALSTORAGE
-            console.log(maskStore.indexOf(itemid))
-            let loveinde  = maskStore.indexOf(itemid);
-            this.classList.toggle('pink');
-            if (this.classList.contains('pink')){
-                if (maskStore.indexOf(itemid) === -1) maskStore.push(itemid);
-            }else{
-                if (maskStore.indexOf(itemid) > -1) maskStore.splice(loveinde, 1)
-            }
-            console.log(maskStore)                                //index
-        }
-        localStorage.setItem('maskStore', JSON.stringify(maskStore));
-    }
-
-    function getStorage() {
-        if (maskStore.length) {
-            var filteredArray = infoData.filter((item)=>{
-                return maskStore.indexOf(item.properties.id) > -1;
-            });
-            console.log(filteredArray)
-            return filteredArray;       
-        }else{
-            return "";            
-        }
-        //return 主動找資料，findMask被趨動
-    }
-
-    function indexPink(id){
-            //if (maskStore && maskStore.length > 0) { 
-        if (maskStore.length) { 
-            if (maskStore.indexOf(id)>=0){
-                return true
-            }else{
-                return false
-            }
-        }else{
-            return false
-        }
-    }
-
-
-    function getDatInfo() {
-        const dayInfo = ['日', '一', '二', '三', '四', '五', '六']
-        let day = new Date().getDay();
-
-        let daydescript = day === 0  
-            ? '全部<span>皆</span>' 
-            : day % 2 === 0 
-                ? '0 2 4 6 8'
-                : '1 3 5 7 9'
-                // console.log(daydescript)
-        document.getElementById('buyday').innerText = dayInfo[day]
-        document.getElementById('dayno').innerHTML =  daydescript
-    }
-
-
-//選擇行政區
-    seltDist.addEventListener('change', (event) => {
-        maskSize.querySelector('.active').classList.remove('active');
-        maskSize.firstElementChild.classList.add('active')
-        findMask();
-    });
-
-    maskSize.addEventListener('click', (e) =>{
-        if(e.target.nodeName=='BUTTON'){
-            const showTitle = document.querySelectorAll(".store_detail");
-            var a_item = e.target.dataset['item'];
-            showTitle.forEach(item=>hideUser(item,a_item));
-            //button sibling
-            e.target.classList.add('active');
-            for (let sibling of e.target.parentNode.children) {
-                if (sibling !== e.target) sibling.classList.remove('active');
-            }
-        }
-    })
-
-    function hideUser(user,userclass){
-        userclass =='all' 
-            ? user.classList.remove('d-none') 
-            : (user.firstElementChild.dataset[userclass] > 0 )? user.classList.remove('d-none')
-                                            : user.classList.add('d-none');
-    }
-    
-    // var markers = new L.MarkerClusterGroup().addTo(map);
-    function getDistance(origin, destination) {
-        lat1 = origin[0]
-        lng1 = origin[1] 
-        lat2 = destination[0]
-        lng2 = destination[1]
-        return 2 * 6378.137 * Math.asin(Math.sqrt(Math.pow(Math.sin(Math.PI * (lat1-lat2)/360), 2)+Math.cos(Math.PI * lat1/180) * Math.cos(Math.PI * lat2/180)*Math.pow(Math.sin(Math.PI*(lng1-lng2)/360), 2)))
-    }
-
-    function toRadian(degree) {
-        return degree*Math.PI/180;
-    }
-
-    //************************************************
-    function filterPharmacy () {
-        let res = [];
-        selCity = document.querySelector('.county').value;
-        selDist = document.querySelector('.district').value;
-        console.log(selCity)//台北市  json 臺北市
-        console.log(selDist)
-        //json 臺北市
-
-        // var test = infoData.filter(({properties: {address, name}}) => {
-        //     // return county=="臺北市"
-        //     return address.indexOf("台北市") !== -1
-        // });
-
-        res = infoData.filter(({properties: {address, county, town}}) => {
-            //return county=="臺北市" && town=="萬華區" 
-            return county.indexOf(selCity.replace(/台/g, '臺'))> -1  && town.indexOf(selDist)> -1
-        });
-        console.log(res)
-
-    
-        // var tres = infoData.filter(item=>
-        //         (item.properties.address.indexOf(selCity.replace(/臺/g, '台'))> -1 && 
-        //         item.properties.address.indexOf(selDist)> -1));
-        // console.log(tres)
-//有資料
-// return address.indexOf("台北市")> -1  
-//return county.indexOf("臺北市")> -1 
-//return county.indexOf("臺北市".replace(/'台'/g, '臺'))> -1 
-//no data
-//  return address.indexOf("臺北市")> -1 
-
-        // res = infoData.filter((item)=>(item.properties.address.indexOf(selCity.replace(/臺/g, '台'))> -1 && item.properties.address.indexOf(selDist)> -1));
-        // console.log(res);
-    
-        return res;
-    }
-
-    function findMask(e) {
-
-     
-        // L.marker([latitude,longitude],{icon: userIcon})
-        //         .addTo(map)
-        //         .bindPopup("我的位置").openPopup();
-
-        markers.clearLayers();
-        markersRef = [];
-        //資料
-        dataAll = !! e ? getStorage()
-                        : !(document.querySelector('.county').value)
-                                ?  filterRange()
-                                :  filterPharmacy()
-        var s  = !! e ? "1"
-                        : !(document.querySelector('.county').value)
-                                ?  "2 filterRange()"
-                                :  "3"
-        console.log(s)
-
-        const s_list =!! e ?  document.getElementById('lovestorelist')
-                            : document.getElementById('storelist');
-
-        const sdiv =!! e ?  '#lovestorelist'
-                        : '#storelist'; 
-                                
-        console.log(s_list)
-        console.log(dataAll)
-        // // const s_list = document.getElementById('storelist')
-        s_list.innerHTML = ''; 
-
-        // if (dataAll && dataAll.length >0){
-        if (dataAll.length){
-            var focus = dataAll[0].geometry.coordinates;
-           // map.setView([latitude,longitude], 16);
-             map.setView([focus[1], focus[0]], 18)
-                // markers.zoomToShowLayer(marker, function() {
-                //     marker.openPopup();
-                // });
-
-            var el= ""
-            dataAll.sort(({geometry: {coordinates: a}}, {geometry: {coordinates: b}})=>{
-                return getDistance([latitude, longitude], [a[1], a[0]]) - getDistance([latitude, longitude], [b[1], b[0]])
-            }).forEach(({properties, geometry: {coordinates}})=>{
-                console.log(properties.name)
-                mask = (!!properties.mask_adult)? greenIcon :redIcon    
-                var typecheck = indexPink(properties.id)
-                var marker = L.marker(new L.LatLng(coordinates[1],coordinates[0]),{icon:mask});
-                var distance =  getDistance([latitude,longitude],[coordinates[1], coordinates[0]])
-                        el +=  
-                        //  <h2 class="store_title" data-child=${properties.mask_child} 
-                        `<div class="store_detail">
-                            <h2 class="store_title" data-child="${properties.mask_child}" 
-                            data-adult="${properties.mask_adult}">${properties.name}
-                            <span><i class="fas fa-map-marker-alt"></i>${distance >= 1 ? distance.toFixed(1) + 'km' : (distance * 1000 >>0) + 'm'}</span>
-                            </h2>
-                            <p class="addtolist ${!!typecheck? "pink" : ""  }" ><i class="far fa-check-square"></i></p>
-                            <p><i class="fas fa-briefcase"></i>${properties.address}</p>
-                            <p><i class="fas fa-phone fa-flip-horizontal"></i><a href="tel:${properties.phone}">${properties.phone}</a></p>
-                            ${properties.note.length <= 1 ? " ": `<p><i class="fas fa-tag"></i>${properties.note}</p>`}
-                            <div class="mask_size">
-                                <span data-size='adult'>成人${properties.mask_adult}</span>
-                                <span data-size='child'>兒童${properties.mask_child}</span>
-                            </div> 
-                            <span>最後更新:${properties.updated}</span>
-                        </div> 
-                        `;
-
-                    // s_list.appendChild(el);   
-                    s_list.innerHTML = el;
-
-                var customOptions =
-                    {   'maxWidth': '500',
-                        'minWidth': '170',
-                        // 'className' : 'custom'
-                    }
-
-                marker.bindPopup(
-                    `<h2>${properties.name}</h2>
-                    <p><i class="fas fa-map-marker-alt"></i>${distance >= 1 ? distance.toFixed(1) + 'km' : (distance * 1000 >>0) + 'm'}</p>
-                    <p><i class="fas fa-briefcase"></i>${properties.address}</p>
-                    <p><i class="fas fa-phone fa-flip-horizontal"></i><a href="tel:${properties.phone}">${properties.phone}</a></p>
-                    <div class="mask_size">
-                    <span data-size="adult">成人${properties.mask_adult}</span>
-                    <span data-size="child">兒童${properties.mask_child}</span>
-                    </div>       
-                `,customOptions)  
-
-                markersRef.push(marker);
-                markers.addLayer(marker); 
-            })  
-
-            sideInfo = [...s_list.childNodes];
-            // sideInfo = [...document.querySelectorAll('.store_title')]    
-            sideInfo.forEach(dom => dom.addEventListener('click', getStore))
-            //checkInfo =[...document.querySelectorAll('.addtolist')] ;
-            checkInfo =[...document.querySelectorAll(sdiv+' .addtolist')] ;
-            // [...document.querySelectorAll('#lovestorelist .addtolist')] ;
-            checkInfo.forEach(dom=>dom.addEventListener('click', intoList))
-
-            if (s_list.id =="lovestorelist"){
-                var sum = 0; 
-                var listlen = document.querySelectorAll('#lovestorelist>.store_detail')
-                for (var i = 0; i < listlen.length; i++) {
-                    sum += parseInt(listlen[i].scrollHeight);
-                };
-                console.log(sum)
-                console.log(window.screen.height)
-                var mq = window.matchMedia("(max-width: 600px)");                   
-                if (sum < window.screen.height) {
-                    // const mq = window.matchMedia( "(max-width: 600px)" );  
-                    if(!mq.matches){
-                        console.log("當視窗寬度>600px時執行")
-                        console.log("資料<window.screen.height，不要scroll")
-                        s_list.style.height = sum+"px";
-                        s_list.parentElement.style.height = "unset";
-                    }else{
-                        console.log("當視窗寬度<1/2H時執行")
-                        if (sum <  (window.screen.height/2)){
-                            s_list.style.height =  "unset";
-                        }                   
-                    }
-                }else{
-                    console.log("資料SUM多於window.screen.height，scroll")
-                    if(!mq.matches){
-                        console.log("當視窗寬度>600px時執行")
-                        console.log("資料<window.screen.height，不要scroll")
-                        // s_list.style.height = sum+"px";
-                        // s_list.parentElement.style.height = "unset";
-                    }else{
-                        console.log("當視窗寬度<600px時執行")
-                    }
-                }
-            }
-            
-            s_list.scrollTo(0,0)
-            map.addLayer(markers);
-
-        }else {
-            s_list.innerHTML ="no data"
-            // s_list.parentNode.style.height="100px"
-            console.log("no data")
-
-            const mq = window.matchMedia("(max-width: 600px)");                   
-                if(!mq.matches){
-                    console.log("*當視窗寬度>600px時執行")
-                    s_list.style.height = "100px";
-                    s_list.parentElement.style.height = "unset";
-                }else{
-                    console.log("*當視窗寬度<600px時執行")
-                }
-        }
-    }
-
-
-
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tw-city-selector@2.1.0/dist/tw-city-selector.min.js"></script>
+    <script src="./all.js"></script>
  
 
-})()
-</script>
-    
 </body>
 </html>

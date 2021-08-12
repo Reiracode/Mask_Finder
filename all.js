@@ -8,24 +8,29 @@ const clickBtn = [...document.querySelectorAll(".list_menu")];
 const closeBtn = [...document.querySelectorAll(".close_overlay")];
 //開合箭頭
 const open_arrow = [...document.querySelectorAll(".open_arrow")];
-const api ="https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json";
+const api =
+  "https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json";
 let maskStore = JSON.parse(localStorage.getItem("maskStore")) || [];
 // leaflet markersRef)=map上所有的點
-let mymarker,map,mymap,markers,markersRef = [];
+let mymarker,
+  map,
+  mymap,
+  markers,
+  markersRef = [];
 // ios mobile height
 let vh = window.innerHeight * 0.01;
 
 document.documentElement.style.setProperty("--vh", `${vh}px`);
 window.addEventListener("resize", () => {
-    let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty("--vh", `${vh}px`);
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
 });
 
 //select city
 new TwCitySelector({
-    el: ".my-selector-c",
-    elCounty: ".county",
-    elDistrict: ".district",
+  el: ".my-selector-c",
+  elCounty: ".county",
+  elDistrict: ".district",
 });
 
 //ICON
@@ -40,6 +45,35 @@ function createIcon(name) {
     popupAnchor: [1, -34],
   });
 }
+
+var picker = new Pikaday({
+  field: document.getElementById("userday"),
+  // format: "D/M/YYYY",
+  format: "YYYY/MM/DD",
+  toString(date, format) {
+    // you should do formatting based on the passed format,
+    // but we will just return 'D/M/YYYY' for simplicity
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+  },
+  parse(dateString, format) {
+    // dateString is the result of `toString` method
+    const parts = dateString.split("/");
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const year = parseInt(parts[2], 10);
+    return new Date(year, month, day);
+  },
+});
+// var picker = new Pikaday({
+//   field: document.getElementById("datepicker"),
+//   format: "YYYY MM DD",
+//   onSelect: function () {
+//     console.log(this.getMoment().format("YYYY MM DD"));
+//   },
+// });
 
 const getPosition = () => {
   // function getPosition() {
@@ -273,7 +307,6 @@ function getMyRecord() {
   let today = new Date().toISOString().substr(0, 10);
   document.querySelector("#userday").value = today;
 
-
   let usersetbtn = document.getElementById("date_set");
   let userdelbtn = document.getElementById("date_set_clear");
   renderStorage();
@@ -306,7 +339,7 @@ function getMyRecord() {
     let maskDay = JSON.parse(localStorage.getItem("maskDay")) || [];
     let newItem = {
       userday: document.querySelector("#userday").value.trim(),
-      userps: document.querySelector("#userps").value.trim()
+      userps: document.querySelector("#userps").value.trim(),
     };
 
     if (maskDay.some((item) => item.userday == newItem.userday)) {
@@ -374,7 +407,7 @@ function renderMask() {
   if (!filterData.length) {
     justifyHeight(s_list);
     return;
-  } 
+  }
   let focus = filterData[0].geometry.coordinates;
   mymap.setView([focus[1], focus[0]], 15);
 
@@ -481,6 +514,11 @@ function renderMask() {
         sum += parseInt(all[i].scrollHeight) + parseInt(margbtm);
       }
       document.getElementById(`${s_list.id}`).scrollTo(0, sum);
+      // document.getElementById(`${s_list.id}`).scrollTo({
+      //   top: 0,
+
+      //   behavior: "smooth",
+      // });
     }
   });
   mymap.doubleClickZoom.disable();
@@ -501,13 +539,15 @@ function justifyHeight(s_list) {
 
   if (s_list.id == "lovestorelist" || s_list.id == "storelist") {
     console.log(s_list.id);
-    let list_len = document.querySelectorAll(`#${s_list.id}>.store_detail`).length;
+    let list_len = document.querySelectorAll(
+      `#${s_list.id}>.store_detail`
+    ).length;
     if (!list_len) {
       s_list.innerHTML = `<p class="nodata">目前沒有資料</p>`;
       s_list.parentElement.classList.add("height_auto");
       return;
-    }else{
-     s_list.parentElement.classList.remove("height_auto");
+    } else {
+      s_list.parentElement.classList.remove("height_auto");
     }
 
     var sum = 0;
@@ -534,7 +574,7 @@ function justifyHeight(s_list) {
         s_list.parentElement.classList.remove("ctrl_size");
       } else {
         s_list.parentElement.classList.remove("height_auto");
-      }     
+      }
     }
   }
 }
