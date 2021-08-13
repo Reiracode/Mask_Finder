@@ -1,6 +1,7 @@
 @charset "UTF-8";
-/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap'); */
+:root {
+    --primary:#90b1ec;
+}
 * {
   padding: 0;
   margin: 0;
@@ -10,8 +11,6 @@
   text-decoration: none;
   outline: none;
   list-style: none;
-  /* font-family: 'Noto Sans TC', sans-serif; */
- 
 }
 
 html, body {
@@ -93,20 +92,10 @@ html, body {
   display: none;
 }
 
-/* input[type="date"]::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
-    width: 15px;
-    padding: 0px;
-    margin: 0px;
-    margin-top: 10px;
-} */
-/* Removes the clear button from date inputs */
-
 /* A few custom styles for date inputs */
 input[type="date"] {
   -moz-appearance: none;
-       appearance: none;
+        appearance: none;
   -webkit-appearance: none;
   color: #95a5a6;
   font-family: "Helvetica", arial, sans-serif;
@@ -140,7 +129,6 @@ input[type="date"]:focus {
   /* background: url("arrow.png") no-repeat right center transparent; */
 }
 
-/* 好像沒作用 */
 .d-none {
   display: none;
 }
@@ -173,7 +161,7 @@ input[type="date"]:focus {
 
 .store_detail {
   padding: 1rem;
-  background-color: #90b1ec;
+  background-color: var(--primary);
   color: white;
   margin-bottom: 5px;
 }
@@ -244,7 +232,7 @@ button {
 
 /* #mask_sel>button :hover, #mask_sel>button:focus, #mask_sel>button:active, #mask_sel>button.active{ */
 button :hover, button:focus, button:active, button.active {
-  background-color: #90b1ec;
+  background-color: var(--primary);
   color: #fff;
 }
 
@@ -340,7 +328,7 @@ button :hover, button:focus, button:active, button.active {
   .open_arrow {
     display: block;
     text-align: center;
-    background-color: #90b1ec;
+    background-color: var(--primary);
     color: white;
     -webkit-transition: all .5s;
     transition: all .5s;
@@ -399,7 +387,7 @@ button :hover, button:focus, button:active, button.active {
 }
 
 .marker-cluster-large div {
-  background-color: #f7f302;
+  background-color: #e9ff00;
 }
 
 .marker-cluster {
@@ -427,7 +415,7 @@ button :hover, button:focus, button:active, button.active {
   position: fixed;
   left: 8px;
   top: 80px;
-  background-color: #90b1ec;
+  background-color: var(--primary);
   color: #fff;
   z-index: 9999;
   display: -webkit-box;
@@ -521,7 +509,7 @@ button :hover, button:focus, button:active, button.active {
 #personal.overlay {
   height: unset;
   padding: 15px 20px;
-  background-color: #90b1ec;
+  background-color: var(--primary);
   color: #fff;
   -webkit-clip-path: unset;
           clip-path: unset;
@@ -537,14 +525,17 @@ button :hover, button:focus, button:active, button.active {
       -ms-flex-align: center;
           align-items: center;
 }
+#form_dateset{
+  margin-bottom: 10px;
+}
 
 .close_overlay {
   position: absolute;
   top: 0;
   right: 0;
   display: block;
-  padding: 5px;
-  color: #90b1ec;
+  padding: 0 5px;
+  color: var(--primary);
   font-size: 1.5rem;
   cursor: pointer;
 }
@@ -714,7 +705,7 @@ button.btn_date:hover {
 
 .nodata {
   padding: 20px 0;
-  background-color: #90b1ec;
+  background-color: var(--primary);
   color: #fff;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -749,4 +740,21 @@ button.btn_date:hover {
 #messager_data div > span:first-child {
   margin-right: 10px;
 }
+
+#messager_data div{
+  display:flex;
+}
+#messager_data div > span:nth-child(2) {
+  flex:1;
+  color:pink;
+}
+#messager_data a{
+  display:block;
+  cursor: pointer;
+  padding:8px;
+}
+#messager_data a:hover{
+  color:pink;
+}
+
  

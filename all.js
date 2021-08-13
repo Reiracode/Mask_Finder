@@ -11,6 +11,7 @@ const open_arrow = [...document.querySelectorAll(".open_arrow")];
 const api =
   "https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json";
 let maskStore = JSON.parse(localStorage.getItem("maskStore")) || [];
+let maskDay = JSON.parse(localStorage.getItem("maskDay")) || [];
 // leaflet markersRef)=map上所有的點
 let mymarker,
   map,
@@ -45,21 +46,21 @@ function createIcon(name) {
     popupAnchor: [1, -34],
   });
 }
-
+  // let today = new Date().toISOString().substr(0, 10);
 var picker = new Pikaday({
   field: document.getElementById("userday"),
-  // format: "D/M/YYYY",
   format: "YYYY/MM/DD",
   toString(date, format) {
-    // you should do formatting based on the passed format,
-    // but we will just return 'D/M/YYYY' for simplicity
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
+    const day = formatzeoro(date.getDate());
+    const month = formatzeoro(date.getMonth() + 1);
     const year = date.getFullYear();
+    function formatzeoro(data) {
+      const v = !(data.toString().length - 1) ? "0" + data : data;
+      return v;
+    }
     return `${year}-${month}-${day}`;
   },
   parse(dateString, format) {
-    // dateString is the result of `toString` method
     const parts = dateString.split("/");
     const day = parseInt(parts[0], 10);
     const month = parseInt(parts[1], 10) - 1;
@@ -67,14 +68,6 @@ var picker = new Pikaday({
     return new Date(year, month, day);
   },
 });
-// var picker = new Pikaday({
-//   field: document.getElementById("datepicker"),
-//   format: "YYYY MM DD",
-//   onSelect: function () {
-//     console.log(this.getMoment().format("YYYY MM DD"));
-//   },
-// });
-
 const getPosition = () => {
   // function getPosition() {
   return new Promise((resolve) => {
@@ -309,23 +302,55 @@ function getMyRecord() {
 
   let usersetbtn = document.getElementById("date_set");
   let userdelbtn = document.getElementById("date_set_clear");
+
   renderStorage();
 
   function renderStorage() {
     let maskDay = JSON.parse(localStorage.getItem("maskDay")) || [];
+    console.log(maskDay);
     let tnode = "";
     maskDay.forEach((el) => {
       console.log(`${el.userday}`);
-      tnode += `<div><span>${el.userday}</span><span>${el.userps}</span></div>`;
+      tnode += `<div><span>${el.userday}</span>
+                      <span>${el.userps}</span>
+                        <a class="todo_list" data-btn="edit"><i class="fas fa-pen-nib"></i> </a>
+                        <a class="todo_list" data-btn="del"><i class="far fa-minus-square"></i> </a>
+                </div>`;
     });
     document.querySelector("#messager_data").innerHTML = tnode;
+    let action = [...document.querySelectorAll(".todo_list")];
+    action.forEach((dom) => dom.addEventListener("click", modify));
   }
+
+
+  function modify() {
+    let target = this.dataset["btn"];
+    let old = JSON.parse(localStorage.getItem("maskDay")) || [];
+    let this_date = this.parentNode.children[0].innerText;
+    
+    old.forEach((item, index) => {
+      if (item.userday == this_date) {
+        console.log(index);
+        old.splice(index, 1);
+      }
+    });
+    console.log(old);
+    this.parentNode.remove();
+    localStorage.setItem("maskDay", JSON.stringify(old));
+
+    if (target == "edit") {
+      let edi_ps = this.parentNode.children[1].innerText;
+      document.querySelector("#userday").value = this_date;
+      document.querySelector("#userps").value = edi_ps;
+    }
+  }
+
+
 
   userdelbtn.addEventListener("click", (e) => {
     e.preventDefault();
     localStorage.removeItem("maskDay");
     renderStorage();
-    // getStorage();
   });
 
   usersetbtn.addEventListener("click", (e) => {
@@ -351,37 +376,18 @@ function getMyRecord() {
       localStorage.setItem("maskDay", JSON.stringify(maskDay));
       console.log(maskDay);
       renderStorage();
-      // var tnode = "";
-      // maskDay.forEach((el) => {
-      //     console.log(`${el.userday}`);
-      //     tnode += `<div><span>${el.userday}</span><span>${el.userps}</span></div>`;
-      // });
-
-      // document.querySelector("#messager_data").innerHTML = tnode;
+      document.querySelector("#userday").value = "";
+      document.querySelector("#userps").value = "";
     }
   });
+
 }
 
-// function get() {
-// var maskDay = JSON.parse(localStorage.getItem("maskDay")) || [];
-// var element = document.querySelector(".myrecord");
-// if (!!element) {
-//     element.parentNode.removeChild(element);
-// }
-// if (!!maskDay.length) {
-//     var newDiv = document.createElement("div");
-//     newDiv.className = "myrecord";
-//     var tnode = "";
-//     maskDay.forEach(el => {
-//         console.log(`${el.userday}`);
-//         tnode += `<div><span>${el.userday}</span><span>${el.userps}</span></div>`;
-//     });
-//     // tnode = `<div>${tnode}</div>`;
-//     newDiv.innerHTML = tnode;
-//     // thisdiv.innerHTML = tnode;
-//     thisdiv.appendChild(newDiv);
-// }
-// }
+
+
+  
+
+
 
 //select all / adult/ child
 function hideSize(user, userclass) {
@@ -433,36 +439,36 @@ function renderMask() {
         [coordinates[1], coordinates[0]]
       );
       el += `<div class="store_detail">
-                    <h2 class="store_title" data-child="${
-                      properties.mask_child
-                    }" 
-                    data-adult="${properties.mask_adult}">${properties.name}
-                    <span><i class="fas fa-map-marker-alt"></i>
-                        ${
-                          distance >= 1
-                            ? distance.toFixed(1) + "km"
-                            : ((distance * 1000) >> 0) + "m"
-                        }
-                    </span>
-                    </h2>
-                    <a class="addtolist ${!!typecheck ? "pink" : ""}" >
-                    <i class="far fa-check-square"></i></a>
-                    <p><i class="fas fa-briefcase"></i>${properties.address}</p>
-                    <p><i class="fas fa-phone fa-flip-horizontal"></i>
-                    <a href="tel:${properties.phone}">${
+        <h2 class="store_title" data-child="${
+          properties.mask_child
+        }" 
+        data-adult="${properties.mask_adult}">${properties.name}
+        <span><i class="fas fa-map-marker-alt"></i>
+            ${
+              distance >= 1
+                ? distance.toFixed(1) + "km"
+                : ((distance * 1000) >> 0) + "m"
+            }
+        </span>
+        </h2>
+        <a class="addtolist ${!!typecheck ? "pink" : ""}" >
+        <i class="far fa-check-square"></i></a>
+        <p><i class="fas fa-briefcase"></i>${properties.address}</p>
+        <p><i class="fas fa-phone fa-flip-horizontal"></i>
+        <a href="tel:${properties.phone}">${
         properties.phone
       }</a></p>
-                    ${
-                      properties.note.length <= 1
-                        ? " "
-                        : `<p><i class="fas fa-tag"></i>${properties.note}</p>`
-                    }
-                    <div class="mask_size">
-                    <span data-size='adult'>成人${properties.mask_adult}</span>
-                    <span data-size='child'>兒童${properties.mask_child}</span>
-                    </div> 
-                    <span>最後更新:${properties.updated}</span>
-                </div> `;
+          ${
+            properties.note.length <= 1
+              ? " "
+              : `<p><i class="fas fa-tag"></i>${properties.note}</p>`
+          }
+          <div class="mask_size">
+          <span data-size='adult'>成人${properties.mask_adult}</span>
+          <span data-size='child'>兒童${properties.mask_child}</span>
+          </div> 
+          <span>最後更新:${properties.updated}</span>
+      </div> `;
 
       s_list.innerHTML = el;
       //   console.log(distance);
@@ -478,8 +484,6 @@ function renderMask() {
                     : ((distance * 1000) >> 0) + "m"
                 }
             </p>
-        
-
             <p class="icontype" data-icon="&#xf124">${properties.address}</p>
             <p class="icontype" data-icon="&#xf879"><a href="tel:${
               properties.phone
@@ -514,11 +518,6 @@ function renderMask() {
         sum += parseInt(all[i].scrollHeight) + parseInt(margbtm);
       }
       document.getElementById(`${s_list.id}`).scrollTo(0, sum);
-      // document.getElementById(`${s_list.id}`).scrollTo({
-      //   top: 0,
-
-      //   behavior: "smooth",
-      // });
     }
   });
   mymap.doubleClickZoom.disable();
@@ -657,8 +656,6 @@ open_arrow.forEach((dom) =>
     // console.log(e.currentTarget.parentNode);
     console.log(e.currentTarget.parentNode.id);
     var sum = e.currentTarget.parentNode.offsetHeight;
-    // if (this.parentNode.parentNode.id == "lovestorelist") {
-
     let mq = window.matchMedia("(max-width: 600px)");
     // //mobile
     if (mq.matches && e.currentTarget.parentNode.id == "mystore") {
@@ -675,8 +672,5 @@ open_arrow.forEach((dom) =>
       e.currentTarget.classList.toggle("active");
       e.currentTarget.parentNode.classList.toggle("ctrl_size");
     }
-
-    // e.currentTarget.classList.toggle("active");
-    // e.currentTarget.parentNode.classList.toggle("ctrl_size");
   })
 );
