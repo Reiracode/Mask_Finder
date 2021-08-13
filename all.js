@@ -47,7 +47,7 @@ function createIcon(name) {
   });
 }
   // let today = new Date().toISOString().substr(0, 10);
-var picker = new Pikaday({
+let picker = new Pikaday({
   field: document.getElementById("userday"),
   format: "YYYY/MM/DD",
   toString(date, format) {
@@ -107,8 +107,8 @@ async function getPoints() {
   const [position, points] = await Promise.all([getPosition(), getAllPoints()]);
   yourPositon = position;
   infoData = points;
-  console.log(yourPositon);
-  console.log(infoData);
+  // console.log(yourPositon);
+  // console.log(infoData);
   drawMap();
   nearestStore();
   loading.style.display = "none";
@@ -263,7 +263,6 @@ function intoList() {
     });
   } else {
     //我的最愛 if>0  PINK  toggle PINK AND LOCALSTORAGE
-    console.log(maskStore.indexOf(itemid));
     let loveinde = maskStore.indexOf(itemid);
     this.classList.toggle("pink");
     if (this.classList.contains("pink")) {
@@ -271,7 +270,7 @@ function intoList() {
     } else {
       if (maskStore.indexOf(itemid) > -1) maskStore.splice(loveinde, 1);
     }
-    console.log(maskStore); //index
+    // console.log(maskStore); //index
   }
   localStorage.setItem("maskStore", JSON.stringify(maskStore));
   if (thisdiv.id == "lovestorelist") justifyHeight(thisdiv);
@@ -307,10 +306,8 @@ function getMyRecord() {
 
   function renderStorage() {
     let maskDay = JSON.parse(localStorage.getItem("maskDay")) || [];
-    console.log(maskDay);
     let tnode = "";
     maskDay.forEach((el) => {
-      console.log(`${el.userday}`);
       tnode += `<div><span>${el.userday}</span>
                       <span>${el.userps}</span>
                         <a class="todo_list" data-btn="edit"><i class="fas fa-pen-nib"></i> </a>
@@ -327,10 +324,8 @@ function getMyRecord() {
     let target = this.dataset["btn"];
     let old = JSON.parse(localStorage.getItem("maskDay")) || [];
     let this_date = this.parentNode.children[0].innerText;
-    
     old.forEach((item, index) => {
       if (item.userday == this_date) {
-        console.log(index);
         old.splice(index, 1);
       }
     });
@@ -343,6 +338,8 @@ function getMyRecord() {
       document.querySelector("#userday").value = this_date;
       document.querySelector("#userps").value = edi_ps;
     }
+
+    console.log(maskDay);
   }
 
 
@@ -368,13 +365,12 @@ function getMyRecord() {
     };
 
     if (maskDay.some((item) => item.userday == newItem.userday)) {
-      console.log("data already exited");
+      // console.log("data already exited");
       document.querySelector("#messager_err").innerHTML = "此日期資料已存在";
     } else {
       document.querySelector("#messager_err").innerHTML = "";
       maskDay.push(newItem);
       localStorage.setItem("maskDay", JSON.stringify(maskDay));
-      console.log(maskDay);
       renderStorage();
       document.querySelector("#userday").value = "";
       document.querySelector("#userps").value = "";
@@ -471,10 +467,6 @@ function renderMask() {
       </div> `;
 
       s_list.innerHTML = el;
-      //   console.log(distance);
-      //********************************************* */
-      // popUp 時設定 className
-      //   let customOptions = { maxWidth: "500", minWidth: "170" };
       marker.bindPopup(
         `<h2>${properties.name}</h2>
             <p class="icontype" data-icon="&#xf3c5">
@@ -492,7 +484,6 @@ function renderMask() {
                 <span data-size="adult">成人${properties.mask_adult}</span>
                 <span data-size="child">兒童${properties.mask_child}</span>
             </div>`
-        // customOptions
       );
       markersRef.push(marker);
       markers.addLayer(marker);
@@ -500,17 +491,15 @@ function renderMask() {
 
   s_list.scrollTo(0, 0);
   mymap.addLayer(markers);
-  console.log(mymap);
+  // console.log(mymap);
 
   //marker 點時，算高度到scroll如果有資料，scroll to index
   markers.on("click", (event) => {
     let id = event.layer._leaflet_id;
-    console.log(id);
     let markIndex = markersRef.map((items) => items._leaflet_id).indexOf(id);
 
     if (!!s_list) {
       let all = document.querySelectorAll(`#${s_list.id}>.store_detail`);
-      console.log(all);
       marginBtom = getComputedStyle(all[0]).marginBottom;
       let margbtm = marginBtom.substr(0, marginBtom.length - 2);
       sum = 0;
@@ -533,11 +522,10 @@ function renderMask() {
 
 //每次checked 都要調整
 function justifyHeight(s_list) {
-  console.log(s_list);
+  // console.log(s_list);
   let mq = window.matchMedia("(max-width: 600px)");
 
   if (s_list.id == "lovestorelist" || s_list.id == "storelist") {
-    console.log(s_list.id);
     let list_len = document.querySelectorAll(
       `#${s_list.id}>.store_detail`
     ).length;
@@ -549,19 +537,16 @@ function justifyHeight(s_list) {
       s_list.parentElement.classList.remove("height_auto");
     }
 
-    var sum = 0;
-    var listlen = document.querySelectorAll(`#${s_list.id}>.store_detail`);
-    var marginBtom = getComputedStyle(listlen[0]).marginBottom;
-    var margbtm = marginBtom.substr(0, marginBtom.length - 2);
+    let sum = 0;
+    let listlen = document.querySelectorAll(`#${s_list.id}>.store_detail`);
+    let marginBtom = getComputedStyle(listlen[0]).marginBottom;
+    let margbtm = marginBtom.substr(0, marginBtom.length - 2);
 
-    for (var i = 0; i < listlen.length; i++) {
+    for (let i = 0; i < listlen.length; i++) {
       sum += parseInt(listlen[i].scrollHeight) + parseInt(margbtm);
     }
-    console.log(sum);
-    console.log(window.innerHeight);
 
     if (sum < window.innerHeight) {
-      console.log("SUM<window.innerHeight");
       s_list.parentElement.classList.add("height_auto");
     } else {
       s_list.parentElement.classList.remove("height_auto");
@@ -603,16 +588,13 @@ maskSize.addEventListener("click", (e) => {
 clickBtn.forEach((dom) =>
   dom.addEventListener("click", (e) => {
     let targetID = e.currentTarget.dataset["id"];
-    console.log(targetID);
     e.currentTarget.classList.toggle("active");
     targetID != "relocate"
       ? document.getElementById(`${targetID}`).classList.toggle("active")
       : "";
     for (let sibling of e.currentTarget.parentNode.children) {
-      console.log(sibling);
       if (sibling !== e.currentTarget) {
         let siblingtag = sibling.dataset["id"];
-        console.log(siblingtag);
         sibling.classList.remove("active");
         //別的就要remove   targetID其他的就要remove
         if (!!siblingtag)
@@ -655,7 +637,7 @@ open_arrow.forEach((dom) =>
     //  overlay
     // console.log(e.currentTarget.parentNode);
     console.log(e.currentTarget.parentNode.id);
-    var sum = e.currentTarget.parentNode.offsetHeight;
+    let sum = e.currentTarget.parentNode.offsetHeight;
     let mq = window.matchMedia("(max-width: 600px)");
     // //mobile
     if (mq.matches && e.currentTarget.parentNode.id == "mystore") {
