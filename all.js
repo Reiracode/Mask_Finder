@@ -40,7 +40,7 @@ let redIcon = createIcon("icon-22");
 let userIcon = createIcon("icon-blue");
 function createIcon(name) {
   return new L.Icon({
-    iconUrl: `./${name}.png`,
+    iconUrl: `./icon/${name}.png`,
     iconSize: [30, 30],
     iconAnchor: [16, 36],
     popupAnchor: [1, -34],
