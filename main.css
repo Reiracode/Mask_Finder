@@ -368,6 +368,9 @@ button :hover, button:focus, button:active, button.active {
     line-height: 2rem;
     border-radius: 10px;
   }
+  .leaflet-popup {
+    width: 200px;
+  }
   .leaflet-popup-content span {
     font-size: 1rem;
   }

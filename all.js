@@ -1,7 +1,7 @@
 let yourPositon, infoData, filterData;
 //DOM selectyor  infoData= all json ;filterData=filter data
 const loading = document.getElementById("loading");
-const seltDist = document.querySelector(".district");
+const seltDist = document.querySelector(".district"); 
 const maskSize = document.querySelector("#mask_sel");
 //left menu and overlay
 const clickBtn = [...document.querySelectorAll(".list_menu")];
@@ -40,7 +40,7 @@ let redIcon = createIcon("icon-22");
 let userIcon = createIcon("icon-blue");
 function createIcon(name) {
   return new L.Icon({
-    iconUrl: `../${name}.png`,
+    iconUrl: `./${name}.png`,
     iconSize: [30, 30],
     iconAnchor: [16, 36],
     popupAnchor: [1, -34],
