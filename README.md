@@ -19,7 +19,7 @@ And you can use the dropdown select box to show pharmacy list.
 ![image](https://github.com/Reiracode/Mask_Finder/blob/gh-pages/icon/Mask_Finder.png)
 
 ### Mobile
-<img src="https://github.com/Reiracode/Mask_Finder/blob/gh-pages/icon/Mask_Finder_m.png" width="468" height="600" />
+<img src="https://github.com/Reiracode/Mask_Finder/blob/gh-pages/icon/Mask_Finder_m.png" width="268" height="400" />
 
 
 ## Points Data
