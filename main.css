@@ -1,4 +1,6 @@
-@charset "UTF-8";
+/* @charset "UTF-8"; */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap');
+
 :root {
     --primary:#90b1ec;
 }
@@ -11,7 +13,7 @@
   text-decoration: none;
   outline: none;
   list-style: none;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family:  Arial,'Noto Sans TC', 'Microsoft JhengHei';
 }
 
 html, body {
@@ -437,6 +439,10 @@ button :hover, button:focus, button:active, button.active {
           flex-direction: column;
 }
 
+.list_menu {
+  position: relative;
+}
+
 .list_menu a {
   display: block;
   padding: 5px;
@@ -450,9 +456,10 @@ button :hover, button:focus, button:active, button.active {
 
 .list_menu:hover .dialog {
   display: block;
+  /* position: absolute; */
 }
 
-/* dialog list_menu對話氣泡框 */
+
 .dialog {
   display: none;
   color: #444;
@@ -464,35 +471,42 @@ button :hover, button:focus, button:active, button.active {
   line-height: 40px;
   text-align: center;
   position: absolute;
-  top: -47px;
   font-size: 12px;
+  top: -5px;
+  left:30px;
 }
 
 .dialog:before, .dialog:after {
-  border: solid transparent;
+  border: 1px solid transparent;
   content: "";
   width: 0;
   height: 0;
   position: absolute;
 }
 
-.dialog:before {
-  border-width: 13px 13px 0 13px;
-  border-top-color: #c4e1ff;
-  /*深色*/
-  position: absolute;
-  top: 100%;
-  right: 26px;
-}
+@media screen and (max-width:608px) { 
+  /* dialog list_menu對話氣泡框 */
+  .dialog {
+    top: -47px;
+    left: -25px;
+  }
 
-.dialog:after {
-  border-width: 10px 10px 0 10px;
-  border-top-color: #ecf5ff;
-  /*淺色*/
-  top: 100%;
-  right: 29px;
-}
+  .dialog:before {
+    border-width: 13px 13px 0 13px;
+    border-top-color: #c4e1ff;
+    position: absolute;
+    top: 100%;
+    right: 26px;
+  }
 
+  .dialog:after {
+    border-width: 10px 10px 0 10px;
+    border-top-color: #ecf5ff;
+    top: 100%;
+    right: 29px;
+  }
+  
+}
 .overlay {
   display: none;
   z-index: 9999;
