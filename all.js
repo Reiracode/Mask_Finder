@@ -166,7 +166,7 @@ async function relocate() {
 function getMymarker() {
   mymarker = L.marker(yourPositon, { icon: userIcon })
     .addTo(mymap)
-    .bindPopup("You're HERE")
+    .bindPopup("You're here!")
     .openPopup();
 }
 

@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta content='developer' name='reiracode' />
     <link rel="icon" href="./icon/favico.png" type="image/png" />
     <title>Mask Finder</title>
+    <meta name="description" content="Mask-Finder Taiwan F2E developer ">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"></link> 
@@ -13,21 +15,20 @@
     <link rel="stylesheet" href="./main.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
     <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
-
 </head>
 <body>
     <div id="loading"><div class="loader"></div></div>
+    <h1 class="logo texthide">
+        <a href="./index.html">Mask Finder</a>
+    </h1>
 
     <div class="main">
         <div id="maskmap"></div>
         <div class="overlay"  data-id="personal" id="personal">
-            <!-- <a class="close_overlay dark"><i class="fas fa-times"></i></a> -->
             <a class="close_overlay dark">x</a>
             <form id="form_dateset">
                 <div>
                     <label class="lb_icon" for="userday"><i class="far fa-calendar-alt"></i></label>
-                    <!-- <input type="date"   name="userday"   id="userday"  />    -->
-                    <!-- <input type="text" id="datepicker"> -->
                     <input type="text" name="userday" id="userday">
                 </div>
 
@@ -35,7 +36,6 @@
                     <label class="lb_icon" for="userps"><i class="far fa-clipboard"></i></label> 
                     <input type="text" placeholder="備註" name="userps"   id="userps" >
                 </div>
-
 
                 <button class="btn_date" id="date_set">確定</button> 
                 <button class="btn_date" id="date_set_clear">清除資料</button> 
@@ -46,14 +46,12 @@
 
         <div class="overlay"  data-id="mystore"  id="mystore">
             <a class="open_arrow"><i class="fas fa-angle-up"></i></a>
-            <!-- <a class="close_overlay dark"><i class="fas fa-times"></i></a> -->
             <a class="close_overlay dark">x</a>
             <div class="datalist"   id="lovestorelist" ></div>
         </div>
 
         <div class="overlay"  data-id="list" id="list">
             <a class="open_arrow"><i class="fas fa-angle-up"></i></a>
-            <!-- <a class="close_overlay"><i class="fas fa-times"></i></a> -->
             <a class="close_overlay">x</a>
             <div class="my-selector-c">
                 <div class="list_selector">
@@ -69,6 +67,7 @@
             </div>          
             <div class="datalist"  id="storelist"></div>     
         </div>
+
         <ul class="mobile_menu" >
             <li class="list_menu" data-id="personal">
                 <a><i class="fas fa-user"></i></a>

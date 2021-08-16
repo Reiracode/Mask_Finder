@@ -22,7 +22,16 @@ html, body {
   height: calc(var(--vh, 1vh) * 100);
   overflow: hidden;
 }
-
+.logo a {
+  width: 0px;
+  height: 0px;
+}
+.texthide{
+  text-indent: 101%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: absolute;
+}
 .main {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -272,10 +281,10 @@ button :hover, button:focus, button:active, button.active {
 .mask_size [data-size="child"] {
   background-color: #afdae6;
 }
-
+/* 
 .leaflet-popup {
   width: 220px;
-}
+} */
 
 .leaflet-popup span {
   color: #fff;
@@ -371,9 +380,9 @@ button :hover, button:focus, button:active, button.active {
     line-height: 2rem;
     border-radius: 10px;
   }
-  .leaflet-popup {
+  /* .leaflet-popup {
     width: 200px;
-  }
+  } */
   .leaflet-popup-content span {
     font-size: 1rem;
   }
@@ -759,13 +768,20 @@ button.btn_date:hover {
   margin-right: 10px;
 }
 
-#messager_data div{
-  display:flex;
-}
 #messager_data div > span:nth-child(2) {
   flex:1;
   color:pink;
 }
+
+#messager_data div{
+  display:flex;
+}
+
+#messager_data div > span{
+  display: flex;
+  align-items: center;
+}
+
 #messager_data a{
   display:block;
   cursor: pointer;
