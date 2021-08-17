@@ -27,7 +27,8 @@ select{
   background-color:#fff!important;
   appearance:none;
   -webkit-appearance:none;
-  background: url("http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png") white no-repeat calc(100% - 10px) ;
+  background: url("./icon/chevron-down-solid.svg") white no-repeat calc(100% - 10px) ;
+  /* background: url("http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png") white no-repeat calc(100% - 10px) ; */
 }
 .logo a {
   width: 0px;
