@@ -5,13 +5,12 @@ https://reiracode.github.io/Mask_Finder/
 
 To avoid the risk of COVID-19, spreading, masks can be used for either protection of healthy persons or to prevent onward transmission.
 
-In February 2020, the mask is out of stock. So the Taiwan government had developed the mask-rationing plan gives people an equal amount of masks to prevent stockpiling.
-
+In February 2020, medical masks were in short supply, So the Taiwan government had developed the mask-rationing plan gives people an equal amount of masks to prevent stockpiling.
 
 
 
 ## Instant Mask Map
-#### When the web is loaded, and allow the location information,the map shows the pharmacy at a distance of less than 1 km.
+#### When the page is loaded, and allow the site access your location,the map shows the pharmacy at a distance of less than 1 km.
 And you can use the dropdown select box to show pharmacy list.
 
 #### Destop
