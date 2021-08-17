@@ -144,7 +144,7 @@ input[type="date"]:focus {
   letter-spacing: 0.5px;
   width: 100%;
   margin-bottom: 10px;
-  /*改變右邊箭頭樣式*/
+  /* drop box  */
   /* background: url("arrow.png") no-repeat right center transparent; */
 }
 
