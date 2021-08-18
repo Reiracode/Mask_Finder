@@ -25,11 +25,11 @@ html, body {
 
 select{
   background-color:#fff!important;
-  appearance:none;
+  /* appearance:none; */
   -webkit-appearance:none;
-  background: url("./icon/chevron-down-solid.svg") white no-repeat calc(100% - 10px) ;
-  /* background: url("http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png") white no-repeat calc(100% - 10px) ; */
+  background: url("./icon/br_down.png") white no-repeat calc(100% - 10px) ;  
 }
+
 .logo a {
   width: 0px;
   height: 0px;
